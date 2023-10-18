@@ -76,6 +76,16 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 
+                <!-- Main Menu - Import -->
+                
+                <MenuItem Header="Import"
+                          VerticalAlignment="Center"
+                          FontSize="15">
+                    <MenuItem.Icon>
+                        <Image Source="Assets/import.png"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                
             </Menu>
         </StackPanel>
         
