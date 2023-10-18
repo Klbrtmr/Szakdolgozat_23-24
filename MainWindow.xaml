@@ -6,8 +6,8 @@
         xmlns:local="clr-namespace:Szakdolgozat"
         mc:Ignorable="d"
         Title="MainWindow"
-        Height="700"
-        Width="900"
+        Height="720"
+        Width="1080"
         WindowStyle="None"
         AllowsTransparency="True"
         WindowStartupLocation="CenterScreen">
@@ -15,6 +15,21 @@
     <!-- Background Grid -->
     
     <Grid Background="Gray">
+
+        <TextBlock Text="K o l b e r t  Z o l t á n  M á r i ó"
+                   Foreground="White"
+                   FontFamily="Times New Roman"
+                   FontSize="10"
+                   VerticalAlignment="Bottom"
+                   HorizontalAlignment="Right"
+                   Margin="0,0,15,10"/>
+        <Border Background="#0096FF"
+                Height="15"
+                CornerRadius="3,0,0,3"
+                Width="5"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Right"
+                Margin="0,0,0,8"/>
 
         <StackPanel Background="DarkGray"
                     Width="230"
@@ -24,7 +39,7 @@
             <Grid Height="50"
                   VerticalAlignment="Top"
                   Margin="0,30,0,0">
-                <Border Background="#D61734"
+                <Border Background="#0096FF"
                         Height="25"
                         CornerRadius="3,0,0,3"
                         Width="6"
@@ -43,13 +58,24 @@
             <!-- Main Menu -->
 
             <Menu Height="450"
-                  Background="AliceBlue"
+                  Background="Transparent"
                   Margin="0,40,0,0">
                 <Menu.ItemsPanel>
                     <ItemsPanelTemplate>
                         <VirtualizingStackPanel Orientation="Vertical"/>
                     </ItemsPanelTemplate>
                 </Menu.ItemsPanel>
+                
+                <!-- Main Menu - Home -->
+
+                <MenuItem Header="Home"
+                          VerticalAlignment="Center"
+                          FontSize="15">
+                    <MenuItem.Icon>
+                        <Image Source="Assets/homepage.png"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                
             </Menu>
         </StackPanel>
         
