@@ -5,8 +5,53 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Szakdolgozat"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="MainWindow"
+        Height="700"
+        Width="900"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        WindowStartupLocation="CenterScreen">
+    
+    <!-- Background Grid -->
+    
+    <Grid Background="Gray">
+
+        <StackPanel Background="DarkGray"
+                    Width="230"
+                    Orientation="Vertical"
+                    HorizontalAlignment="Left">
+
+            <Grid Height="50"
+                  VerticalAlignment="Top"
+                  Margin="0,30,0,0">
+                <Border Background="#D61734"
+                        Height="25"
+                        CornerRadius="3,0,0,3"
+                        Width="6"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Right"/>
+                <TextBlock Text="S z a k d o l g o z a t"
+                           Foreground="White"
+                           FontFamily="Times New Roman"
+                           FontSize="25"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"/>
+
+            </Grid>
+            
+            
+            <!-- Main Menu -->
+
+            <Menu Height="450"
+                  Background="AliceBlue"
+                  Margin="0,40,0,0">
+                <Menu.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel Orientation="Vertical"/>
+                    </ItemsPanelTemplate>
+                </Menu.ItemsPanel>
+            </Menu>
+        </StackPanel>
         
     </Grid>
 </Window>
