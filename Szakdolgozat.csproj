@@ -37,6 +37,8 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -95,19 +97,26 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Assets\homepage.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Fonts\" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Assets\full_screen.png" />
+    <Resource Include="Assets\add-document.png" />
+    <Resource Include="Assets\chart-histogram.png" />
+    <Resource Include="Assets\circle-xmark.png" />
+    <Resource Include="Assets\download.png" />
+    <Resource Include="Assets\expand.png" />
+    <Resource Include="Assets\file-import.png" />
+    <Resource Include="Assets\home.png" />
+    <Resource Include="Assets\minus-small.png" />
+    <Resource Include="Assets\search.png" />
+    <Resource Include="Assets\trash.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Assets\import.png" />
+    <Resource Include="Assets\broken-heart.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Assets\exit.png" />
+    <Resource Include="Assets\document.png" />
+    <Resource Include="Assets\mail.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

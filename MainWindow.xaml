@@ -5,17 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Szakdolgozat"
         mc:Ignorable="d"
-        Title="MainWindow"
+        Title="Szakdolgozat"
         Height="720"
         Width="1080"
-        WindowStyle="None"
-        AllowsTransparency="True"
-        WindowStartupLocation="CenterScreen">
-    
-    <!-- Background Grid -->
-    
-    <Grid Background="Gray">
+        WindowStartupLocation="CenterScreen" Icon="/Assets/broken-heart.png" Background="Gray">
 
+    <!-- Background Grid -->
+
+    <Grid Background="Gray">
+        
+        <!-- Copyrights title -->
+        
         <TextBlock Text="K o l b e r t  Z o l t á n  M á r i ó"
                    Foreground="White"
                    FontFamily="Times New Roman"
@@ -31,14 +31,21 @@
                 HorizontalAlignment="Right"
                 Margin="0,0,0,8"/>
 
+        <!-- Working area -->
+        
         <StackPanel Background="DarkGray"
                     Width="230"
                     Orientation="Vertical"
                     HorizontalAlignment="Left">
 
+            <!-- Grid for import menu navigation -->
+            
             <Grid Height="50"
                   VerticalAlignment="Top"
                   Margin="0,30,0,0">
+                
+                <!-- Main title for project -->
+                
                 <Border Background="#0096FF"
                         Height="25"
                         CornerRadius="3,0,0,3"
@@ -53,8 +60,7 @@
                            HorizontalAlignment="Center"/>
 
             </Grid>
-            
-            
+
             <!-- Main Menu -->
 
             <Menu Height="450"
@@ -65,29 +71,37 @@
                         <VirtualizingStackPanel Orientation="Vertical"/>
                     </ItemsPanelTemplate>
                 </Menu.ItemsPanel>
-                
+
                 <!-- Main Menu - Home -->
 
                 <MenuItem Header="Home"
                           VerticalAlignment="Center"
-                          FontSize="15">
+                          FontSize="15" Margin="10,0,0,10">
                     <MenuItem.Icon>
-                        <Image Source="Assets/homepage.png"/>
+                        <Image Source="Assets/home.png"/>
                     </MenuItem.Icon>
                 </MenuItem>
-                
-                <!-- Main Menu - Import -->
-                
-                <MenuItem Header="Import"
+
+                <!-- Main Menu - Import excel file -->
+
+                <MenuItem Header="Import excel"
                           VerticalAlignment="Center"
-                          FontSize="15">
+                          FontSize="15" Margin="10,0,0,10">
                     <MenuItem.Icon>
-                        <Image Source="Assets/import.png"/>
+                        <Image Source="Assets/document.png"/>
                     </MenuItem.Icon>
                 </MenuItem>
-                
+
+                <!-- Main Menu - Import project file -->
+
+                <MenuItem Header="Import project"
+                          VerticalAlignment="Center"
+                          FontSize="15" Margin="10,0,0,10">
+                    <MenuItem.Icon>
+                        <Image Source="Assets/file-import.png"/>
+                    </MenuItem.Icon>
+                </MenuItem>
             </Menu>
         </StackPanel>
-        
     </Grid>
 </Window>
