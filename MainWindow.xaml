@@ -6,8 +6,10 @@
         xmlns:local="clr-namespace:Szakdolgozat"
         mc:Ignorable="d"
         Title="Szakdolgozat"
-        Height="720"
-        Width="1080"
+        MinHeight="720"
+        MinWidth="1080"
+        Width="Auto"
+        Height="Auto"
         WindowStartupLocation="CenterScreen" Icon="/Assets/broken-heart.png" Background="Gray">
 
     <!-- Background Grid -->
@@ -22,30 +24,50 @@
                    FontSize="10"
                    VerticalAlignment="Bottom"
                    HorizontalAlignment="Right"
-                   Margin="0,0,15,10"/>
+                   Margin="0,0,15,10" Panel.ZIndex="999"/>
         <Border Background="#0096FF"
                 Height="15"
                 CornerRadius="3,0,0,3"
                 Width="5"
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Right"
-                Margin="0,0,0,8"/>
+                Margin="0,0,0,8" Panel.ZIndex="999"/>
 
         <!-- Working area -->
-        
+
+        <DockPanel Margin="230,0,0,0">
+            <Border x:Name="tabControlBorder" CornerRadius="2" BorderThickness="2" BorderBrush="Red">
+                <TabControl Background="DarkGray"
+                        VerticalContentAlignment="Stretch"
+                        DockPanel.Dock="Top">
+                    <TabItem Header="Excel Table" FontFamily="Times New Roman" FontWeight="Bold" FontSize="15">
+                        <Image></Image>
+                    </TabItem>
+                    <TabItem Header="Chart" FontFamily="Times New Roman" FontWeight="Bold" FontSize="15">
+                        
+                    </TabItem>
+                    <TabItem Header="Custom" FontFamily="Times New Roman" FontWeight="Bold" FontSize="15">
+                        
+                    </TabItem>
+                </TabControl>
+            </Border>
+        </DockPanel>
+
+
+
         <StackPanel Background="DarkGray"
                     Width="230"
                     Orientation="Vertical"
                     HorizontalAlignment="Left">
 
             <!-- Grid for import menu navigation -->
-            
+
             <Grid Height="50"
                   VerticalAlignment="Top"
                   Margin="0,30,0,0">
-                
+
                 <!-- Main title for project -->
-                
+
                 <Border Background="#0096FF"
                         Height="25"
                         CornerRadius="3,0,0,3"
@@ -63,7 +85,7 @@
 
             <!-- Main Menu -->
 
-            <Menu Height="450"
+            <Menu Height="200"
                   Background="Transparent"
                   Margin="0,40,0,0">
                 <Menu.ItemsPanel>
@@ -76,7 +98,7 @@
 
                 <MenuItem Header="Home"
                           VerticalAlignment="Center"
-                          FontSize="15" Margin="10,0,0,10">
+                          FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" FontWeight="Bold">
                     <MenuItem.Icon>
                         <Image Source="Assets/home.png"/>
                     </MenuItem.Icon>
@@ -86,7 +108,7 @@
 
                 <MenuItem Header="Import excel"
                           VerticalAlignment="Center"
-                          FontSize="15" Margin="10,0,0,10">
+                          FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" FontWeight="Bold">
                     <MenuItem.Icon>
                         <Image Source="Assets/document.png"/>
                     </MenuItem.Icon>
@@ -96,12 +118,25 @@
 
                 <MenuItem Header="Import project"
                           VerticalAlignment="Center"
-                          FontSize="15" Margin="10,0,0,10">
+                          FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" FontWeight="Bold">
                     <MenuItem.Icon>
                         <Image Source="Assets/file-import.png"/>
                     </MenuItem.Icon>
                 </MenuItem>
             </Menu>
+           
+
+            <DockPanel>
+                <Border CornerRadius="2" BorderThickness="2" BorderBrush="Black" Background="White">
+                    <Grid VerticalAlignment="Stretch">
+                        <ScrollViewer VerticalScrollBarVisibility="Visible">
+                            <ListBox x:Name="filesListing" Loaded="filesListing_Loaded"/>
+                        </ScrollViewer>
+                        
+                    </Grid>
+                </Border>
+            </DockPanel>
+            
         </StackPanel>
     </Grid>
 </Window>
