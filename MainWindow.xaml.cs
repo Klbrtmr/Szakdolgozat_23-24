@@ -178,11 +178,21 @@ namespace Szakdolgozat
             if (openFileDialog.ShowDialog() == true)
             {
                 string excelFilePath = openFileDialog.FileName;
-                string fileName = System.IO.Path.GetFileName(excelFilePath);
+                string fileName = System.IO.Path.GetFileNameWithoutExtension(excelFilePath);
+                string fileExtension = System.IO.Path.GetExtension(excelFilePath);
+
+                int counter = 1;
+                string newFileName = fileName;
+
+                while (selectedFiles.Any(file => file.FileName == newFileName))
+                {
+                    newFileName = $"{fileName}_{counter}";
+                    counter++;
+                }
 
                 ImportedFile importedFile = new ImportedFile
                 {
-                    FileName = fileName,
+                    FileName = newFileName,
                     FilePath = excelFilePath
                 };
 
