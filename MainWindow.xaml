@@ -36,12 +36,15 @@
         <!-- Working area -->
 
         <DockPanel Margin="230,0,0,0">
-            <Border x:Name="tabControlBorder" CornerRadius="2" BorderThickness="2" BorderBrush="Red">
+            <Border x:Name="tabControlBorder" CornerRadius="2" BorderThickness="2">
                 <TabControl Background="DarkGray"
                         VerticalContentAlignment="Stretch"
                         DockPanel.Dock="Top">
+                    <TabItem Header="Configuration" FontFamily="Times New Roman" FontWeight="Bold" FontSize="15">
+
+                    </TabItem>
                     <TabItem Header="Excel Table" FontFamily="Times New Roman" FontWeight="Bold" FontSize="15">
-                        <Image></Image>
+                        
                     </TabItem>
                     <TabItem Header="Chart" FontFamily="Times New Roman" FontWeight="Bold" FontSize="15">
                         
@@ -128,11 +131,11 @@
 
             <DockPanel>
                 <Border CornerRadius="2" BorderThickness="2" BorderBrush="Black" Background="White">
-                    <Grid VerticalAlignment="Stretch">
+                    <Grid VerticalAlignment="Stretch" 
+                          MinHeight="200">
                         <ScrollViewer VerticalScrollBarVisibility="Visible">
                             <ListBox x:Name="filesListing" Loaded="filesListing_Loaded"/>
                         </ScrollViewer>
-                        
                     </Grid>
                 </Border>
             </DockPanel>
