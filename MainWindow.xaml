@@ -41,7 +41,15 @@
                         VerticalContentAlignment="Stretch"
                         DockPanel.Dock="Top">
                     <TabItem Header="Configuration" FontFamily="Times New Roman" FontWeight="Bold" FontSize="15">
-
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <DataGrid Name="excelDataGrid" Grid.Row="0" AutoGenerateColumns="True"
+                                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                            
+                        </Grid>
                     </TabItem>
                     <TabItem Header="Excel Table" FontFamily="Times New Roman" FontWeight="Bold" FontSize="15">
                         
@@ -109,9 +117,9 @@
 
                 <!-- Main Menu - Import excel file -->
 
-                <MenuItem Header="Import excel"
+                <MenuItem x:Name="importExcel" Header="Import excel"
                           VerticalAlignment="Center"
-                          FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" FontWeight="Bold">
+                          FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" FontWeight="Bold" Click="importExcel_Click">
                     <MenuItem.Icon>
                         <Image Source="Assets/document.png"/>
                     </MenuItem.Icon>
@@ -134,7 +142,13 @@
                     <Grid VerticalAlignment="Stretch" 
                           MinHeight="200">
                         <ScrollViewer VerticalScrollBarVisibility="Visible">
-                            <ListBox x:Name="filesListing" Loaded="filesListing_Loaded"/>
+                            <ListBox x:Name="filesListing" Loaded="filesListing_Loaded" ContextMenuOpening="filesListing_ContextMenuOpening">
+                                <ListBox.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem x:Name="DeleteMenuItem" Header="DeleteItem" Click="DeleteMenuItem_Click"/>
+                                    </ContextMenu>
+                                </ListBox.ContextMenu>    
+                            </ListBox>
                         </ScrollViewer>
                     </Grid>
                 </Border>
