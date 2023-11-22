@@ -142,7 +142,7 @@
                     <Grid VerticalAlignment="Stretch" 
                           MinHeight="200">
                         <ScrollViewer VerticalScrollBarVisibility="Visible">
-                            <ListBox x:Name="filesListing" Loaded="filesListing_Loaded" ContextMenuOpening="filesListing_ContextMenuOpening">
+                            <ListBox x:Name="filesListing" Loaded="filesListing_Loaded" ContextMenuOpening="filesListing_ContextMenuOpening" SelectedValuePath="FileName" MouseDoubleClick="filesListing_MouseDoubleClick">
                                 <ListBox.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem x:Name="DeleteMenuItem" Header="DeleteItem" Click="DeleteMenuItem_Click"/>
