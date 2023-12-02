@@ -12,5 +12,6 @@ namespace Szakdolgozat
         public string FileName { get; set; }
         public string FilePath { get; set; }
         public System.Windows.Media.Color DisplayColor { get; set; }
+        public object[,] ExcelData { get; set; }
     }
 }

@@ -4,6 +4,6 @@
              xmlns:local="clr-namespace:Szakdolgozat"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <local:PercentageConverter x:Key="PercentageConverter"/>
     </Application.Resources>
 </Application>

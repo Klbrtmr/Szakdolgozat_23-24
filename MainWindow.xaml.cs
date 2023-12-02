@@ -1,6 +1,8 @@
-﻿using Microsoft.Win32;
+﻿using ExcelDataReader;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -14,6 +16,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using LiveCharts;
+using LiveCharts.Wpf;
 
 namespace Szakdolgozat
 {
@@ -27,11 +31,16 @@ namespace Szakdolgozat
             InitializeComponent();
         }
 
+        //indoklások az elrendezés miatt a szakdogaban
+        //struktura szarmazasok
+
         /// <summary>
         /// The list in which the imported files are stored.
         /// </summary>
         private List<ImportedFile> selectedFiles = new List<ImportedFile>();
-        
+
+        public object[,] cellValues { get; private set; }
+
         /// <summary>
         /// Listed all file what we imported. This method created an ellipse to every file.
         /// </summary>
@@ -91,11 +100,44 @@ namespace Szakdolgozat
 
                 Color displayColor = selectedFiles.FirstOrDefault(file => file.FileName == newFileName)?.DisplayColor ?? GenerateRandomColor();
 
+                
+
+                using (var streamval = File.Open(excelFilePath, FileMode.Open, FileAccess.Read))
+                {
+                    using (var reader = ExcelReaderFactory.CreateReader(streamval))
+                    {
+                        var configuration = new ExcelDataSetConfiguration
+                        {
+                            ConfigureDataTable = _ => new ExcelDataTableConfiguration
+                            {
+                                UseHeaderRow = false
+                            }
+                        };
+                        var dataSet = reader.AsDataSet(configuration);
+
+                        if (dataSet.Tables.Count>0)
+                        {
+                            var dataTable = dataSet.Tables[0];
+                        }
+
+                        cellValues = new object[dataSet.Tables[0].Rows.Count, dataSet.Tables[0].Columns.Count];
+
+                        for (int i = 0; i < dataSet.Tables[0].Rows.Count; i++)
+                        {
+                            for (int j = 0; j < dataSet.Tables[0].Columns.Count; j++)
+                            {
+                                cellValues[i, j] = dataSet.Tables[0].Rows[i].ItemArray[j]; 
+                            }
+                        }
+                    }
+                }
+
                 ImportedFile importedFile = new ImportedFile
                 {
                     FileName = newFileName,
                     FilePath = excelFilePath,
-                    DisplayColor = displayColor
+                    DisplayColor = displayColor,
+                    ExcelData = cellValues,
                 };
 
                 selectedFiles.Add(importedFile);
@@ -170,9 +212,52 @@ namespace Szakdolgozat
                     if (m_selectedImportedFile != null)
                     {
                         tabControlBorder.BorderBrush = new SolidColorBrush(m_selectedImportedFile.DisplayColor);
+                        DisplayExcelData(m_selectedImportedFile);
                     }
                 }
             }
+        }
+        
+        private void mainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (mainTabControl.SelectedItem is TabItem selectedTabItem)
+            {
+                if (selectedTabItem.DataContext is ImportedFile selectedImportedFile)
+                {
+                    //DisplayExcelData(selectedImportedFile);
+                }
+            }
+        }
+
+        private void DisplayExcelData(ImportedFile importedFile)
+        {
+            DataTable dataTable = ConvertArrayToDataTable(importedFile.ExcelData);
+            excelDataGrid.ItemsSource = dataTable.DefaultView;
+
+            DataTable customDataTable = ConvertArrayToDataTable(importedFile.ExcelData);
+            excelCustomDataGrid.ItemsSource = customDataTable.DefaultView;
+        }
+
+        private DataTable ConvertArrayToDataTable(object[,] array)
+        {
+            DataTable dataTable = new DataTable();
+            
+            for (int i = 0; i < array.GetLength(1); i++)
+            {
+                dataTable.Columns.Add($"{array[0,i]}");
+            }
+
+            for (int i = 1; i < array.GetLength(0); i++)
+            {
+                DataRow dataRow = dataTable.NewRow();
+                for (int j = 0; j < array.GetLength(1); j++)
+                {
+                    dataRow[j] = array[i, j];
+                }
+                dataTable.Rows.Add(dataRow);
+            }
+
+            return dataTable;
         }
     }
 }

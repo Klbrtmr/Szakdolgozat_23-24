@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Szakdolgozat"
+        xmlns:local="clr-namespace:Szakdolgozat" xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         mc:Ignorable="d"
         Title="Szakdolgozat"
         MinHeight="720"
@@ -37,28 +37,65 @@
 
         <DockPanel Margin="230,0,0,0">
             <Border x:Name="tabControlBorder" CornerRadius="2" BorderThickness="2">
-                <TabControl Background="DarkGray"
+                <TabControl x:Name="mainTabControl" Background="DarkGray"
                         VerticalContentAlignment="Stretch"
-                        DockPanel.Dock="Top">
+                        DockPanel.Dock="Top" SelectionChanged="mainTabControl_SelectionChanged">
                     <TabItem Header="Configuration" FontFamily="Times New Roman" FontWeight="Bold" FontSize="15">
+                        
+                    </TabItem>
+                    <TabItem Header="Excel Table" FontFamily="Times New Roman" FontWeight="Bold" FontSize="15">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <DataGrid Name="excelDataGrid" Grid.Row="0" AutoGenerateColumns="True"
-                                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                            <DataGrid Name="excelDataGrid" Grid.Row="1" ColumnWidth="Auto"
+                                      AutoGenerateColumns="True"
+                                      HorizontalAlignment="Stretch" 
+                                      VerticalAlignment="Stretch"
+                                      ItemsSource="{Binding}"
+                                      VirtualizingPanel.IsVirtualizing="True"
+                                      VirtualizingPanel.VirtualizationMode="Standard"
+                                      ScrollViewer.CanContentScroll="True"
+                                      ScrollViewer.VerticalScrollBarVisibility="Visible"
+                                      IsReadOnly="True"
+                                      CanUserSortColumns="False"
+                                      MaxHeight="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, 
+                                                    Path=ActualHeight, 
+                                                    Converter={StaticResource PercentageConverter}, 
+                                                    ConverterParameter=0.67}"/>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Chart" FontFamily="Times New Roman" FontWeight="Bold" FontSize="15">
+                        <Grid>
                             
                         </Grid>
                     </TabItem>
-                    <TabItem Header="Excel Table" FontFamily="Times New Roman" FontWeight="Bold" FontSize="15">
-                        
+                    <TabItem Header="Custom Table" FontFamily="Times New Roman" FontWeight="Bold" FontSize="15">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <DataGrid Name="excelCustomDataGrid" Grid.Row="1" ColumnWidth="Auto"
+                                      AutoGenerateColumns="True"
+                                      HorizontalAlignment="Stretch" 
+                                      VerticalAlignment="Stretch"
+                                      ItemsSource="{Binding}"
+                                      VirtualizingPanel.IsVirtualizing="True"
+                                      VirtualizingPanel.VirtualizationMode="Standard"
+                                      ScrollViewer.CanContentScroll="True"
+                                      ScrollViewer.VerticalScrollBarVisibility="Visible"
+                                      IsReadOnly="False"
+                                      CanUserSortColumns="False"
+                                      MaxHeight="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, 
+                                                    Path=ActualHeight, 
+                                                    Converter={StaticResource PercentageConverter}, 
+                                                    ConverterParameter=0.67}"/>
+                        </Grid>
                     </TabItem>
-                    <TabItem Header="Chart" FontFamily="Times New Roman" FontWeight="Bold" FontSize="15">
-                        
-                    </TabItem>
-                    <TabItem Header="Custom" FontFamily="Times New Roman" FontWeight="Bold" FontSize="15">
-                        
+                    <TabItem Header="Custom Chart" FontFamily="Times New Roman" FontWeight="Bold" FontSize="15">
+
                     </TabItem>
                 </TabControl>
             </Border>
