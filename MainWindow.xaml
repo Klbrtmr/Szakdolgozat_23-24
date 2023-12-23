@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Szakdolgozat" xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+        xmlns:local="clr-namespace:Szakdolgozat" xmlns:my="clr-namespace:Steema.TeeChart.WPF;assembly=TeeChart.WPF"
+        xmlns:d3="clr-namespace:InteractiveDataDisplay.WPF;assembly=InteractiveDataDisplay.WPF"
         mc:Ignorable="d"
         Title="Szakdolgozat"
         MinHeight="720"
@@ -12,6 +13,10 @@
         Height="Auto"
         WindowStartupLocation="CenterScreen" Icon="/Assets/broken-heart.png" Background="Gray">
 
+    <Window.Resources>
+        <local:VisibilityToCheckedConverter x:Key="VisibilityToCheckedConverter"/>
+    </Window.Resources>
+    
     <!-- Background Grid -->
 
     <Grid Background="Gray">
@@ -67,8 +72,33 @@
                         </Grid>
                     </TabItem>
                     <TabItem Header="Chart" FontFamily="Times New Roman" FontWeight="Bold" FontSize="15">
-                        <Grid>
-                            
+                        <Grid x:Name="Layoutroot" Background="White">
+                            <ToolBarTray>
+                                <ToolBar>
+                                    <Button>asd</Button>
+                                    <Separator/>
+                                    <Button>asd2</Button>
+                                </ToolBar>
+                            </ToolBarTray>
+                            <d3:Chart Name="plotter" Margin="0,30,0,0">
+                                <d3:Chart.Title>
+                                    <TextBlock HorizontalAlignment="Center" FontSize="18" Margin="0,5,0,5">No data</TextBlock>
+                                </d3:Chart.Title>
+                                <d3:Chart.LegendContent>
+                                    <d3:LegendItemsPanel>
+                                        <d3:LegendItemsPanel.Resources>
+                                            <DataTemplate x:Key="InteractiveDataDisplay.WPF.LineGraph">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <CheckBox IsChecked="{Binding Path=Visibility, Converter={StaticResource VisibilityToCheckedConverter}, Mode=TwoWay}"/>
+                                                    <Line Width="15" Height="15" X1="0" Y1="0" X2="15" Y2="15" Stroke="{Binding Path=Stroke}" StrokeThickness="2"/>
+                                                    <TextBlock Margin="5,0,0,0" Text="{Binding Path=Description}"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </d3:LegendItemsPanel.Resources>
+                                    </d3:LegendItemsPanel>
+                                </d3:Chart.LegendContent>
+                                <Grid Name="lines1"/>
+                            </d3:Chart>
                         </Grid>
                     </TabItem>
                     <TabItem Header="Custom Table" FontFamily="Times New Roman" FontWeight="Bold" FontSize="15">

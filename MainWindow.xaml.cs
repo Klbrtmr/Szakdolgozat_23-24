@@ -18,6 +18,13 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using LiveCharts;
 using LiveCharts.Wpf;
+using LiveCharts.Defaults;
+using Steema.TeeChart;
+using Steema.TeeChart.WPF;
+using Steema.TeeChart.Themes;
+using InteractiveDataDisplay.WPF;
+using InteractiveDataDisplay;
+using System.Reactive.Linq;
 
 namespace Szakdolgozat
 {
@@ -26,6 +33,7 @@ namespace Szakdolgozat
     /// </summary>
     public partial class MainWindow : Window
     {
+        public SeriesCollection ChartValues { get; set; } = new SeriesCollection();
         public MainWindow()
         {
             InitializeComponent();
@@ -40,6 +48,10 @@ namespace Szakdolgozat
         private List<ImportedFile> selectedFiles = new List<ImportedFile>();
 
         public object[,] cellValues { get; private set; }
+
+        private ObservablePoint observablePoint;
+
+        
 
         /// <summary>
         /// Listed all file what we imported. This method created an ellipse to every file.
@@ -229,6 +241,10 @@ namespace Szakdolgozat
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="importedFile"></param>
         private void DisplayExcelData(ImportedFile importedFile)
         {
             DataTable dataTable = ConvertArrayToDataTable(importedFile.ExcelData);
@@ -236,8 +252,15 @@ namespace Szakdolgozat
 
             DataTable customDataTable = ConvertArrayToDataTable(importedFile.ExcelData);
             excelCustomDataGrid.ItemsSource = customDataTable.DefaultView;
+
+            UpdateChart(importedFile, dataTable);
         }
 
+        /// <summary>
+        /// Convert from the imported file datas to datatable for a easier handle.
+        /// </summary>
+        /// <param name="array">Two-dimension array from imported file.</param>
+        /// <returns>Returns the datatable from excel data.</returns>
         private DataTable ConvertArrayToDataTable(object[,] array)
         {
             DataTable dataTable = new DataTable();
@@ -258,6 +281,40 @@ namespace Szakdolgozat
             }
 
             return dataTable;
+        }
+
+        /// <summary>
+        /// Created chart view from actual datas when the file is open.
+        /// </summary>
+        /// <param name="importedFile">Imported excel file.</param>
+        /// <param name="dataTable">Datatable from imported excel file.</param>
+        private void UpdateChart(ImportedFile importedFile, DataTable dataTable)
+        {
+            //Clear for other call
+            lines1.Children.Clear();
+
+            //Chart title
+            plotter.Title = importedFile.FileName;
+
+            if (dataTable.Rows.Count>0)
+            {
+                var xColumn = dataTable.Columns[0];
+                var yColumns = dataTable.Columns.Cast<DataColumn>().Skip(1).ToArray();
+
+                var x = dataTable.AsEnumerable().Select(row => Convert.ToDouble(row[xColumn])).ToArray();
+
+                foreach ( var yColumn in yColumns)
+                {
+                    var lg = new LineGraph();
+                    lines1.Children.Add(lg);
+                    lg.Stroke = new SolidColorBrush(Color.FromArgb(255, 0, 0, 255));
+                    lg.Description = String.Format($"{yColumn.ColumnName}");
+                    lg.StrokeThickness = 2;
+
+                    var y = dataTable.AsEnumerable().Select(row => Convert.ToDouble(row[yColumn])).ToArray();
+                    lg.Plot(x, y);
+                }
+            }
         }
     }
 }
