@@ -428,7 +428,7 @@ namespace Szakdolgozat
             }
             if (invalidvalues == true)
             {
-                MessageBox.Show("Excel contains invalid values! Invalid values are set to 0.");
+                MessageBox.Show("Excel contains invalid values! Invalid values are set to 0.", "Import warning!" , MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
         
@@ -449,15 +449,13 @@ namespace Szakdolgozat
                     }
                     else
                     {
-                        MessageBox.Show("Invalid value!");
+                        MessageBox.Show("Invalid value!", "Invalid value error!", MessageBoxButton.OK, MessageBoxImage.Error);
                         ((TextBox)e.EditingElement).Text = rowView.Row[e.Column.DisplayIndex].ToString();
                     }
                 }
 
             }
         }
-
-        
 
         private void ZoomIn_Click(object sender, RoutedEventArgs e)
         {
