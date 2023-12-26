@@ -51,7 +51,12 @@ namespace Szakdolgozat
 
         private ObservablePoint observablePoint;
 
-        
+        //Actual importedFile helper
+        private ImportedFile m_ImportedFile;
+        private DataTable m_CustomDataTable;
+
+        // For scaling, zoom-in, zoom-out
+        private TransformGroup transformGroup = new TransformGroup();
 
         /// <summary>
         /// Listed all file what we imported. This method created an ellipse to every file.
@@ -250,10 +255,13 @@ namespace Szakdolgozat
             DataTable dataTable = ConvertArrayToDataTable(importedFile.ExcelData);
             excelDataGrid.ItemsSource = dataTable.DefaultView;
 
-            DataTable customDataTable = ConvertArrayToDataTable(importedFile.ExcelData);
-            excelCustomDataGrid.ItemsSource = customDataTable.DefaultView;
+            //DataTable customDataTable = ConvertArrayToDataTable(importedFile.ExcelData);
+            m_CustomDataTable = ConvertArrayToDataTable(importedFile.ExcelData);
+            excelCustomDataGrid.ItemsSource = m_CustomDataTable.DefaultView;
 
+            this.m_ImportedFile = importedFile;
             UpdateChart(importedFile, dataTable);
+            UpdateCustomChart(importedFile, m_CustomDataTable);
         }
 
         /// <summary>
@@ -276,12 +284,30 @@ namespace Szakdolgozat
                 for (int j = 0; j < array.GetLength(1); j++)
                 {
                     dataRow[j] = array[i, j];
+                    if (j == 0)
+                    {
+                        dataTable.Columns[j].ReadOnly = true;
+                    }
                 }
                 dataTable.Rows.Add(dataRow);
             }
 
+
+            // innen folytatni...
+            /*
+            if (dataTable.Rows.Count > 0)
+            {
+                DataRow lastRow = dataTable.Rows[dataTable.Rows.Count - 1];
+                foreach (DataColumn column in dataTable.Columns)
+                {
+                    lastRow[column] = lastRow[column];
+                }
+            }*/
+
             return dataTable;
         }
+
+
 
         /// <summary>
         /// Created chart view from actual datas when the file is open.
@@ -311,10 +337,154 @@ namespace Szakdolgozat
                     lg.Description = String.Format($"{yColumn.ColumnName}");
                     lg.StrokeThickness = 2;
 
-                    var y = dataTable.AsEnumerable().Select(row => Convert.ToDouble(row[yColumn])).ToArray();
+                    var y = dataTable.AsEnumerable().Select(row =>
+                    {
+                        var yValue = row[yColumn];
+                        if (yValue != DBNull.Value)
+                        {
+                            double parsedValue;
+                            if (double.TryParse(yValue.ToString(), out parsedValue))
+                            {
+                                return parsedValue;
+                            }
+                            else
+                            {
+                                // Logic for invalid values
+                                row[yColumn] = 0.0;
+                                return 0.0;
+                            }
+                        }
+                        else
+                        {
+                            // Logic for empty values
+                            row[yColumn] = 0.0;
+                            return 0.0;
+                        }
+                    }).ToArray();
+
                     lg.Plot(x, y);
                 }
             }
+        }
+
+        private void UpdateCustomChart(ImportedFile importedFile, DataTable dataTable)
+        {
+            //Clear for other call
+            customLines1.Children.Clear();
+
+            //Chart title
+            customplotter.Title = importedFile.FileName;
+
+            bool invalidvalues = false;
+
+            if (dataTable.Rows.Count > 0)
+            {
+                var xColumn = dataTable.Columns[0];
+                var yColumns = dataTable.Columns.Cast<DataColumn>().Skip(1).ToArray();
+
+                var x = dataTable.AsEnumerable().Select(row =>
+                {
+                    var xValue = row[xColumn];
+                    return xValue != DBNull.Value ? Convert.ToDouble(xValue) : 0.0;
+                }).ToArray();
+
+                foreach (var yColumn in yColumns)
+                {
+                    var lg = new LineGraph();
+                    customLines1.Children.Add(lg);
+                    lg.Stroke = new SolidColorBrush(Color.FromArgb(255, 0, 0, 255));
+                    lg.Description = String.Format($"{yColumn.ColumnName}");
+                    lg.StrokeThickness = 2;
+
+                    var y = dataTable.AsEnumerable().Select(row =>
+                    {
+                        var yValue = row[yColumn];
+                        if (yValue != DBNull.Value)
+                        {
+                            double parsedValue;
+                            if (double.TryParse(yValue.ToString(), out parsedValue))
+                            {
+                                return parsedValue;
+                            }
+                            else
+                            {
+                                // Logic for invalid values
+                                invalidvalues = true;
+                                row[yColumn] = 0.0;
+                                return 0.0;
+                            }
+                        }
+                        else
+                        {
+                            // Logic for empty values
+                            invalidvalues = true;
+                            row[yColumn] = 0.0;
+                            return 0.0;
+                        }
+                    }).ToArray();
+
+                    lg.Plot(x, y);
+                }
+            }
+            if (invalidvalues == true)
+            {
+                MessageBox.Show("Excel contains invalid values! Invalid values are set to 0.");
+            }
+        }
+        
+        private void excelCustomDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+
+            if (e.Column.DisplayIndex != 0 && e.Row.Item is DataRowView rowView)
+            {
+                object modifiedValue = ((TextBox)e.EditingElement).Text;
+
+                if (modifiedValue != DBNull.Value)
+                {
+                    double parsedValue;
+                    if (double.TryParse(modifiedValue.ToString(), out parsedValue))
+                    {
+                        rowView.Row[e.Column.DisplayIndex] = parsedValue;
+                        UpdateCustomChart(m_ImportedFile, m_CustomDataTable);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Invalid value!");
+                        ((TextBox)e.EditingElement).Text = rowView.Row[e.Column.DisplayIndex].ToString();
+                    }
+                }
+
+            }
+        }
+
+        
+
+        private void ZoomIn_Click(object sender, RoutedEventArgs e)
+        {
+            ApplyZoom(1.1);
+        }
+
+        private void ZoomOut_Click(object sender, RoutedEventArgs e)
+        {
+            ApplyZoom(0.9);
+        }
+
+        private void ZoomOutCompletly_Click(object sender, RoutedEventArgs e)
+        {
+            ResetZoom();
+        }
+
+        private void ApplyZoom(double factor)
+        {
+            ScaleTransform scaleTransform = new ScaleTransform(factor, factor);
+            transformGroup.Children.Add(scaleTransform);
+            lines1.LayoutTransform = transformGroup;
+        }
+
+        private void ResetZoom()
+        {
+            transformGroup.Children.Clear();
+            transformGroup.Children.Add(new ScaleTransform(1.0, 1.0));
         }
     }
 }
