@@ -26,6 +26,7 @@ using InteractiveDataDisplay.WPF;
 using InteractiveDataDisplay;
 using System.Reactive.Linq;
 using ClosedXML.Excel;
+using OfficeOpenXml;
 
 namespace Szakdolgozat
 {
@@ -49,6 +50,7 @@ namespace Szakdolgozat
         private List<ImportedFile> selectedFiles = new List<ImportedFile>();
 
         public object[,] cellValues { get; private set; }
+        public object[,] customCellValues { get; private set; }
 
         private ObservablePoint observablePoint;
 
@@ -157,13 +159,15 @@ namespace Szakdolgozat
                     }
                 }
 
+                customCellValues = cellValues;
+
                 ImportedFile importedFile = new ImportedFile
                 {
                     FileName = newFileName,
                     FilePath = excelFilePath,
                     DisplayColor = displayColor,
                     ExcelData = cellValues,
-                    CustomExcelData = cellValues,
+                    CustomExcelData = customCellValues,
                 };
 
                 selectedFiles.Add(importedFile);
@@ -458,6 +462,11 @@ namespace Szakdolgozat
                     if (double.TryParse(modifiedValue.ToString(), out parsedValue))
                     {
                         rowView.Row[e.Column.DisplayIndex] = parsedValue;
+
+                        int rowIndex = e.Row.GetIndex() + 1;
+                        int columnIndex = e.Column.DisplayIndex;
+                        customCellValues[rowIndex, columnIndex] = parsedValue;
+                        
                         UpdateCustomChart(m_ImportedFile, m_CustomDataTable);
                     }
                     else
@@ -496,6 +505,50 @@ namespace Szakdolgozat
         {
             transformGroup.Children.Clear();
             transformGroup.Children.Add(new ScaleTransform(1.0, 1.0));
+        }
+
+        private void exporttoexcel_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Filter = "Excel file (*.xlsx)|*.xlsx",
+                Title = "Save",
+                FileName = System.IO.Path.GetFileNameWithoutExtension(m_ImportedFile.FileName) + "_customtable.xlsx"
+            };
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                string outputPath = saveFileDialog.FileName;
+
+                using (var stream = File.Create(outputPath))
+                {
+                    using (var package = new ExcelPackage(stream))
+                    {
+                        var worksheet = package.Workbook.Worksheets.Add("Sheet1");
+
+                        for (int i = 0; i < customCellValues.GetLength(0); i++)
+                        {
+                            for (int j = 0; j < customCellValues.GetLength(1); j++)
+                            {
+                                worksheet.Cells[i + 1, j + 1].Value = customCellValues[i, j];
+                            }
+                        }
+
+                        package.Save();
+                    }
+
+                    MessageBox.Show("File saved successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+        }
+
+        private void closeProject_Click(object sender, RoutedEventArgs e)
+        {
+            var result = MessageBox.Show("Are you sure?", "Close", MessageBoxButton.OKCancel, MessageBoxImage.Hand);
+            if (result == MessageBoxResult.OK)
+            {
+                Application.Current.Shutdown();
+            }
         }
     }
 }

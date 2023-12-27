@@ -192,7 +192,7 @@
 
             <!-- Main Menu -->
 
-            <Menu Height="200"
+            <Menu Height="250"
                   Background="Transparent"
                   Margin="0,40,0,0">
                 <Menu.ItemsPanel>
@@ -233,9 +233,9 @@
 
                 <!-- Main Menu - Export custom table to excel file -->
                 
-                <MenuItem Header="Export Custom Table"
+                <MenuItem x:Name="exporttoexcel" Header="Export Custom Table"
                           VerticalAlignment="Center"
-                          FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" FontWeight="Bold">
+                          FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" FontWeight="Bold" Click="exporttoexcel_Click">
                     <MenuItem.Icon>
                         <Image Source="Assets/export.png"/>
                     </MenuItem.Icon>
@@ -250,6 +250,17 @@
                         <Image Source="Assets/exportfile.png"/>
                     </MenuItem.Icon>
                 </MenuItem>
+                
+                <!-- Main Menu - Close project-->
+
+                <MenuItem x:Name="closeProject" Header="Close project"
+                          VerticalAlignment="Center"
+                          FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" FontWeight="Bold" Click="closeProject_Click">
+                    <MenuItem.Icon>
+                        <Image Source="Assets/circle-xmark.png"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+
             </Menu>
 
             <!-- DockPanel for imported files list -->
