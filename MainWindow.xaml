@@ -230,10 +230,31 @@
                         <Image Source="Assets/file-import.png"/>
                     </MenuItem.Icon>
                 </MenuItem>
-            </Menu>
-           
 
-            <DockPanel>
+                <!-- Main Menu - Export custom table to excel file -->
+                
+                <MenuItem Header="Export Custom Table"
+                          VerticalAlignment="Center"
+                          FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" FontWeight="Bold">
+                    <MenuItem.Icon>
+                        <Image Source="Assets/export.png"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <!-- Main Menu - Export project file-->
+                
+                <MenuItem Header="Export project"
+                          VerticalAlignment="Center"
+                          FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" FontWeight="Bold">
+                    <MenuItem.Icon>
+                        <Image Source="Assets/exportfile.png"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+            </Menu>
+
+            <!-- DockPanel for imported files list -->
+
+                <DockPanel>
                 <Border CornerRadius="2" BorderThickness="2" BorderBrush="Black" Background="White">
                     <Grid VerticalAlignment="Stretch" 
                           MinHeight="200">

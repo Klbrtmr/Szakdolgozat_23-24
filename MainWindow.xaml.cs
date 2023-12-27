@@ -25,6 +25,7 @@ using Steema.TeeChart.Themes;
 using InteractiveDataDisplay.WPF;
 using InteractiveDataDisplay;
 using System.Reactive.Linq;
+using ClosedXML.Excel;
 
 namespace Szakdolgozat
 {
@@ -134,6 +135,13 @@ namespace Szakdolgozat
 
                         if (dataSet.Tables.Count>0)
                         {
+                            var firstCellValue = dataSet.Tables[0].Rows[0].ItemArray[0];
+                            if (firstCellValue == null || !firstCellValue.ToString().Equals("Sample", StringComparison.OrdinalIgnoreCase))
+                            {
+                                MessageBox.Show("Error: Wrong file structure or file is corrupt.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                                return;
+                            }
+
                             var dataTable = dataSet.Tables[0];
                         }
 
@@ -155,6 +163,7 @@ namespace Szakdolgozat
                     FilePath = excelFilePath,
                     DisplayColor = displayColor,
                     ExcelData = cellValues,
+                    CustomExcelData = cellValues,
                 };
 
                 selectedFiles.Add(importedFile);
@@ -256,7 +265,7 @@ namespace Szakdolgozat
             excelDataGrid.ItemsSource = dataTable.DefaultView;
 
             //DataTable customDataTable = ConvertArrayToDataTable(importedFile.ExcelData);
-            m_CustomDataTable = ConvertArrayToDataTable(importedFile.ExcelData);
+            m_CustomDataTable = ConvertArrayToDataTable(importedFile.CustomExcelData);
             excelCustomDataGrid.ItemsSource = m_CustomDataTable.DefaultView;
 
             this.m_ImportedFile = importedFile;
@@ -327,7 +336,11 @@ namespace Szakdolgozat
                 var xColumn = dataTable.Columns[0];
                 var yColumns = dataTable.Columns.Cast<DataColumn>().Skip(1).ToArray();
 
-                var x = dataTable.AsEnumerable().Select(row => Convert.ToDouble(row[xColumn])).ToArray();
+                var x = dataTable.AsEnumerable().Select(row =>
+                {
+                    var xValue = row[xColumn];
+                    return xValue != DBNull.Value ? Convert.ToDouble(xValue) : 0.0;
+                }).ToArray();
 
                 foreach ( var yColumn in yColumns)
                 {
