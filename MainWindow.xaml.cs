@@ -49,16 +49,29 @@ namespace Szakdolgozat
         /// </summary>
         private List<ImportedFile> selectedFiles = new List<ImportedFile>();
 
+        /// <summary>
+        /// Two-dimension array for original excel datas.
+        /// </summary>
         public object[,] cellValues { get; private set; }
+
+        /// <summary>
+        /// Two-dimension array for custom changed excel datas.
+        /// </summary>
         public object[,] customCellValues { get; private set; }
 
-        private ObservablePoint observablePoint;
-
-        //Actual importedFile helper
+        /// <summary>
+        /// Actual importedFile.
+        /// </summary>
         private ImportedFile m_ImportedFile;
+
+        /// <summary>
+        /// Actual opened dataTable.
+        /// </summary>
         private DataTable m_CustomDataTable;
 
-        // For scaling, zoom-in, zoom-out
+        /// <summary>
+        /// TransformGroup for scaling, zoom-in, zoom-out
+        /// </summary>
         private TransformGroup transformGroup = new TransformGroup();
 
         /// <summary>
@@ -88,13 +101,18 @@ namespace Szakdolgozat
             }
         }
 
+        /// <summary>
+        /// Event handler to ListFiles() method.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void filesListing_Loaded(object sender, RoutedEventArgs e)
         {
             ListFiles();
         }
 
         /// <summary>
-        /// Import excel button click
+        /// Import excel button click.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -260,9 +278,9 @@ namespace Szakdolgozat
         }
 
         /// <summary>
-        /// 
+        /// Display Excel Data in a dataTable.
         /// </summary>
-        /// <param name="importedFile"></param>
+        /// <param name="importedFile">Selected imported file.</param>
         private void DisplayExcelData(ImportedFile importedFile)
         {
             DataTable dataTable = ConvertArrayToDataTable(importedFile.ExcelData);
@@ -278,7 +296,7 @@ namespace Szakdolgozat
         }
 
         /// <summary>
-        /// Convert from the imported file datas to datatable for a easier handle.
+        /// Convert from the imported file datas to datatable for an easier handle.
         /// </summary>
         /// <param name="array">Two-dimension array from imported file.</param>
         /// <returns>Returns the datatable from excel data.</returns>
@@ -319,8 +337,6 @@ namespace Szakdolgozat
 
             return dataTable;
         }
-
-
 
         /// <summary>
         /// Created chart view from actual datas when the file is open.
@@ -384,6 +400,7 @@ namespace Szakdolgozat
             }
         }
 
+        /// <inheritdoc cref="UpdateChart(ImportedFile, DataTable)"/>
         private void UpdateCustomChart(ImportedFile importedFile, DataTable dataTable)
         {
             //Clear for other call
@@ -449,6 +466,11 @@ namespace Szakdolgozat
             }
         }
         
+        /// <summary>
+        /// Handle when in the custom data grid edited cell(s). Save the new value to the customCellValues array.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void excelCustomDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
 
@@ -507,6 +529,11 @@ namespace Szakdolgozat
             transformGroup.Children.Add(new ScaleTransform(1.0, 1.0));
         }
 
+        /// <summary>
+        /// Exported custom data table to the new excel file.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void exporttoexcel_Click(object sender, RoutedEventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog
@@ -542,12 +569,73 @@ namespace Szakdolgozat
             }
         }
 
+        /// <summary>
+        /// Close project.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void closeProject_Click(object sender, RoutedEventArgs e)
         {
             var result = MessageBox.Show("Are you sure?", "Close", MessageBoxButton.OKCancel, MessageBoxImage.Hand);
             if (result == MessageBoxResult.OK)
             {
                 Application.Current.Shutdown();
+            }
+        }
+
+        /// <summary>
+        /// "Save as PNG" toolbar button eventhandler. 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void saveaspng_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Filter = "PNG Files (*.png)|*.png",
+                Title = "Save as PNG"
+            };
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                SaveChartAsPng(saveFileDialog.FileName, plotter);
+            }
+        }
+
+        /// <inheritdoc cref="saveaspng_Click(object, RoutedEventArgs)"/>
+        private void customsaveaspng_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Filter = "PNG Files (*.png)|*.png",
+                Title = "Save as PNG"
+            };
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                SaveChartAsPng(saveFileDialog.FileName, customplotter);
+            }
+        }
+
+        /// <summary>
+        /// Save chart to PNG.
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="chartName"></param>
+        private void SaveChartAsPng(string filePath, InteractiveDataDisplay.WPF.Chart chartName)
+        {
+            // Create a RenderTargetBitmap for the chart
+            var renderTargetBitmap = new RenderTargetBitmap((int)chartName.ActualWidth, (int)chartName.ActualHeight, 96, 96, PixelFormats.Pbgra32);
+            renderTargetBitmap.Render(chartName);
+
+            // Create a PNG encoder
+            var pngEncoder = new PngBitmapEncoder();
+            pngEncoder.Frames.Add(BitmapFrame.Create(renderTargetBitmap));
+
+            // Save to file
+            using (var stream = File.Create(filePath))
+            {
+                pngEncoder.Save(stream);
             }
         }
     }
