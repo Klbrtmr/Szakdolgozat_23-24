@@ -27,6 +27,8 @@ using InteractiveDataDisplay;
 using System.Reactive.Linq;
 using ClosedXML.Excel;
 using OfficeOpenXml;
+using ICSharpCode.SharpZipLib.Zip;
+using System.IO.Compression;
 
 namespace Szakdolgozat
 {
@@ -73,6 +75,8 @@ namespace Szakdolgozat
         /// TransformGroup for scaling, zoom-in, zoom-out
         /// </summary>
         private TransformGroup transformGroup = new TransformGroup();
+
+        private int currentID = 0;
 
         /// <summary>
         /// Listed all file what we imported. This method created an ellipse to every file.
@@ -179,8 +183,10 @@ namespace Szakdolgozat
 
                 customCellValues = cellValues;
 
+                int newID = GenerateNewID();
                 ImportedFile importedFile = new ImportedFile
                 {
+                    ID = newID,
                     FileName = newFileName,
                     FilePath = excelFilePath,
                     DisplayColor = displayColor,
@@ -192,6 +198,11 @@ namespace Szakdolgozat
 
                 ListFiles();
             }
+        }
+
+        private int GenerateNewID()
+        {
+            return currentID++;
         }
 
         /// <summary>
@@ -254,11 +265,12 @@ namespace Szakdolgozat
                 if (selectedStackPanel.Children[1] is TextBlock textBlock)
                 {
                     string selectedFileName = textBlock.Text;
-                
-                    ImportedFile m_selectedImportedFile = selectedFiles.FirstOrDefault(file => file.FileName == selectedFileName);
+
+                    ImportedFile m_selectedImportedFile = selectedFiles.FirstOrDefault(file => file.FileName.Equals(selectedFileName));
 
                     if (m_selectedImportedFile != null)
                     {
+                        m_ImportedFile = m_selectedImportedFile;
                         tabControlBorder.BorderBrush = new SolidColorBrush(m_selectedImportedFile.DisplayColor);
                         DisplayExcelData(m_selectedImportedFile);
                     }
@@ -473,7 +485,6 @@ namespace Szakdolgozat
         /// <param name="e"></param>
         private void excelCustomDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
-
             if (e.Column.DisplayIndex != 0 && e.Row.Item is DataRowView rowView)
             {
                 object modifiedValue = ((TextBox)e.EditingElement).Text;
@@ -487,9 +498,14 @@ namespace Szakdolgozat
 
                         int rowIndex = e.Row.GetIndex() + 1;
                         int columnIndex = e.Column.DisplayIndex;
-                        customCellValues[rowIndex, columnIndex] = parsedValue;
-                        
-                        UpdateCustomChart(m_ImportedFile, m_CustomDataTable);
+
+                        ImportedFile selectedFile = m_ImportedFile;
+
+                        if (selectedFile != null)
+                        {
+                            selectedFile.CustomExcelData[rowIndex, columnIndex] = parsedValue;
+                            UpdateCustomChart(selectedFile, m_CustomDataTable);
+                        }
                     }
                     else
                     {
@@ -553,11 +569,11 @@ namespace Szakdolgozat
                     {
                         var worksheet = package.Workbook.Worksheets.Add("Sheet1");
 
-                        for (int i = 0; i < customCellValues.GetLength(0); i++)
+                        for (int i = 0; i < m_ImportedFile.CustomExcelData.GetLength(0); i++)
                         {
-                            for (int j = 0; j < customCellValues.GetLength(1); j++)
+                            for (int j = 0; j < m_ImportedFile.CustomExcelData.GetLength(1); j++)
                             {
-                                worksheet.Cells[i + 1, j + 1].Value = customCellValues[i, j];
+                                worksheet.Cells[i + 1, j + 1].Value = m_ImportedFile.CustomExcelData[i,j];
                             }
                         }
 
@@ -637,6 +653,63 @@ namespace Szakdolgozat
             {
                 pngEncoder.Save(stream);
             }
+        }
+
+        private void exportproject_Click(object sender, RoutedEventArgs e)
+        {/*
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Package file (*.zip)|*.zip";
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                string zipFileName = saveFileDialog.FileName;
+
+                try
+                {
+                    // Ideiglenes könyvtár létrehozása
+                    string tempDirectory = System.IO.Path.Combine(System.IO.Path.GetTempPath(), Guid.NewGuid().ToString());
+                    Directory.CreateDirectory(tempDirectory);
+
+                    // Importált fájlok másolása az ideiglenes könyvtárba
+                    foreach (var selectedFile in selectedFiles)
+                    {
+                        string destinationPath = System.IO.Path.Combine(tempDirectory, selectedFile.FileName + ".xlsx");
+                        File.Copy(selectedFile.FilePath, destinationPath);
+                    }
+
+                    // Tömörítés
+                    using (FileStream zipToOpen = new FileStream(zipFileName, FileMode.Create))
+                    {
+                        using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Create))
+                        {
+                            foreach (var selectedFile in selectedFiles)
+                            {
+                                string filePath = System.IO.Path.Combine(tempDirectory, selectedFile.FileName + ".xlsx");
+                                string entryName = System.IO.Path.GetFileName(filePath);
+
+                                // Tömörítési szint megadása
+                                var entry = archive.CreateEntry(entryName, System.IO.Compression.CompressionLevel.Optimal);
+
+                                // Fájl tartalmának beírása a tömörített fájlba
+                                using (var entryStream = entry.Open())
+                                using (var fileStream = File.OpenRead(filePath))
+                                {
+                                    fileStream.CopyTo(entryStream);
+                                }
+                            }
+                        }
+                    }
+
+                    // Ideiglenes könyvtár törlése
+                    Directory.Delete(tempDirectory, true);
+
+                    MessageBox.Show("Fájlok sikeresen exportálva!");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Hiba történt a fájlok exportálása során: {ex.Message}");
+                }
+            }*/
         }
     }
 }

@@ -247,9 +247,9 @@
 
                 <!-- Main Menu - Export project file-->
                 
-                <MenuItem Header="Export project"
+                <MenuItem x:Name="exportproject" Header="Export project"
                           VerticalAlignment="Center"
-                          FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" FontWeight="Bold">
+                          FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" FontWeight="Bold" Click="exportproject_Click">
                     <MenuItem.Icon>
                         <Image Source="Assets/exportfile.png"/>
                     </MenuItem.Icon>
@@ -269,7 +269,7 @@
 
             <!-- DockPanel for imported files list -->
 
-                <DockPanel>
+            <DockPanel>
                 <Border CornerRadius="2" BorderThickness="2" BorderBrush="Black" Background="White">
                     <Grid VerticalAlignment="Stretch" 
                           MinHeight="200">
@@ -279,13 +279,12 @@
                                     <ContextMenu>
                                         <MenuItem x:Name="DeleteMenuItem" Header="DeleteItem" Click="DeleteMenuItem_Click"/>
                                     </ContextMenu>
-                                </ListBox.ContextMenu>    
+                                </ListBox.ContextMenu>
                             </ListBox>
                         </ScrollViewer>
                     </Grid>
                 </Border>
             </DockPanel>
-            
         </StackPanel>
     </Grid>
 </Window>
