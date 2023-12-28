@@ -29,6 +29,7 @@ using ClosedXML.Excel;
 using OfficeOpenXml;
 using ICSharpCode.SharpZipLib.Zip;
 using System.IO.Compression;
+using ICSharpCode.SharpZipLib.Zip;
 
 namespace Szakdolgozat
 {
@@ -656,7 +657,7 @@ namespace Szakdolgozat
         }
 
         private void exportproject_Click(object sender, RoutedEventArgs e)
-        {/*
+        {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = "Package file (*.zip)|*.zip";
 
@@ -670,46 +671,53 @@ namespace Szakdolgozat
                     string tempDirectory = System.IO.Path.Combine(System.IO.Path.GetTempPath(), Guid.NewGuid().ToString());
                     Directory.CreateDirectory(tempDirectory);
 
-                    // Importált fájlok másolása az ideiglenes könyvtárba
+                    // Exportálás az ideiglenes könyvtárba
                     foreach (var selectedFile in selectedFiles)
                     {
-                        string destinationPath = System.IO.Path.Combine(tempDirectory, selectedFile.FileName + ".xlsx");
-                        File.Copy(selectedFile.FilePath, destinationPath);
+                        // Exportálás ideiglenes Excel fájlba
+                        ExportToExcel(selectedFile, tempDirectory);
                     }
 
-                    // Tömörítés
-                    using (FileStream zipToOpen = new FileStream(zipFileName, FileMode.Create))
-                    {
-                        using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Create))
-                        {
-                            foreach (var selectedFile in selectedFiles)
-                            {
-                                string filePath = System.IO.Path.Combine(tempDirectory, selectedFile.FileName + ".xlsx");
-                                string entryName = System.IO.Path.GetFileName(filePath);
-
-                                // Tömörítési szint megadása
-                                var entry = archive.CreateEntry(entryName, System.IO.Compression.CompressionLevel.Optimal);
-
-                                // Fájl tartalmának beírása a tömörített fájlba
-                                using (var entryStream = entry.Open())
-                                using (var fileStream = File.OpenRead(filePath))
-                                {
-                                    fileStream.CopyTo(entryStream);
-                                }
-                            }
-                        }
-                    }
+                    // Tömörítés az ideiglenes könyvtárba
+                    FastZip fastZip = new FastZip();
+                    fastZip.CreateZip(zipFileName, tempDirectory, true, "");
 
                     // Ideiglenes könyvtár törlése
                     Directory.Delete(tempDirectory, true);
 
-                    MessageBox.Show("Fájlok sikeresen exportálva!");
+                    MessageBox.Show("Files saved and compressed successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Hiba történt a fájlok exportálása során: {ex.Message}");
+                    MessageBox.Show($"An error occurred while exporting and compressing files: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-            }*/
+            }
         }
+
+        private void ExportToExcel(ImportedFile importedFile, string outputDirectory)
+        {
+            string outputPath = System.IO.Path.Combine(outputDirectory, importedFile.FileName + "_customtable.xlsx");
+
+            using (var stream = File.Create(outputPath))
+            {
+                using (var package = new ExcelPackage(stream))
+                {
+                    var worksheet = package.Workbook.Worksheets.Add("Sheet1");
+
+                    for (int i = 0; i < importedFile.CustomExcelData.GetLength(0); i++)
+                    {
+                        for (int j = 0; j < importedFile.CustomExcelData.GetLength(1); j++)
+                        {
+                            worksheet.Cells[i + 1, j + 1].Value = importedFile.CustomExcelData[i, j];
+                        }
+                    }
+
+                    package.Save();
+                }
+            }
+        }
+
+
+
     }
 }
