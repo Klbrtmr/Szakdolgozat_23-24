@@ -29,7 +29,6 @@ using ClosedXML.Excel;
 using OfficeOpenXml;
 using ICSharpCode.SharpZipLib.Zip;
 using System.IO.Compression;
-using ICSharpCode.SharpZipLib.Zip;
 
 namespace Szakdolgozat
 {
@@ -76,6 +75,11 @@ namespace Szakdolgozat
         /// TransformGroup for scaling, zoom-in, zoom-out
         /// </summary>
         private TransformGroup transformGroup = new TransformGroup();
+
+        /// <summary>
+        /// Number of imported file from one package file.
+        /// </summary>
+        private int m_importedFileNumber;
 
         private int currentID = 0;
 
@@ -717,7 +721,166 @@ namespace Szakdolgozat
             }
         }
 
+        private void importProject_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Package file (*.zip)|*.zip";
 
+            if (openFileDialog.ShowDialog() == true)
+            {
+                string zipFilePath = openFileDialog.FileName;
+
+                try
+                {
+                    // Ideiglenes könyvtár létrehozása
+                    string tempDirectory = System.IO.Path.Combine(System.IO.Path.GetTempPath(), Guid.NewGuid().ToString());
+                    m_importedFileNumber = 0;
+                    Directory.CreateDirectory(tempDirectory);
+
+                    // ZIP fájl kicsomagolása
+                    using (ZipInputStream zipInputStream = new ZipInputStream(File.OpenRead(zipFilePath)))
+                    {
+                        ZipEntry entry;
+                        while ((entry = zipInputStream.GetNextEntry()) != null)
+                        {
+                            string entryPath = System.IO.Path.Combine(tempDirectory, entry.Name);
+
+                            if (!entry.IsDirectory)
+                            {
+                                using (FileStream entryStream = File.Create(entryPath))
+                                {
+                                    zipInputStream.CopyTo(entryStream);
+                                }
+                            }
+                            else
+                            {
+                                Directory.CreateDirectory(entryPath);
+                            }
+                        }
+                    }
+
+                    // Beolvasás az ideiglenes könyvtárból
+                    foreach (var excelFile in Directory.GetFiles(tempDirectory, "*.xlsx"))
+                    {
+                        // Ellenőrzés, hogy a fájl valóban Excel fájl-e
+                        if (IsValidExcelFile(excelFile))
+                        {
+                            // Importálás
+                            ImportExcelFile(excelFile);
+                        }
+                        else
+                        {
+                            MessageBox.Show($"Error: {excelFile} is not a valid Excel file.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+
+                    // Ideiglenes könyvtár törlése
+                    Directory.Delete(tempDirectory, true);
+
+                    if (m_importedFileNumber == 0)
+                    {
+                        MessageBox.Show("Package file is not valid. 0 file imported.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                    else if (m_importedFileNumber == 1)
+                    {
+                        MessageBox.Show("File imported successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    else if (m_importedFileNumber > 1)
+                    {
+                        MessageBox.Show("Files imported successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"An error occurred while importing files: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private bool IsValidExcelFile(string filePath)
+        {
+            try
+            {
+                using (var stream = File.Open(filePath, FileMode.Open, FileAccess.Read))
+                {
+                    using (var reader = ExcelReaderFactory.CreateReader(stream))
+                    {
+                        return true;
+                    }
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private void ImportExcelFile(string excelFilePath)
+        {
+            try
+            {
+                using (var streamval = File.Open(excelFilePath, FileMode.Open, FileAccess.Read))
+                {
+                    using (var reader = ExcelReaderFactory.CreateReader(streamval))
+                    {
+                        var configuration = new ExcelDataSetConfiguration
+                        {
+                            ConfigureDataTable = _ => new ExcelDataTableConfiguration
+                            {
+                                UseHeaderRow = false
+                            }
+                        };
+
+                        var dataSet = reader.AsDataSet(configuration);
+
+                        if (dataSet.Tables.Count > 0)
+                        {
+                            var firstCellValue = dataSet.Tables[0].Rows[0].ItemArray[0];
+                            if (firstCellValue == null || !firstCellValue.ToString().Equals("Sample", StringComparison.OrdinalIgnoreCase))
+                            {
+                                MessageBox.Show("Error: Wrong file structure or file is corrupt.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                                return;
+                            }
+
+                            var dataTable = dataSet.Tables[0];
+                        }
+
+                        object[,] cellValues = new object[dataSet.Tables[0].Rows.Count, dataSet.Tables[0].Columns.Count];
+
+                        for (int i = 0; i < dataSet.Tables[0].Rows.Count; i++)
+                        {
+                            for (int j = 0; j < dataSet.Tables[0].Columns.Count; j++)
+                            {
+                                cellValues[i, j] = dataSet.Tables[0].Rows[i].ItemArray[j];
+                            }
+                        }
+
+                        int newID = GenerateNewID();
+                        Color displayColor = selectedFiles.FirstOrDefault(file => file.FileName == System.IO.Path.GetFileNameWithoutExtension(excelFilePath))?.DisplayColor ?? GenerateRandomColor();
+                        ImportedFile importedFile = new ImportedFile
+                        {
+                            ID = newID,
+                            FileName = System.IO.Path.GetFileNameWithoutExtension(excelFilePath),
+                            FilePath = excelFilePath,
+                            DisplayColor = displayColor,
+                            ExcelData = cellValues,
+                            CustomExcelData = cellValues, // Mivel itt a CustomExcelData és az ExcelData ugyanaz, módosítsd szükség esetén
+                        };
+
+                        selectedFiles.Add(importedFile);
+                        m_importedFileNumber++;
+
+                        // Frissítsd a felületet vagy hajtsd végre azokat a lépéseket, amelyek a felhasználónak mutatják az új fájlt a listájában
+                        ListFiles();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred while importing the file: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
 
     }
 }

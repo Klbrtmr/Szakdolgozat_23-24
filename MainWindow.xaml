@@ -227,9 +227,9 @@
 
                 <!-- Main Menu - Import project file -->
 
-                <MenuItem Header="Import project"
+                <MenuItem x:Name="importProject" Header="Import project"
                           VerticalAlignment="Center"
-                          FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" FontWeight="Bold">
+                          FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" FontWeight="Bold" Click="importProject_Click">
                     <MenuItem.Icon>
                         <Image Source="Assets/file-import.png"/>
                     </MenuItem.Icon>
