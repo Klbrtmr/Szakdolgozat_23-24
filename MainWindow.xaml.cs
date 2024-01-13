@@ -671,22 +671,22 @@ namespace Szakdolgozat
 
                 try
                 {
-                    // Ideiglenes könyvtár létrehozása
+                    // Create temporary directory
                     string tempDirectory = System.IO.Path.Combine(System.IO.Path.GetTempPath(), Guid.NewGuid().ToString());
                     Directory.CreateDirectory(tempDirectory);
 
-                    // Exportálás az ideiglenes könyvtárba
+                    // Export to temporary directory
                     foreach (var selectedFile in selectedFiles)
                     {
-                        // Exportálás ideiglenes Excel fájlba
+                        // Export to temporary excel file
                         ExportToExcel(selectedFile, tempDirectory);
                     }
 
-                    // Tömörítés az ideiglenes könyvtárba
+                    // Create package file
                     FastZip fastZip = new FastZip();
                     fastZip.CreateZip(zipFileName, tempDirectory, true, "");
 
-                    // Ideiglenes könyvtár törlése
+                    // Delete temporary directory
                     Directory.Delete(tempDirectory, true);
 
                     MessageBox.Show("Files saved and compressed successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -732,12 +732,12 @@ namespace Szakdolgozat
 
                 try
                 {
-                    // Ideiglenes könyvtár létrehozása
+                    // Create temporary directory
                     string tempDirectory = System.IO.Path.Combine(System.IO.Path.GetTempPath(), Guid.NewGuid().ToString());
                     m_importedFileNumber = 0;
                     Directory.CreateDirectory(tempDirectory);
 
-                    // ZIP fájl kicsomagolása
+                    // Open Package file
                     using (ZipInputStream zipInputStream = new ZipInputStream(File.OpenRead(zipFilePath)))
                     {
                         ZipEntry entry;
@@ -759,13 +759,12 @@ namespace Szakdolgozat
                         }
                     }
 
-                    // Beolvasás az ideiglenes könyvtárból
                     foreach (var excelFile in Directory.GetFiles(tempDirectory, "*.xlsx"))
                     {
-                        // Ellenőrzés, hogy a fájl valóban Excel fájl-e
+                        // Check for file is excel file
                         if (IsValidExcelFile(excelFile))
                         {
-                            // Importálás
+                            // Import
                             ImportExcelFile(excelFile);
                         }
                         else
@@ -774,7 +773,7 @@ namespace Szakdolgozat
                         }
                     }
 
-                    // Ideiglenes könyvtár törlése
+                    // Delete temporary directory
                     Directory.Delete(tempDirectory, true);
 
                     if (m_importedFileNumber == 0)
@@ -865,13 +864,12 @@ namespace Szakdolgozat
                             FilePath = excelFilePath,
                             DisplayColor = displayColor,
                             ExcelData = cellValues,
-                            CustomExcelData = cellValues, // Mivel itt a CustomExcelData és az ExcelData ugyanaz, módosítsd szükség esetén
+                            CustomExcelData = cellValues,
                         };
 
                         selectedFiles.Add(importedFile);
                         m_importedFileNumber++;
 
-                        // Frissítsd a felületet vagy hajtsd végre azokat a lépéseket, amelyek a felhasználónak mutatják az új fájlt a listájában
                         ListFiles();
                     }
                 }
