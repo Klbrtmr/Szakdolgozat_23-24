@@ -45,8 +45,14 @@
                 <TabControl x:Name="mainTabControl" Background="DarkGray"
                         VerticalContentAlignment="Stretch"
                         DockPanel.Dock="Top" SelectionChanged="mainTabControl_SelectionChanged">
+                    
                     <TabItem Header="Configuration" FontFamily="Times New Roman" FontWeight="Bold" FontSize="15">
-                        
+
+                        <ProgressBar x:Name="importProgressBar" Width="300" Height="30" VerticalAlignment="Center" HorizontalAlignment="Center"
+                            Visibility="Hidden" IsIndeterminate="True"
+                            Foreground="#0096FF" Background="White" BorderBrush="#0096FF">
+                        </ProgressBar>
+
                     </TabItem>
                     <TabItem Header="Excel Table" FontFamily="Times New Roman" FontWeight="Bold" FontSize="15">
                         <Grid>
@@ -157,6 +163,34 @@
                                     </d3:LegendItemsPanel>
                                 </d3:Chart.LegendContent>
                                 <Grid x:Name="customLines1"/>
+                            </d3:Chart>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Charts" FontFamily="Times New Roman" FontWeight="Bold" FontSize="15">
+                        <Grid x:Name="allChartLayoutRoot" Background="White">
+                            <ToolBarTray>
+                                <ToolBar>
+                                    <Button x:Name="allChartsSaveAsPng" Click="allChartsSaveAsPng_Click">Save as PNG</Button>
+                                </ToolBar>
+                            </ToolBarTray>
+                            <d3:Chart Name="allChartsPlotter" Margin="0,30,0,30">
+                                <d3:Chart.Title>
+                                    <TextBlock HorizontalAlignment="Center" FontSize="18" Margin="0,5,0,5">No Data</TextBlock>
+                                </d3:Chart.Title>
+                                <d3:Chart.LegendContent>
+                                    <d3:LegendItemsPanel>
+                                        <d3:LegendItemsPanel.Resources>
+                                            <DataTemplate x:Key="InteractiveDataDisplay.WPF.LineGraph">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <CheckBox IsChecked="{Binding Path=Visibility, Converter={StaticResource VisibilityToCheckedConverter}, Mode=TwoWay}"/>
+                                                    <Line Width="15" Height="15" X1="0" Y1="0" X2="15" Y2="15" Stroke="{Binding Path=Stroke}" StrokeThickness="2"/>
+                                                    <TextBlock Margin="5,0,0,0" Text="{Binding Path=Description}"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </d3:LegendItemsPanel.Resources>
+                                    </d3:LegendItemsPanel>
+                                </d3:Chart.LegendContent>
+                                <Grid x:Name="allChartsLine"/>
                             </d3:Chart>
                         </Grid>
                     </TabItem>

@@ -41,6 +41,7 @@ namespace Szakdolgozat
         public MainWindow()
         {
             InitializeComponent();
+            importProgressBar = FindName("importProgressBar") as ProgressBar;
         }
 
         //indoklások az elrendezés miatt a szakdogaban
@@ -176,13 +177,32 @@ namespace Szakdolgozat
 
                         cellValues = new object[dataSet.Tables[0].Rows.Count, dataSet.Tables[0].Columns.Count];
 
-                        for (int i = 0; i < dataSet.Tables[0].Rows.Count; i++)
+                        importProgressBar.Visibility = Visibility.Visible;
+
+                        try
                         {
-                            for (int j = 0; j < dataSet.Tables[0].Columns.Count; j++)
+                            await Task.Run(() =>
                             {
-                                cellValues[i, j] = dataSet.Tables[0].Rows[i].ItemArray[j]; 
-                            }
+                                for (int i = 0; i < dataSet.Tables[0].Rows.Count; i++)
+                                {
+                                    for (int j = 0; j < dataSet.Tables[0].Columns.Count; j++)
+                                    {
+                                        cellValues[i, j] = dataSet.Tables[0].Rows[i].ItemArray[j];
+                                    }
+                                }
+                                System.Threading.Thread.Sleep(2000);
+                            });
                         }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                        finally
+                        {
+                            importProgressBar.Visibility = Visibility.Collapsed;
+                        }
+
+                        
                     }
                 }
 
@@ -199,9 +219,11 @@ namespace Szakdolgozat
                     CustomExcelData = customCellValues,
                 };
 
-                selectedFiles.Add(importedFile);
-
-                ListFiles();
+                Dispatcher.Invoke(() =>
+                {
+                    selectedFiles.Add(importedFile);
+                    ListFiles();
+                });
             }
         }
 
@@ -310,6 +332,7 @@ namespace Szakdolgozat
             this.m_ImportedFile = importedFile;
             UpdateChart(importedFile, dataTable);
             UpdateCustomChart(importedFile, m_CustomDataTable);
+            UpdateAllCharts(importedFile, dataTable, m_CustomDataTable);
         }
 
         /// <summary>
@@ -317,7 +340,7 @@ namespace Szakdolgozat
         /// </summary>
         /// <param name="array">Two-dimension array from imported file.</param>
         /// <returns>Returns the datatable from excel data.</returns>
-        private DataTable ConvertArrayToDataTable(object[,] array)
+        /*private DataTable ConvertArrayToDataTable(object[,] array)
         {
             DataTable dataTable = new DataTable();
             
@@ -329,6 +352,7 @@ namespace Szakdolgozat
             for (int i = 1; i < array.GetLength(0); i++)
             {
                 DataRow dataRow = dataTable.NewRow();
+
                 for (int j = 0; j < array.GetLength(1); j++)
                 {
                     dataRow[j] = array[i, j];
@@ -337,7 +361,7 @@ namespace Szakdolgozat
                         dataTable.Columns[j].ReadOnly = true;
                     }
                 }
-                dataTable.Rows.Add(dataRow);
+                    dataTable.Rows.Add(dataRow);
             }
 
 
@@ -350,12 +374,33 @@ namespace Szakdolgozat
                 {
                     lastRow[column] = lastRow[column];
                 }
-            }*/
+            }
+            return dataTable;
+        }*/
 
+        
+        private DataTable ConvertArrayToDataTable(object[,] array)
+        {
+            DataTable dataTable = new DataTable();
+
+            for (int i = 0; i < array.GetLength(1); i++)
+            {
+                dataTable.Columns.Add($"{array[0, i]}");
+            }
+
+            for (int i = 1; i < array.GetLength(0); i++)
+            {
+                DataRow dataRow = dataTable.NewRow();
+
+                for (int j = 0; j < array.GetLength(1); j++)
+                {
+                    dataRow[j] = (double)array[i, j];
+                }
+
+                dataTable.Rows.Add(dataRow);
+            }
             return dataTable;
         }
-
-
 
         /// <summary>
         /// Created chart view from actual datas when the file is open.
@@ -483,6 +528,11 @@ namespace Szakdolgozat
             {
                 MessageBox.Show("Excel contains invalid values! Invalid values are set to 0.", "Import warning!" , MessageBoxButton.OK, MessageBoxImage.Warning);
             }
+        }
+
+        private void UpdateAllCharts(ImportedFile importedFile, DataTable dataTable, DataTable customDataTable)
+        {
+
         }
         
         /// <summary>
@@ -661,7 +711,7 @@ namespace Szakdolgozat
                 pngEncoder.Save(stream);
             }
         }
-
+        /*
         private void exportproject_Click(object sender, RoutedEventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -698,9 +748,48 @@ namespace Szakdolgozat
                     MessageBox.Show($"An error occurred while exporting and compressing files: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+        }*/
+
+        private void exportproject_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "EDF file (*.edf)|*.edf";
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                string edfFileName = saveFileDialog.FileName;
+
+                try
+                {
+                    // Create temporary directory
+                    string tempDirectory = System.IO.Path.Combine(System.IO.Path.GetTempPath(), Guid.NewGuid().ToString());
+                    Directory.CreateDirectory(tempDirectory);
+
+                    // Export to temporary directory
+                    foreach (var selectedFile in selectedFiles)
+                    {
+                        // Export to temporary excel file
+                        ExportToExcel(selectedFile, tempDirectory);
+                    }
+
+                    // Create EDF file (not an actual ZIP file, just a custom extension)
+                    FastZip fastZip = new FastZip();
+                    fastZip.CreateZip(edfFileName, tempDirectory, true, "");
+
+                    // Delete temporary directory
+                    Directory.Delete(tempDirectory, true);
+
+                    MessageBox.Show("Files saved successfully in EDF format.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"An error occurred while exporting files: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
 
-        private void ExportToExcel(ImportedFile importedFile, string outputDirectory)
+
+            private void ExportToExcel(ImportedFile importedFile, string outputDirectory)
         {
             string outputPath = System.IO.Path.Combine(outputDirectory, importedFile.FileName + "_customtable.xlsx");
 
@@ -722,7 +811,7 @@ namespace Szakdolgozat
                 }
             }
         }
-
+        /*
         private void importProject_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -798,6 +887,81 @@ namespace Szakdolgozat
                 }
             }
         }
+        */
+        private void importProject_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "EDF file (*.edf)|*.edf";
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                string edfFilePath = openFileDialog.FileName;
+
+                try
+                {
+                    // Create temporary directory
+                    string tempDirectory = System.IO.Path.Combine(System.IO.Path.GetTempPath(), Guid.NewGuid().ToString());
+                    m_importedFileNumber = 0;
+                    Directory.CreateDirectory(tempDirectory);
+
+                    // Copy files from EDF file to temporary directory
+                    using (ZipInputStream zipInputStream = new ZipInputStream(File.OpenRead(edfFilePath)))
+                    {
+                        ZipEntry entry;
+                        while ((entry = zipInputStream.GetNextEntry()) != null)
+                        {
+                            string entryPath = System.IO.Path.Combine(tempDirectory, entry.Name);
+
+                            if (!entry.IsDirectory)
+                            {
+                                using (FileStream entryStream = File.Create(entryPath))
+                                {
+                                    zipInputStream.CopyTo(entryStream);
+                                }
+                            }
+                            else
+                            {
+                                Directory.CreateDirectory(entryPath);
+                            }
+                        }
+                    }
+
+                    foreach (var excelFile in Directory.GetFiles(tempDirectory, "*.xlsx"))
+                    {
+                        // Check for file is excel file
+                        if (IsValidExcelFile(excelFile))
+                        {
+                            // Import
+                            ImportExcelFile(excelFile);
+                        }
+                        else
+                        {
+                            MessageBox.Show($"Error: {excelFile} is not a valid Excel file.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+
+                    // Delete temporary directory
+                    Directory.Delete(tempDirectory, true);
+
+                    if (m_importedFileNumber == 0)
+                    {
+                        MessageBox.Show("EDF file is not valid. 0 file imported.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                    else if (m_importedFileNumber == 1)
+                    {
+                        MessageBox.Show("File imported successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    else if (m_importedFileNumber > 1)
+                    {
+                        MessageBox.Show("Files imported successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"An error occurred while importing files: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
 
         private bool IsValidExcelFile(string filePath)
         {
@@ -857,22 +1021,21 @@ namespace Szakdolgozat
                             }
                         }
 
-                        int newID = GenerateNewID();
-                        Color displayColor = selectedFiles.FirstOrDefault(file => file.FileName == System.IO.Path.GetFileNameWithoutExtension(excelFilePath))?.DisplayColor ?? GenerateRandomColor();
-                        ImportedFile importedFile = new ImportedFile
-                        {
-                            ID = newID,
-                            FileName = System.IO.Path.GetFileNameWithoutExtension(excelFilePath),
-                            FilePath = excelFilePath,
-                            DisplayColor = displayColor,
-                            ExcelData = cellValues,
-                            CustomExcelData = cellValues,
-                        };
+                                int newID = GenerateNewID();
+                                Color displayColor = selectedFiles.FirstOrDefault(file => file.FileName == System.IO.Path.GetFileNameWithoutExtension(excelFilePath))?.DisplayColor ?? GenerateRandomColor();
+                                ImportedFile importedFile = new ImportedFile
+                                {
+                                    ID = newID,
+                                    FileName = System.IO.Path.GetFileNameWithoutExtension(excelFilePath),
+                                    FilePath = excelFilePath,
+                                    DisplayColor = displayColor,
+                                    ExcelData = cellValues,
+                                    CustomExcelData = cellValues,
+                                };
 
-                        selectedFiles.Add(importedFile);
-                        m_importedFileNumber++;
-
-                        ListFiles();
+                                    selectedFiles.Add(importedFile);
+                                    m_importedFileNumber++;
+                                    ListFiles();
                     }
                 }
             }
@@ -882,5 +1045,18 @@ namespace Szakdolgozat
             }
         }
 
+        private void allChartsSaveAsPng_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Filter = "PNG Files (*.png)|*.png",
+                Title = "Save as PNG"
+            };
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                SaveChartAsPng(saveFileDialog.FileName, allChartsPlotter);
+            }
+        }
     }
 }
