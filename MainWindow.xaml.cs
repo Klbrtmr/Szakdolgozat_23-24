@@ -1,34 +1,22 @@
 ﻿using ExcelDataReader;
+using ICSharpCode.SharpZipLib.Zip;
+using InteractiveDataDisplay.WPF;
+using LiveCharts;
 using Microsoft.Win32;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Text;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using LiveCharts;
-using LiveCharts.Wpf;
-using LiveCharts.Defaults;
-using Steema.TeeChart;
-using Steema.TeeChart.WPF;
-using Steema.TeeChart.Themes;
-using InteractiveDataDisplay.WPF;
-using InteractiveDataDisplay;
-using System.Reactive.Linq;
-using ClosedXML.Excel;
-using OfficeOpenXml;
-using ICSharpCode.SharpZipLib.Zip;
-using System.IO.Compression;
 
 namespace Szakdolgozat
 {
@@ -105,7 +93,7 @@ namespace Szakdolgozat
                 StackPanel panel = new StackPanel();
                 panel.Orientation = Orientation.Horizontal;
                 panel.Children.Add(ellipse);
-                panel.Children.Add(new TextBlock() { Text = importedFile.FileName});
+                panel.Children.Add(new TextBlock() { Text = importedFile.FileName });
 
                 filesListing.Items.Add(panel);
             }
@@ -148,7 +136,7 @@ namespace Szakdolgozat
 
                 Color displayColor = selectedFiles.FirstOrDefault(file => file.FileName == newFileName)?.DisplayColor ?? GenerateRandomColor();
 
-                
+
 
                 using (var streamval = File.Open(excelFilePath, FileMode.Open, FileAccess.Read))
                 {
@@ -163,7 +151,7 @@ namespace Szakdolgozat
                         };
                         var dataSet = reader.AsDataSet(configuration);
 
-                        if (dataSet.Tables.Count>0)
+                        if (dataSet.Tables.Count > 0)
                         {
                             var firstCellValue = dataSet.Tables[0].Rows[0].ItemArray[0];
                             if (firstCellValue == null || !firstCellValue.ToString().Equals("Sample", StringComparison.OrdinalIgnoreCase))
@@ -201,8 +189,6 @@ namespace Szakdolgozat
                         {
                             importProgressBar.Visibility = Visibility.Collapsed;
                         }
-
-                        
                     }
                 }
 
@@ -249,7 +235,7 @@ namespace Szakdolgozat
         /// <param name="e"></param>
         private void DeleteMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (filesListing.SelectedItem != null && filesListing.SelectedItem is StackPanel selectedStackPanel) 
+            if (filesListing.SelectedItem != null && filesListing.SelectedItem is StackPanel selectedStackPanel)
             {
                 if (selectedStackPanel.Children[1] is TextBlock textBlock)
                 {
@@ -304,7 +290,7 @@ namespace Szakdolgozat
                 }
             }
         }
-        
+
         private void mainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (mainTabControl.SelectedItem is TabItem selectedTabItem)
@@ -378,7 +364,7 @@ namespace Szakdolgozat
             return dataTable;
         }*/
 
-        
+
         private DataTable ConvertArrayToDataTable(object[,] array)
         {
             DataTable dataTable = new DataTable();
@@ -415,7 +401,7 @@ namespace Szakdolgozat
             //Chart title
             plotter.Title = importedFile.FileName;
 
-            if (dataTable.Rows.Count>0)
+            if (dataTable.Rows.Count > 0)
             {
                 var xColumn = dataTable.Columns[0];
                 var yColumns = dataTable.Columns.Cast<DataColumn>().Skip(1).ToArray();
@@ -426,7 +412,7 @@ namespace Szakdolgozat
                     return xValue != DBNull.Value ? Convert.ToDouble(xValue) : 0.0;
                 }).ToArray();
 
-                foreach ( var yColumn in yColumns)
+                foreach (var yColumn in yColumns)
                 {
                     var lg = new LineGraph();
                     lines1.Children.Add(lg);
@@ -526,7 +512,7 @@ namespace Szakdolgozat
             }
             if (invalidvalues == true)
             {
-                MessageBox.Show("Excel contains invalid values! Invalid values are set to 0.", "Import warning!" , MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Excel contains invalid values! Invalid values are set to 0.", "Import warning!", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
@@ -534,7 +520,7 @@ namespace Szakdolgozat
         {
 
         }
-        
+
         /// <summary>
         /// Handle when in the custom data grid edited cell(s). Save the new value to the customCellValues array.
         /// </summary>
@@ -574,34 +560,6 @@ namespace Szakdolgozat
             }
         }
 
-        private void ZoomIn_Click(object sender, RoutedEventArgs e)
-        {
-            ApplyZoom(1.1);
-        }
-
-        private void ZoomOut_Click(object sender, RoutedEventArgs e)
-        {
-            ApplyZoom(0.9);
-        }
-
-        private void ZoomOutCompletly_Click(object sender, RoutedEventArgs e)
-        {
-            ResetZoom();
-        }
-
-        private void ApplyZoom(double factor)
-        {
-            ScaleTransform scaleTransform = new ScaleTransform(factor, factor);
-            transformGroup.Children.Add(scaleTransform);
-            lines1.LayoutTransform = transformGroup;
-        }
-
-        private void ResetZoom()
-        {
-            transformGroup.Children.Clear();
-            transformGroup.Children.Add(new ScaleTransform(1.0, 1.0));
-        }
-
         /// <summary>
         /// Exported custom data table to the new excel file.
         /// </summary>
@@ -630,7 +588,7 @@ namespace Szakdolgozat
                         {
                             for (int j = 0; j < m_ImportedFile.CustomExcelData.GetLength(1); j++)
                             {
-                                worksheet.Cells[i + 1, j + 1].Value = m_ImportedFile.CustomExcelData[i,j];
+                                worksheet.Cells[i + 1, j + 1].Value = m_ImportedFile.CustomExcelData[i, j];
                             }
                         }
 
@@ -789,7 +747,7 @@ namespace Szakdolgozat
         }
 
 
-            private void ExportToExcel(ImportedFile importedFile, string outputDirectory)
+        private void ExportToExcel(ImportedFile importedFile, string outputDirectory)
         {
             string outputPath = System.IO.Path.Combine(outputDirectory, importedFile.FileName + "_customtable.xlsx");
 
@@ -1021,21 +979,21 @@ namespace Szakdolgozat
                             }
                         }
 
-                                int newID = GenerateNewID();
-                                Color displayColor = selectedFiles.FirstOrDefault(file => file.FileName == System.IO.Path.GetFileNameWithoutExtension(excelFilePath))?.DisplayColor ?? GenerateRandomColor();
-                                ImportedFile importedFile = new ImportedFile
-                                {
-                                    ID = newID,
-                                    FileName = System.IO.Path.GetFileNameWithoutExtension(excelFilePath),
-                                    FilePath = excelFilePath,
-                                    DisplayColor = displayColor,
-                                    ExcelData = cellValues,
-                                    CustomExcelData = cellValues,
-                                };
+                        int newID = GenerateNewID();
+                        Color displayColor = selectedFiles.FirstOrDefault(file => file.FileName == System.IO.Path.GetFileNameWithoutExtension(excelFilePath))?.DisplayColor ?? GenerateRandomColor();
+                        ImportedFile importedFile = new ImportedFile
+                        {
+                            ID = newID,
+                            FileName = System.IO.Path.GetFileNameWithoutExtension(excelFilePath),
+                            FilePath = excelFilePath,
+                            DisplayColor = displayColor,
+                            ExcelData = cellValues,
+                            CustomExcelData = cellValues,
+                        };
 
-                                    selectedFiles.Add(importedFile);
-                                    m_importedFileNumber++;
-                                    ListFiles();
+                        selectedFiles.Add(importedFile);
+                        m_importedFileNumber++;
+                        ListFiles();
                     }
                 }
             }

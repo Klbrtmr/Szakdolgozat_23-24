@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Szakdolgozat
+﻿namespace Szakdolgozat
 {
     public class ImportedFile
     {
-        public int ID {  get; set; }
+        public int ID { get; set; }
         public string FileName { get; set; }
         public string FilePath { get; set; }
         public System.Windows.Media.Color DisplayColor { get; set; }

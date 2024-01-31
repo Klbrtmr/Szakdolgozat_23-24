@@ -81,13 +81,8 @@
                         <Grid x:Name="Layoutroot" Background="White">
                             <ToolBarTray>
                                 <ToolBar>
-                                    <Button x:Name="ZoomIn" Content="Zoom in" Click="ZoomIn_Click" />
-                                    <Separator/>
-                                    <Button x:Name="ZoomOut" Content="Zoom out" Click="ZoomOut_Click"/>
-                                    <Separator/>
-                                    <Button x:Name="ZoomOutCompletly" Content="Display All" Click="ZoomOutCompletly_Click"/>
-                                    <Separator/>
                                     <Button x:Name="saveaspng" Click="saveaspng_Click">Save as PNG</Button>
+                                    <Separator/>
                                 </ToolBar>
                             </ToolBarTray>
                             <d3:Chart Name="plotter" Margin="0,30,0,0">
@@ -138,11 +133,8 @@
                         <Grid x:Name="CustomLayoutroot" Background="White">
                             <ToolBarTray>
                                 <ToolBar>
-                                    <Button>Undo</Button>
-                                    <Separator/>
-                                    <Button>Redo</Button>
-                                    <Separator/>
                                     <Button x:Name="customsaveaspng" Click="customsaveaspng_Click">Save as PNG</Button>
+                                    <Separator/>
                                 </ToolBar>
                             </ToolBarTray>
                             <d3:Chart Name="customplotter" Margin="0,30,0,30">
