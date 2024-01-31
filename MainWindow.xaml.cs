@@ -125,7 +125,7 @@ namespace Szakdolgozat
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void importExcel_Click(object sender, RoutedEventArgs e)
+        private async void importExcel_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Excel files (*.xlsx)|*.xlsx|All files (*.*)|*.*";
@@ -354,6 +354,8 @@ namespace Szakdolgozat
 
             return dataTable;
         }
+
+
 
         /// <summary>
         /// Created chart view from actual datas when the file is open.
