@@ -171,13 +171,42 @@ namespace Szakdolgozat
                         {
                             await Task.Run(() =>
                             {
-                                for (int i = 0; i < dataSet.Tables[0].Rows.Count; i++)
+                                for (int i = 0; i < dataSet.Tables[0].Columns.Count; i++)
+                                {
+                                    cellValues[0,i] = dataSet.Tables[0].Rows[0].ItemArray[i];
+                                }
+
+                                for (int i = 1; i < dataSet.Tables[0].Rows.Count; i++)
                                 {
                                     for (int j = 0; j < dataSet.Tables[0].Columns.Count; j++)
                                     {
-                                        cellValues[i, j] = dataSet.Tables[0].Rows[i].ItemArray[j];
+                                        var actualValue = dataSet.Tables[0].Rows[i].ItemArray[j];
+
+                                        if (double.TryParse(actualValue.ToString(), out double parsedValue))
+                                        {
+                                            cellValues[i,j] = parsedValue;
+                                        }
+                                        else
+                                        {
+                                            // Logic for invalid values
+                                            cellValues[i,j] = 0.0;
+                                        }
                                     }
                                 }
+                                /*
+                                int rowCount = dataSet.Tables[0].Rows.Count;
+                                int columnCount = dataSet.Tables[0].Columns.Count;
+
+                                Parallel.For(0, rowCount, i =>
+                                {
+                                    var itemArray = dataSet.Tables[0].Rows[i].ItemArray;
+
+                                    for (int j = 0; j < columnCount; j++)
+                                    {
+                                        cellValues[i, j] = itemArray[j];
+                                    }
+                                });*/
+
                                 System.Threading.Thread.Sleep(2000);
                             });
                         }
@@ -314,6 +343,8 @@ namespace Szakdolgozat
             //DataTable customDataTable = ConvertArrayToDataTable(importedFile.ExcelData);
             m_CustomDataTable = ConvertArrayToDataTable(importedFile.CustomExcelData);
             excelCustomDataGrid.ItemsSource = m_CustomDataTable.DefaultView;
+
+
 
             this.m_ImportedFile = importedFile;
             UpdateChart(importedFile, dataTable);
@@ -534,8 +565,7 @@ namespace Szakdolgozat
 
                 if (modifiedValue != DBNull.Value)
                 {
-                    double parsedValue;
-                    if (double.TryParse(modifiedValue.ToString(), out parsedValue))
+                    if (double.TryParse(modifiedValue.ToString(), out double parsedValue))
                     {
                         rowView.Row[e.Column.DisplayIndex] = parsedValue;
 
@@ -971,11 +1001,26 @@ namespace Szakdolgozat
 
                         object[,] cellValues = new object[dataSet.Tables[0].Rows.Count, dataSet.Tables[0].Columns.Count];
 
-                        for (int i = 0; i < dataSet.Tables[0].Rows.Count; i++)
+                        for (int i = 0; i < dataSet.Tables[0].Columns.Count; i++)
+                        {
+                            cellValues[0, i] = dataSet.Tables[0].Rows[0].ItemArray[i];
+                        }
+
+                        for (int i = 1; i < dataSet.Tables[0].Rows.Count; i++)
                         {
                             for (int j = 0; j < dataSet.Tables[0].Columns.Count; j++)
                             {
-                                cellValues[i, j] = dataSet.Tables[0].Rows[i].ItemArray[j];
+                                var actualValue = dataSet.Tables[0].Rows[i].ItemArray[j];
+
+                                if (double.TryParse(actualValue.ToString(), out double parsedValue))
+                                {
+                                    cellValues[i, j] = parsedValue;
+                                }
+                                else
+                                {
+                                    // Logic for invalid values
+                                    cellValues[i, j] = 0.0;
+                                }
                             }
                         }
 
