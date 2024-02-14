@@ -13,6 +13,7 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -344,7 +345,8 @@ namespace Szakdolgozat
             m_CustomDataTable = ConvertArrayToDataTable(importedFile.CustomExcelData);
             excelCustomDataGrid.ItemsSource = m_CustomDataTable.DefaultView;
 
-
+            DataTable configTable = ConvertArrayToDataTableConfigPage(importedFile.CustomExcelData);
+            configGrid.ItemsSource = configTable.DefaultView;
 
             this.m_ImportedFile = importedFile;
             UpdateChart(importedFile, dataTable);
@@ -416,6 +418,51 @@ namespace Szakdolgozat
 
                 dataTable.Rows.Add(dataRow);
             }
+            return dataTable;
+        }
+
+        private DataTable ConvertArrayToDataTableConfigPage(object[,] array)
+        {
+            DataTable dataTable = new DataTable();
+
+            dataTable.Columns.Add("Signal Name", typeof(string));
+
+            // dataTable.Columns.Add("Colors", typeof(int));
+            DataGridTemplateColumn templateColumn = new DataGridTemplateColumn();
+            templateColumn.Header = "Colors";
+
+            // DataTemplate létrehozása, ami tartalmazza a ComboBox-ot
+            FrameworkElementFactory comboBoxFactory = new FrameworkElementFactory(typeof(ComboBox));
+            comboBoxFactory.SetValue(ComboBox.ItemsSourceProperty, Enumerable.Range(1, 5));
+            comboBoxFactory.SetBinding(ComboBox.SelectedValueProperty, new Binding("Colors"));
+            DataTemplate cellTemplate = new DataTemplate { VisualTree = comboBoxFactory };
+            templateColumn.CellTemplate = cellTemplate;
+
+            configGrid.Columns.Add(templateColumn);
+            //dataTable.Columns.Add(templateColumn);
+            
+            for (int columnIndex = 1; columnIndex < array.GetLength(1); columnIndex++)
+            {
+                DataRow dataRow = dataTable.NewRow();
+
+                dataRow["Signal Name"] = array[0, columnIndex];
+                // dataRow["Colors"] = 42;
+                /*
+                DataGridTemplateColumn templateColumn = new DataGridTemplateColumn();
+                templateColumn.Header = "sad";
+
+                // DataTemplate létrehozása, ami tartalmazza a ComboBox-ot
+                FrameworkElementFactory comboBoxFactory = new FrameworkElementFactory(typeof(ComboBox));
+                comboBoxFactory.SetValue(ComboBox.ItemsSourceProperty, Enumerable.Range(1, 5));
+                comboBoxFactory.SetBinding(ComboBox.SelectedValueProperty, new Binding("Colors"));
+                DataTemplate cellTemplate = new DataTemplate { VisualTree = comboBoxFactory };
+                templateColumn.CellTemplate = cellTemplate;
+
+                configGrid.Columns.Add(templateColumn);*/
+
+                dataTable.Rows.Add(dataRow);
+            }
+
             return dataTable;
         }
 

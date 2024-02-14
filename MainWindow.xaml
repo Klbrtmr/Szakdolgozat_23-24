@@ -65,10 +65,13 @@
                                       ScrollViewer.VerticalScrollBarVisibility="Hidden"
                                       IsReadOnly="True"
                                       CanUserAddRows="False"
+                                      CanUserReorderColumns="False"
+                                      CanUserSortColumns="False"
+                                      CanUserDeleteRows="False"
                                        MaxHeight="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, 
                                                     Path=ActualHeight, 
                                                     Converter={StaticResource PercentageConverter}, 
-                                                    ConverterParameter=0.67}"/>
+                                                    ConverterParameter=0.67}"  />
                         </Grid>
 
                     </TabItem>
