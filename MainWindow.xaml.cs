@@ -2,6 +2,7 @@
 using ICSharpCode.SharpZipLib.Zip;
 using InteractiveDataDisplay.WPF;
 using LiveCharts;
+using LiveCharts.Defaults;
 using Microsoft.Win32;
 using OfficeOpenXml;
 using System;
@@ -15,6 +16,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
@@ -351,7 +353,7 @@ namespace Szakdolgozat
             this.m_ImportedFile = importedFile;
             UpdateChart(importedFile, dataTable);
             UpdateCustomChart(importedFile, m_CustomDataTable);
-            UpdateAllCharts(importedFile, dataTable, m_CustomDataTable);
+            UpdateSpecialChart(importedFile, dataTable);
         }
 
         /// <summary>
@@ -594,9 +596,72 @@ namespace Szakdolgozat
             }
         }
 
-        private void UpdateAllCharts(ImportedFile importedFile, DataTable dataTable, DataTable customDataTable)
+        private void UpdateSpecialChart(ImportedFile importedFile, DataTable dataTable)
         {
+            // ScottPlot.Color asd = new ScottPlot.Color(255,0,0);
+            // ScottPlot.Color asd2 = new ScottPlot.Color(0,255,0);
+            // ScottPlot.Color asd3 = new ScottPlot.Color(0,0,255);
+            myPlot.Plot.Clear();
+            //Chart title
+            myPlot.Plot.Title($"{importedFile.FileName}");
+            myPlot.Plot.YLabel("ylabel lesz");
+            myPlot.Plot.XLabel("xlabel lesz");
+            
+            
+            if (dataTable.Rows.Count > 0)
+            {
+                var xColumn = dataTable.Columns[0];
+                var yColumns = dataTable.Columns.Cast<DataColumn>().Skip(1).ToArray();
 
+                var x = dataTable.AsEnumerable().Select(row =>
+                {
+                    var xValue = row[xColumn];
+                    return xValue != DBNull.Value ? Convert.ToDouble(xValue) : 0.0;
+                }).ToArray();
+
+                foreach (var yColumn in yColumns)
+                {
+                    // var lg = new LineGraph();
+                    // lines1.Children.Add(lg);
+                    // lg.Stroke = new SolidColorBrush(Color.FromArgb(255, 0, 0, 255));
+                    // lg.Description = String.Format($"{yColumn.ColumnName}");
+                    // lg.StrokeThickness = 2;
+
+                    var y = dataTable.AsEnumerable().Select(row =>
+                    {
+                        var yValue = row[yColumn];
+                        if (yValue != DBNull.Value)
+                        {
+                            double parsedValue;
+                            if (double.TryParse(yValue.ToString(), out parsedValue))
+                            {
+                                return parsedValue;
+                            }
+                            else
+                            {
+                                // Logic for invalid values
+                                row[yColumn] = 0.0;
+                                return 0.0;
+                            }
+                        }
+                        else
+                        {
+                            // Logic for empty values
+                            row[yColumn] = 0.0;
+                            return 0.0;
+                        }
+                    }).ToArray();
+
+                    var currentLine = myPlot.Plot.Add.Scatter(x, y);
+                    currentLine.Label = yColumn.ColumnName;
+                    currentLine.MarkerStyle.IsVisible = false;
+                    
+                }
+            }
+            myPlot.Plot.Axes.AutoScaleX();
+            myPlot.Plot.Axes.AutoScaleY();
+            myPlot.Plot.ShowLegend();
+            myPlot.Refresh();
         }
 
         /// <summary>
@@ -1095,18 +1160,11 @@ namespace Szakdolgozat
             }
         }
 
-        private void allChartsSaveAsPng_Click(object sender, RoutedEventArgs e)
+        private void myPlot_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog
-            {
-                Filter = "PNG Files (*.png)|*.png",
-                Title = "Save as PNG"
-            };
-
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                SaveChartAsPng(saveFileDialog.FileName, allChartsPlotter);
-            }
+            myPlot.Plot.Axes.AutoScaleX();
+            myPlot.Plot.Axes.AutoScaleY();
+            myPlot.Refresh();
         }
     }
 }
