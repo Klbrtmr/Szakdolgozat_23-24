@@ -1,10 +1,9 @@
 ﻿using ExcelDataReader;
 using ICSharpCode.SharpZipLib.Zip;
-using InteractiveDataDisplay.WPF;
 using LiveCharts;
-using LiveCharts.Defaults;
 using Microsoft.Win32;
 using OfficeOpenXml;
+using ScottPlot;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -16,7 +15,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
@@ -59,14 +57,14 @@ namespace Szakdolgozat
         private ImportedFile m_ImportedFile;
 
         /// <summary>
-        /// Actual opened dataTable.
+        /// Actual opened original dataTable.
         /// </summary>
-        private DataTable m_CustomDataTable;
+        private DataTable m_OriginalDataTable;
 
         /// <summary>
-        /// TransformGroup for scaling, zoom-in, zoom-out
+        /// Actual opened custom dataTable.
         /// </summary>
-        private TransformGroup transformGroup = new TransformGroup();
+        private DataTable m_CustomDataTable;
 
         /// <summary>
         /// Number of imported file from one package file.
@@ -94,7 +92,7 @@ namespace Szakdolgozat
                 ellipse.Fill = brush;
 
                 StackPanel panel = new StackPanel();
-                panel.Orientation = Orientation.Horizontal;
+                panel.Orientation = System.Windows.Controls.Orientation.Horizontal;
                 panel.Children.Add(ellipse);
                 panel.Children.Add(new TextBlock() { Text = importedFile.FileName });
 
@@ -137,7 +135,7 @@ namespace Szakdolgozat
                     counter++;
                 }
 
-                Color displayColor = selectedFiles.FirstOrDefault(file => file.FileName == newFileName)?.DisplayColor ?? GenerateRandomColor();
+                System.Windows.Media.Color displayColor = selectedFiles.FirstOrDefault(file => file.FileName == newFileName)?.DisplayColor ?? GenerateRandomColorForFiles();
 
 
 
@@ -157,7 +155,9 @@ namespace Szakdolgozat
                         if (dataSet.Tables.Count > 0)
                         {
                             var firstCellValue = dataSet.Tables[0].Rows[0].ItemArray[0];
-                            if (firstCellValue == null || !firstCellValue.ToString().Equals("Sample", StringComparison.OrdinalIgnoreCase))
+                            var secondCellValue = dataSet.Tables[0].Rows[0].ItemArray[1];
+                            if (firstCellValue == null || !firstCellValue.ToString().Equals("Sample", StringComparison.OrdinalIgnoreCase) &&
+                                secondCellValue == null || !secondCellValue.ToString().Equals("Events", StringComparison.OrdinalIgnoreCase))
                             {
                                 MessageBox.Show("Error: Wrong file structure or file is corrupt.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                                 return;
@@ -189,6 +189,10 @@ namespace Szakdolgozat
                                         {
                                             cellValues[i,j] = parsedValue;
                                         }
+                                        else if (actualValue.ToString().EndsWith("Event"))
+                                        {
+                                            cellValues[i, j] = actualValue.ToString();
+                                        }
                                         else
                                         {
                                             // Logic for invalid values
@@ -196,19 +200,6 @@ namespace Szakdolgozat
                                         }
                                     }
                                 }
-                                /*
-                                int rowCount = dataSet.Tables[0].Rows.Count;
-                                int columnCount = dataSet.Tables[0].Columns.Count;
-
-                                Parallel.For(0, rowCount, i =>
-                                {
-                                    var itemArray = dataSet.Tables[0].Rows[i].ItemArray;
-
-                                    for (int j = 0; j < columnCount; j++)
-                                    {
-                                        cellValues[i, j] = itemArray[j];
-                                    }
-                                });*/
 
                                 System.Threading.Thread.Sleep(2000);
                             });
@@ -224,7 +215,10 @@ namespace Szakdolgozat
                     }
                 }
 
-                customCellValues = cellValues;
+                // customCellValues = cellValues;
+
+                customCellValues = new object[cellValues.GetLength(0), cellValues.GetLength(1)];
+                Array.Copy(cellValues, customCellValues, cellValues.Length);
 
                 int newID = GenerateNewID();
                 ImportedFile importedFile = new ImportedFile
@@ -254,10 +248,10 @@ namespace Szakdolgozat
         /// Generate color for files.
         /// </summary>
         /// <returns>A color.</returns>
-        private Color GenerateRandomColor()
+        private System.Windows.Media.Color GenerateRandomColorForFiles()
         {
             Random random = new Random();
-            return Color.FromRgb((byte)random.Next(256), (byte)random.Next(256), (byte)random.Next(256));
+            return System.Windows.Media.Color.FromRgb((byte)random.Next(256), (byte)random.Next(256), (byte)random.Next(256));
         }
 
         /// <summary>
@@ -340,20 +334,20 @@ namespace Szakdolgozat
         /// <param name="importedFile">Selected imported file.</param>
         private void DisplayExcelData(ImportedFile importedFile)
         {
-            DataTable dataTable = ConvertArrayToDataTable(importedFile.ExcelData);
-            excelDataGrid.ItemsSource = dataTable.DefaultView;
+            m_OriginalDataTable = ConvertArrayToDataTable(importedFile.ExcelData);
+            excelDataGrid.ItemsSource = m_OriginalDataTable.DefaultView;
 
             //DataTable customDataTable = ConvertArrayToDataTable(importedFile.ExcelData);
             m_CustomDataTable = ConvertArrayToDataTable(importedFile.CustomExcelData);
             excelCustomDataGrid.ItemsSource = m_CustomDataTable.DefaultView;
 
-            DataTable configTable = ConvertArrayToDataTableConfigPage(importedFile.CustomExcelData);
+            DataTable configTable = ConvertArrayToDataTableConfigPage(importedFile.ExcelData);
             configGrid.ItemsSource = configTable.DefaultView;
 
             this.m_ImportedFile = importedFile;
-            UpdateChart(importedFile, dataTable);
+            UpdateChart(importedFile, m_OriginalDataTable);
             UpdateCustomChart(importedFile, m_CustomDataTable);
-            UpdateSpecialChart(importedFile, dataTable);
+            // UpdateSpecialChart(importedFile, m_OriginalDataTable);
         }
 
         /// <summary>
@@ -361,45 +355,6 @@ namespace Szakdolgozat
         /// </summary>
         /// <param name="array">Two-dimension array from imported file.</param>
         /// <returns>Returns the datatable from excel data.</returns>
-        /*private DataTable ConvertArrayToDataTable(object[,] array)
-        {
-            DataTable dataTable = new DataTable();
-            
-            for (int i = 0; i < array.GetLength(1); i++)
-            {
-                dataTable.Columns.Add($"{array[0,i]}");
-            }
-
-            for (int i = 1; i < array.GetLength(0); i++)
-            {
-                DataRow dataRow = dataTable.NewRow();
-
-                for (int j = 0; j < array.GetLength(1); j++)
-                {
-                    dataRow[j] = array[i, j];
-                    if (j == 0)
-                    {
-                        dataTable.Columns[j].ReadOnly = true;
-                    }
-                }
-                    dataTable.Rows.Add(dataRow);
-            }
-
-
-            // innen folytatni...
-            /*
-            if (dataTable.Rows.Count > 0)
-            {
-                DataRow lastRow = dataTable.Rows[dataTable.Rows.Count - 1];
-                foreach (DataColumn column in dataTable.Columns)
-                {
-                    lastRow[column] = lastRow[column];
-                }
-            }
-            return dataTable;
-        }*/
-
-
         private DataTable ConvertArrayToDataTable(object[,] array)
         {
             DataTable dataTable = new DataTable();
@@ -415,7 +370,15 @@ namespace Szakdolgozat
 
                 for (int j = 0; j < array.GetLength(1); j++)
                 {
-                    dataRow[j] = (double)array[i, j];
+                    var actualValue = array[i, j];
+                    if (double.TryParse(actualValue.ToString(), out double parsedValue))
+                    {
+                        dataRow[j] = parsedValue;
+                    }
+                    else if (actualValue.ToString().EndsWith("Event"))
+                    {
+                        dataRow[j] = actualValue.ToString();
+                    }
                 }
 
                 dataTable.Rows.Add(dataRow);
@@ -429,7 +392,6 @@ namespace Szakdolgozat
 
             dataTable.Columns.Add("Signal Name", typeof(string));
 
-            // dataTable.Columns.Add("Colors", typeof(int));
             DataGridTemplateColumn templateColumn = new DataGridTemplateColumn();
             templateColumn.Header = "Colors";
 
@@ -440,28 +402,16 @@ namespace Szakdolgozat
             DataTemplate cellTemplate = new DataTemplate { VisualTree = comboBoxFactory };
             templateColumn.CellTemplate = cellTemplate;
 
-            configGrid.Columns.Add(templateColumn);
-            //dataTable.Columns.Add(templateColumn);
+            if (configGrid.Columns.Count < 2)
+            {
+                configGrid.Columns.Add(templateColumn);
+            }
             
             for (int columnIndex = 1; columnIndex < array.GetLength(1); columnIndex++)
             {
                 DataRow dataRow = dataTable.NewRow();
 
                 dataRow["Signal Name"] = array[0, columnIndex];
-                // dataRow["Colors"] = 42;
-                /*
-                DataGridTemplateColumn templateColumn = new DataGridTemplateColumn();
-                templateColumn.Header = "sad";
-
-                // DataTemplate létrehozása, ami tartalmazza a ComboBox-ot
-                FrameworkElementFactory comboBoxFactory = new FrameworkElementFactory(typeof(ComboBox));
-                comboBoxFactory.SetValue(ComboBox.ItemsSourceProperty, Enumerable.Range(1, 5));
-                comboBoxFactory.SetBinding(ComboBox.SelectedValueProperty, new Binding("Colors"));
-                DataTemplate cellTemplate = new DataTemplate { VisualTree = comboBoxFactory };
-                templateColumn.CellTemplate = cellTemplate;
-
-                configGrid.Columns.Add(templateColumn);*/
-
                 dataTable.Rows.Add(dataRow);
             }
 
@@ -476,15 +426,21 @@ namespace Szakdolgozat
         private void UpdateChart(ImportedFile importedFile, DataTable dataTable)
         {
             //Clear for other call
-            lines1.Children.Clear();
+            originalChart.Plot.Clear();
 
-            //Chart title
-            plotter.Title = importedFile.FileName;
+            //Chart Titles
+            originalChart.Plot.Title($"{importedFile.FileName}");
+            originalChart.Plot.XLabel("Samples");
+            originalChart.Plot.YLabel("Values");
+
 
             if (dataTable.Rows.Count > 0)
             {
                 var xColumn = dataTable.Columns[0];
-                var yColumns = dataTable.Columns.Cast<DataColumn>().Skip(1).ToArray();
+                var eventColumn = dataTable.Columns[1];
+                // var eventColumn = dataTable.Columns.Cast<DataColumn>().Skip(1).Take(1).ToArray();
+                // List<int> eventSamples = new List<int>();
+                var yColumns = dataTable.Columns.Cast<DataColumn>().Skip(2).ToArray();
 
                 var x = dataTable.AsEnumerable().Select(row =>
                 {
@@ -492,23 +448,26 @@ namespace Szakdolgozat
                     return xValue != DBNull.Value ? Convert.ToDouble(xValue) : 0.0;
                 }).ToArray();
 
+                var events = dataTable.AsEnumerable().Select(row =>
+                {
+                    var eventValue = row[eventColumn];
+                    return eventValue != DBNull.Value ? eventValue : 0.0;
+                }).ToArray();
+
                 foreach (var yColumn in yColumns)
                 {
-                    var lg = new LineGraph();
-                    lines1.Children.Add(lg);
-                    lg.Stroke = new SolidColorBrush(Color.FromArgb(255, 0, 0, 255));
-                    lg.Description = String.Format($"{yColumn.ColumnName}");
-                    lg.StrokeThickness = 2;
-
                     var y = dataTable.AsEnumerable().Select(row =>
                     {
                         var yValue = row[yColumn];
                         if (yValue != DBNull.Value)
                         {
-                            double parsedValue;
-                            if (double.TryParse(yValue.ToString(), out parsedValue))
+                            if (double.TryParse(yValue.ToString(), out double parsedValue))
                             {
                                 return parsedValue;
+                            }
+                            else if (yValue.ToString().EndsWith("Event"))
+                            {
+                                return yValue;
                             }
                             else
                             {
@@ -525,26 +484,58 @@ namespace Szakdolgozat
                         }
                     }).ToArray();
 
-                    lg.Plot(x, y);
+
+                    // var currentLine = originalChart.Plot.Add.Scatter(x, y, ScottPlot.Color.FromHex("#000000"));
+                    var currentLine = originalChart.Plot.Add.Scatter(x, y);
+                    currentLine.Label = yColumn.ColumnName;
+                    // currentLine.Color = ScottPlot.Color.FromHex("#000000");
+                    currentLine.MarkerStyle.IsVisible = false;
+                    for (int i = 0; i < events.Length; i++)
+                    {
+                        var xIndex = x[i];
+                        var yIndex = (double)y[i];
+                        var marker = originalChart.Plot.Add.Marker(xIndex, yIndex);
+                        if (events[i].ToString() == "Alarm_Event")
+                        {
+                            marker.MarkerStyle.Fill.Color = ScottPlot.Color.FromARGB(4278190219); // Dark Blue
+
+                        }
+                        else if (events[i].ToString() == "Error_Event")
+                        {
+                            marker.MarkerStyle.Shape = MarkerShape.FilledTriangleUp;
+                            marker.MarkerStyle.Fill.Color = ScottPlot.Color.FromARGB(4294901760); // Red
+                        }
+                        else
+                        {
+                            marker.MarkerStyle.IsVisible = false;
+                        }
+                    }
                 }
             }
+            originalChart.Plot.Axes.AutoScaleX();
+            originalChart.Plot.Axes.AutoScaleY();
+            originalChart.Plot.ShowLegend();
+            originalChart.Refresh();
         }
 
         /// <inheritdoc cref="UpdateChart(ImportedFile, DataTable)"/>
         private void UpdateCustomChart(ImportedFile importedFile, DataTable dataTable)
         {
             //Clear for other call
-            customLines1.Children.Clear();
+            CustomChart.Plot.Clear();
 
-            //Chart title
-            customplotter.Title = importedFile.FileName;
+            //Chart Titles
+            CustomChart.Plot.Title($"{importedFile.FileName}");
+            CustomChart.Plot.XLabel("Samples");
+            CustomChart.Plot.YLabel("Values");
 
             bool invalidvalues = false;
 
             if (dataTable.Rows.Count > 0)
             {
                 var xColumn = dataTable.Columns[0];
-                var yColumns = dataTable.Columns.Cast<DataColumn>().Skip(1).ToArray();
+                var eventColumn = dataTable.Columns[1];
+                var yColumns = dataTable.Columns.Cast<DataColumn>().Skip(2).ToArray();
 
                 var x = dataTable.AsEnumerable().Select(row =>
                 {
@@ -552,23 +543,26 @@ namespace Szakdolgozat
                     return xValue != DBNull.Value ? Convert.ToDouble(xValue) : 0.0;
                 }).ToArray();
 
+                var events = dataTable.AsEnumerable().Select(row =>
+                {
+                    var eventValue = row[eventColumn];
+                    return eventValue != DBNull.Value ? eventValue : 0.0;
+                }).ToArray();
+
                 foreach (var yColumn in yColumns)
                 {
-                    var lg = new LineGraph();
-                    customLines1.Children.Add(lg);
-                    lg.Stroke = new SolidColorBrush(Color.FromArgb(255, 0, 0, 255));
-                    lg.Description = String.Format($"{yColumn.ColumnName}");
-                    lg.StrokeThickness = 2;
-
                     var y = dataTable.AsEnumerable().Select(row =>
                     {
                         var yValue = row[yColumn];
                         if (yValue != DBNull.Value)
                         {
-                            double parsedValue;
-                            if (double.TryParse(yValue.ToString(), out parsedValue))
+                            if (double.TryParse(yValue.ToString(), out double parsedValue))
                             {
                                 return parsedValue;
+                            }
+                            else if (yValue.ToString().EndsWith("Event"))
+                            {
+                                return yValue;
                             }
                             else
                             {
@@ -587,83 +581,42 @@ namespace Szakdolgozat
                         }
                     }).ToArray();
 
-                    lg.Plot(x, y);
+                    var currentLine = CustomChart.Plot.Add.Scatter(x, y);
+                    currentLine.Label = yColumn.ColumnName;
+                    currentLine.MarkerStyle.IsVisible = false;
+                    for (int i = 0; i < events.Length; i++)
+                    {
+                        var xIndex = x[i];
+                        var yIndex = (double)y[i];
+                        var marker = CustomChart.Plot.Add.Marker(xIndex, yIndex);
+                        if (events[i].ToString() == "Alarm_Event")
+                        {
+                            marker.MarkerStyle.Fill.Color = ScottPlot.Color.FromARGB(4278190219); // Dark Blue
+                            
+                        }
+                        else if (events[i].ToString() == "Error_Event")
+                        {
+                            marker.MarkerStyle.Shape = MarkerShape.FilledTriangleUp;
+                            marker.MarkerStyle.Fill.Color = ScottPlot.Color.FromARGB(4294901760); // Red
+                        }
+                        else
+                        {
+                            marker.MarkerStyle.IsVisible = false;
+                        }
+                    }
                 }
             }
             if (invalidvalues == true)
             {
                 MessageBox.Show("Excel contains invalid values! Invalid values are set to 0.", "Import warning!", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
+
+            CustomChart.Plot.Axes.AutoScaleX();
+            CustomChart.Plot.Axes.AutoScaleY();
+            CustomChart.Plot.ShowLegend();
+            CustomChart.Refresh();
         }
-
-        private void UpdateSpecialChart(ImportedFile importedFile, DataTable dataTable)
-        {
-            // ScottPlot.Color asd = new ScottPlot.Color(255,0,0);
-            // ScottPlot.Color asd2 = new ScottPlot.Color(0,255,0);
-            // ScottPlot.Color asd3 = new ScottPlot.Color(0,0,255);
-            myPlot.Plot.Clear();
-            //Chart title
-            myPlot.Plot.Title($"{importedFile.FileName}");
-            myPlot.Plot.YLabel("ylabel lesz");
-            myPlot.Plot.XLabel("xlabel lesz");
-            
-            
-            if (dataTable.Rows.Count > 0)
-            {
-                var xColumn = dataTable.Columns[0];
-                var yColumns = dataTable.Columns.Cast<DataColumn>().Skip(1).ToArray();
-
-                var x = dataTable.AsEnumerable().Select(row =>
-                {
-                    var xValue = row[xColumn];
-                    return xValue != DBNull.Value ? Convert.ToDouble(xValue) : 0.0;
-                }).ToArray();
-
-                foreach (var yColumn in yColumns)
-                {
-                    // var lg = new LineGraph();
-                    // lines1.Children.Add(lg);
-                    // lg.Stroke = new SolidColorBrush(Color.FromArgb(255, 0, 0, 255));
-                    // lg.Description = String.Format($"{yColumn.ColumnName}");
-                    // lg.StrokeThickness = 2;
-
-                    var y = dataTable.AsEnumerable().Select(row =>
-                    {
-                        var yValue = row[yColumn];
-                        if (yValue != DBNull.Value)
-                        {
-                            double parsedValue;
-                            if (double.TryParse(yValue.ToString(), out parsedValue))
-                            {
-                                return parsedValue;
-                            }
-                            else
-                            {
-                                // Logic for invalid values
-                                row[yColumn] = 0.0;
-                                return 0.0;
-                            }
-                        }
-                        else
-                        {
-                            // Logic for empty values
-                            row[yColumn] = 0.0;
-                            return 0.0;
-                        }
-                    }).ToArray();
-
-                    var currentLine = myPlot.Plot.Add.Scatter(x, y);
-                    currentLine.Label = yColumn.ColumnName;
-                    currentLine.MarkerStyle.IsVisible = false;
-                    
-                }
-            }
-            myPlot.Plot.Axes.AutoScaleX();
-            myPlot.Plot.Axes.AutoScaleY();
-            myPlot.Plot.ShowLegend();
-            myPlot.Refresh();
-        }
-
+        
         /// <summary>
         /// Handle when in the custom data grid edited cell(s). Save the new value to the customCellValues array.
         /// </summary>
@@ -677,9 +630,18 @@ namespace Szakdolgozat
 
                 if (modifiedValue != DBNull.Value)
                 {
-                    if (double.TryParse(modifiedValue.ToString(), out double parsedValue))
+                    if (double.TryParse(modifiedValue.ToString(), out double parsedValue) ||
+                        (modifiedValue.ToString().EndsWith("Event") && e.Column.DisplayIndex == 1))
                     {
-                        rowView.Row[e.Column.DisplayIndex] = parsedValue;
+                        if (parsedValue != 0)
+                        {
+                            rowView.Row[e.Column.DisplayIndex] = parsedValue;
+                        }
+                        else
+                        {
+                            rowView.Row[e.Column.DisplayIndex] = modifiedValue;
+                        }
+
 
                         int rowIndex = e.Row.GetIndex() + 1;
                         int columnIndex = e.Column.DisplayIndex;
@@ -688,7 +650,15 @@ namespace Szakdolgozat
 
                         if (selectedFile != null)
                         {
-                            selectedFile.CustomExcelData[rowIndex, columnIndex] = parsedValue;
+                            if (modifiedValue.ToString().EndsWith("Event"))
+                            {
+                                selectedFile.CustomExcelData[rowIndex, columnIndex] = modifiedValue;
+                            }
+                            else
+                            {
+                                selectedFile.CustomExcelData[rowIndex, columnIndex] = parsedValue;
+                            }
+
                             UpdateCustomChart(selectedFile, m_CustomDataTable);
                         }
                     }
@@ -698,7 +668,11 @@ namespace Szakdolgozat
                         ((TextBox)e.EditingElement).Text = rowView.Row[e.Column.DisplayIndex].ToString();
                     }
                 }
-
+            }
+            else if (e.Column.DisplayIndex == 0 && e.Row.Item is DataRowView rowView2)
+            {
+                ((TextBox)e.EditingElement).Text = rowView2.Row[e.Column.DisplayIndex].ToString();
+                MessageBox.Show("Invalid value!", "Invalid value error!", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -771,7 +745,7 @@ namespace Szakdolgozat
 
             if (saveFileDialog.ShowDialog() == true)
             {
-                SaveChartAsPng(saveFileDialog.FileName, plotter);
+                // SaveChartAsPng(saveFileDialog.FileName, plotter);
             }
         }
 
@@ -786,7 +760,7 @@ namespace Szakdolgozat
 
             if (saveFileDialog.ShowDialog() == true)
             {
-                SaveChartAsPng(saveFileDialog.FileName, customplotter);
+                //SaveChartAsPng(saveFileDialog.FileName, customplotter);
             }
         }
 
@@ -811,44 +785,6 @@ namespace Szakdolgozat
                 pngEncoder.Save(stream);
             }
         }
-        /*
-        private void exportproject_Click(object sender, RoutedEventArgs e)
-        {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "Package file (*.zip)|*.zip";
-
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                string zipFileName = saveFileDialog.FileName;
-
-                try
-                {
-                    // Create temporary directory
-                    string tempDirectory = System.IO.Path.Combine(System.IO.Path.GetTempPath(), Guid.NewGuid().ToString());
-                    Directory.CreateDirectory(tempDirectory);
-
-                    // Export to temporary directory
-                    foreach (var selectedFile in selectedFiles)
-                    {
-                        // Export to temporary excel file
-                        ExportToExcel(selectedFile, tempDirectory);
-                    }
-
-                    // Create package file
-                    FastZip fastZip = new FastZip();
-                    fastZip.CreateZip(zipFileName, tempDirectory, true, "");
-
-                    // Delete temporary directory
-                    Directory.Delete(tempDirectory, true);
-
-                    MessageBox.Show("Files saved and compressed successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"An error occurred while exporting and compressing files: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-        }*/
 
         private void exportproject_Click(object sender, RoutedEventArgs e)
         {
@@ -911,83 +847,7 @@ namespace Szakdolgozat
                 }
             }
         }
-        /*
-        private void importProject_Click(object sender, RoutedEventArgs e)
-        {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Package file (*.zip)|*.zip";
 
-            if (openFileDialog.ShowDialog() == true)
-            {
-                string zipFilePath = openFileDialog.FileName;
-
-                try
-                {
-                    // Create temporary directory
-                    string tempDirectory = System.IO.Path.Combine(System.IO.Path.GetTempPath(), Guid.NewGuid().ToString());
-                    m_importedFileNumber = 0;
-                    Directory.CreateDirectory(tempDirectory);
-
-                    // Open Package file
-                    using (ZipInputStream zipInputStream = new ZipInputStream(File.OpenRead(zipFilePath)))
-                    {
-                        ZipEntry entry;
-                        while ((entry = zipInputStream.GetNextEntry()) != null)
-                        {
-                            string entryPath = System.IO.Path.Combine(tempDirectory, entry.Name);
-
-                            if (!entry.IsDirectory)
-                            {
-                                using (FileStream entryStream = File.Create(entryPath))
-                                {
-                                    zipInputStream.CopyTo(entryStream);
-                                }
-                            }
-                            else
-                            {
-                                Directory.CreateDirectory(entryPath);
-                            }
-                        }
-                    }
-
-                    foreach (var excelFile in Directory.GetFiles(tempDirectory, "*.xlsx"))
-                    {
-                        // Check for file is excel file
-                        if (IsValidExcelFile(excelFile))
-                        {
-                            // Import
-                            ImportExcelFile(excelFile);
-                        }
-                        else
-                        {
-                            MessageBox.Show($"Error: {excelFile} is not a valid Excel file.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                        }
-                    }
-
-                    // Delete temporary directory
-                    Directory.Delete(tempDirectory, true);
-
-                    if (m_importedFileNumber == 0)
-                    {
-                        MessageBox.Show("Package file is not valid. 0 file imported.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                    else if (m_importedFileNumber == 1)
-                    {
-                        MessageBox.Show("File imported successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    }
-                    else if (m_importedFileNumber > 1)
-                    {
-                        MessageBox.Show("Files imported successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    }
-                    
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"An error occurred while importing files: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-        }
-        */
         private void importProject_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -1128,6 +988,10 @@ namespace Szakdolgozat
                                 {
                                     cellValues[i, j] = parsedValue;
                                 }
+                                else if (actualValue.ToString().EndsWith("Event"))
+                                {
+                                    cellValues[i, j] = actualValue;
+                                }
                                 else
                                 {
                                     // Logic for invalid values
@@ -1137,7 +1001,11 @@ namespace Szakdolgozat
                         }
 
                         int newID = GenerateNewID();
-                        Color displayColor = selectedFiles.FirstOrDefault(file => file.FileName == System.IO.Path.GetFileNameWithoutExtension(excelFilePath))?.DisplayColor ?? GenerateRandomColor();
+                        System.Windows.Media.Color displayColor = selectedFiles.FirstOrDefault(file => file.FileName == System.IO.Path.GetFileNameWithoutExtension(excelFilePath))?.DisplayColor ?? GenerateRandomColorForFiles();
+
+                        var customCellValue = new object[cellValues.GetLength(0), cellValues.GetLength(1)];
+                        Array.Copy(cellValues, customCellValue, cellValues.Length);
+
                         ImportedFile importedFile = new ImportedFile
                         {
                             ID = newID,
@@ -1145,7 +1013,7 @@ namespace Szakdolgozat
                             FilePath = excelFilePath,
                             DisplayColor = displayColor,
                             ExcelData = cellValues,
-                            CustomExcelData = cellValues,
+                            CustomExcelData = customCellValue,
                         };
 
                         selectedFiles.Add(importedFile);
@@ -1162,9 +1030,12 @@ namespace Szakdolgozat
 
         private void myPlot_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            myPlot.Plot.Axes.AutoScaleX();
-            myPlot.Plot.Axes.AutoScaleY();
-            myPlot.Refresh();
+            originalChart.Plot.Axes.AutoScaleX();
+            originalChart.Plot.Axes.AutoScaleY();
+            originalChart.Refresh();
+            CustomChart.Plot.Axes.AutoScaleX();
+            CustomChart.Plot.Axes.AutoScaleY();
+            CustomChart.Refresh();
         }
     }
 }
