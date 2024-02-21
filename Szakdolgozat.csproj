@@ -338,6 +338,9 @@
   <ItemGroup>
     <Resource Include="Assets\sendemail.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\darkmode.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

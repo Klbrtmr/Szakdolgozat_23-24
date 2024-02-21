@@ -185,13 +185,13 @@
                     </ItemsPanelTemplate>
                 </Menu.ItemsPanel>
 
-                <!-- Main Menu - Home -->
+                <!-- Main Menu - Dark Mode -->
 
-                <MenuItem Header="Home"
+                <MenuItem Header="Dark Mode"
                           VerticalAlignment="Center"
                           FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" FontWeight="Bold">
                     <MenuItem.Icon>
-                        <Image Source="Assets/home.png"/>
+                        <Image Source="Assets/darkmode.png"/>
                     </MenuItem.Icon>
                 </MenuItem>
 
