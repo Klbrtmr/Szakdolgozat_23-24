@@ -962,7 +962,9 @@ namespace Szakdolgozat
                         if (dataSet.Tables.Count > 0)
                         {
                             var firstCellValue = dataSet.Tables[0].Rows[0].ItemArray[0];
-                            if (firstCellValue == null || !firstCellValue.ToString().Equals("Sample", StringComparison.OrdinalIgnoreCase))
+                            var secondCellValue = dataSet.Tables[0].Rows[0].ItemArray[1];
+                            if (firstCellValue == null || !firstCellValue.ToString().Equals("Sample", StringComparison.OrdinalIgnoreCase) &&
+                                secondCellValue == null || !secondCellValue.ToString().Equals("Events", StringComparison.OrdinalIgnoreCase))
                             {
                                 MessageBox.Show("Error: Wrong file structure or file is corrupt.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                                 return;
