@@ -20,11 +20,12 @@
     
     <!-- Background Grid -->
 
-    <Grid Background="Gray">
+    <Grid x:Name="BackroundBehindTabs" Background="Gray">
         
         <!-- Copyrights title -->
         
         <TextBlock Text="K o l b e r t  Z o l t á n  M á r i ó"
+                   x:Name="myNameText"
                    Foreground="Black"
                    FontFamily="Times New Roman"
                    FontSize="10"
@@ -55,7 +56,8 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <DataGrid Name="configGrid" Grid.Row="0" ColumnWidth="Auto"
+                            
+                            <DataGrid Name="configGrid" Grid.Row="1" ColumnWidth="Auto"
                                       AutoGenerateColumns="True"
                                       HorizontalAlignment="Stretch"
                                       VerticalAlignment="Stretch"
@@ -73,6 +75,13 @@
                                                     Path=ActualHeight, 
                                                     Converter={StaticResource PercentageConverter}, 
                                                     ConverterParameter=0.67}"  />
+                            <ToolBarTray Grid.Row="0">
+                                <ToolBar>
+                                    <ToggleButton x:Name="DarkModeToggleButton" Click="DarkModeToggleButton_Click">
+                                        <Image Source="Assets/moon.png" Width="16" Height="16"/>
+                                    </ToggleButton>
+                                </ToolBar>
+                            </ToolBarTray>
                         </Grid>
 
                     </TabItem>
@@ -146,7 +155,8 @@
                                         BorderBrush="#0096FF"/>
         </Grid>
 
-        <StackPanel Background="DarkGray"
+        <StackPanel x:Name="controllerStackPanel" 
+                    Background="DarkGray"
                     Width="230"
                     Orientation="Vertical"
                     HorizontalAlignment="Left">
@@ -187,11 +197,11 @@
 
                 <!-- Main Menu - Dark Mode -->
 
-                <MenuItem Header="Dark Mode"
+                <MenuItem x:Name="homeButton" Header="Home"
                           VerticalAlignment="Center"
                           FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" FontWeight="Bold">
                     <MenuItem.Icon>
-                        <Image Source="Assets/darkmode.png"/>
+                        <Image Source="Assets/home.png"/>
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -241,7 +251,7 @@
                           VerticalAlignment="Center"
                           FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" FontWeight="Bold" Click="closeProject_Click">
                     <MenuItem.Icon>
-                        <Image Source="Assets/circle-xmark.png"/>
+                        <Image Source="Assets/exit.png"/>
                     </MenuItem.Icon>
                 </MenuItem>
 

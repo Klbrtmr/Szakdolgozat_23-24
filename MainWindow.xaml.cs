@@ -1,5 +1,6 @@
 ﻿using ExcelDataReader;
 using ICSharpCode.SharpZipLib.Zip;
+using InteractiveDataDisplay.WPF;
 using LiveCharts;
 using Microsoft.Win32;
 using OfficeOpenXml;
@@ -1038,6 +1039,121 @@ namespace Szakdolgozat
             CustomChart.Plot.Axes.AutoScaleX();
             CustomChart.Plot.Axes.AutoScaleY();
             CustomChart.Refresh();
+        }
+
+        private void DarkModeToggleButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (DarkModeToggleButton.IsChecked == true)
+            {
+                DarkModeToggleButton.Content = ImageForModeSwitch("Assets/brightness.png");
+
+                originalChart.Plot.Style.DarkMode();
+                CustomChart.Plot.Style.DarkMode();
+
+                DarkModeForBackGround();
+                originalChart.Refresh();
+                CustomChart.Refresh();
+
+            }
+            else if (DarkModeToggleButton.IsChecked == false)
+            {
+                DarkModeToggleButton.Content = ImageForModeSwitch("Assets/moon.png");
+
+                LightModeForCharts();
+                LightModeForBackGround();
+                originalChart.Refresh();
+                CustomChart.Refresh();
+            }
+        }
+
+        private void LightModeForCharts()
+        {
+            originalChart.Plot.Style.ColorAxes(ScottPlot.Color.FromHex("#000000"));
+
+            originalChart.Plot.Style.ColorGrids(ScottPlot.Color.FromHex("#e0e0e0"));
+
+            originalChart.Plot.Style.Background(
+                figure: ScottPlot.Color.FromHex("#ffffff"),
+                data: ScottPlot.Color.FromHex("#ffffff"));
+
+            originalChart.Plot.Style.ColorLegend(
+                background: ScottPlot.Color.FromHex("#ffffff"),
+                foreground: ScottPlot.Color.FromHex("#000000"),
+                border: ScottPlot.Color.FromHex("#000000"));
+
+            CustomChart.Plot.Style.ColorAxes(ScottPlot.Color.FromHex("#000000"));
+
+            CustomChart.Plot.Style.ColorGrids(ScottPlot.Color.FromHex("#e0e0e0"));
+
+            CustomChart.Plot.Style.Background(
+                figure: ScottPlot.Color.FromHex("#ffffff"),
+                data: ScottPlot.Color.FromHex("#ffffff"));
+
+            CustomChart.Plot.Style.ColorLegend(
+                background: ScottPlot.Color.FromHex("#ffffff"),
+                foreground: ScottPlot.Color.FromHex("#000000"),
+                border: ScottPlot.Color.FromHex("#000000"));
+        }
+
+        private void DarkModeForBackGround()
+        {
+            SolidColorBrush darkBackground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(40, 40, 40)); // dark gray
+            SolidColorBrush soliddarkBackground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(50, 50, 50)); // dark gray
+            SolidColorBrush whiteColor = new SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 255, 255));
+            BackroundBehindTabs.Background = darkBackground;
+            mainTabControl.Background = soliddarkBackground;
+            controllerStackPanel.Background = darkBackground;
+            myNameText.Foreground = whiteColor;
+            homeButton.Foreground = whiteColor;
+            importExcel.Foreground = whiteColor;
+            importProject.Foreground = whiteColor;
+            exporttoexcel.Foreground = whiteColor;
+            exportproject.Foreground = whiteColor;
+            closeProject.Foreground = whiteColor;
+            filesListing.Background = soliddarkBackground;
+            filesListing.Foreground = whiteColor;
+
+            homeButton.Icon = ImageForModeSwitch("Assets/home_light.png");
+            importExcel.Icon = ImageForModeSwitch("Assets/document_light.png");
+            importProject.Icon = ImageForModeSwitch("Assets/file-import_light.png");
+            exporttoexcel.Icon = ImageForModeSwitch("Assets/export_light.png");
+            exportproject.Icon = ImageForModeSwitch("Assets/exportfile_light.png");
+            closeProject.Icon = ImageForModeSwitch("Assets/exit_light.png");
+        }
+
+        private void LightModeForBackGround()
+        {
+            SolidColorBrush lightBackground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(128, 128, 128)); // gray
+            SolidColorBrush blackColor = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 0, 0));
+            SolidColorBrush whiteColor = new SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 255, 255));
+            BackroundBehindTabs.Background = lightBackground;
+            mainTabControl.Background = lightBackground;
+            controllerStackPanel.Background= lightBackground;
+            myNameText.Foreground = blackColor;
+            homeButton.Foreground = blackColor;
+            importExcel.Foreground = blackColor;
+            importProject.Foreground = blackColor;
+            exporttoexcel.Foreground = blackColor;
+            exportproject.Foreground = blackColor;
+            closeProject.Foreground = blackColor;
+            filesListing.Background = whiteColor;
+            filesListing.Foreground = blackColor;
+
+            homeButton.Icon = ImageForModeSwitch("Assets/home.png");
+            importExcel.Icon = ImageForModeSwitch("Assets/document.png");
+            importProject.Icon = ImageForModeSwitch("Assets/file-import.png");
+            exporttoexcel.Icon = ImageForModeSwitch("Assets/export.png");
+            exportproject.Icon = ImageForModeSwitch("Assets/exportfile.png");
+            closeProject.Icon = ImageForModeSwitch("Assets/exit.png");
+        }
+
+        private System.Windows.Controls.Image ImageForModeSwitch(string root)
+        {
+            System.Windows.Controls.Image icon = new System.Windows.Controls.Image();
+            icon.Source = new BitmapImage(new Uri(root, UriKind.RelativeOrAbsolute));
+            icon.Width = 16;
+            icon.Height = 16;
+            return icon;
         }
     }
 }

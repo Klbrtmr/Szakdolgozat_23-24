@@ -313,14 +313,10 @@
   <ItemGroup>
     <Resource Include="Assets\add-document.png" />
     <Resource Include="Assets\chart-histogram.png" />
-    <Resource Include="Assets\circle-xmark.png" />
     <Resource Include="Assets\download.png" />
-    <Resource Include="Assets\expand.png" />
     <Resource Include="Assets\file-import.png" />
     <Resource Include="Assets\home.png" />
-    <Resource Include="Assets\minus-small.png" />
     <Resource Include="Assets\search.png" />
-    <Resource Include="Assets\trash.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\broken-heart.png" />
@@ -340,6 +336,27 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\darkmode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\brightness.png" />
+    <Resource Include="Assets\moon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\home_light.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\file-import_light.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\document_light.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\exportfile_light.png" />
+    <Resource Include="Assets\export_light.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\exit.png" />
+    <Resource Include="Assets\exit_light.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
