@@ -50,7 +50,11 @@
                         VerticalContentAlignment="Stretch"
                         DockPanel.Dock="Top" SelectionChanged="mainTabControl_SelectionChanged">
                     
-                    <TabItem Header="Configuration" FontFamily="Times New Roman" FontWeight="Bold" FontSize="15">
+                    <TabItem Header="Configuration" 
+                             FontFamily="Times New Roman" 
+                             FontWeight="Bold" 
+                             FontSize="15" 
+                             Width="120">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -85,7 +89,11 @@
                         </Grid>
 
                     </TabItem>
-                    <TabItem Header="Excel Table" FontFamily="Times New Roman" FontWeight="Bold" FontSize="15">
+                    <TabItem Header="Excel Table" 
+                             FontFamily="Times New Roman" 
+                             FontWeight="Bold" 
+                             FontSize="15"  
+                             Width="120">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -108,12 +116,20 @@
                                                     ConverterParameter=0.67}"/>
                         </Grid>
                     </TabItem>
-                    <TabItem Header="Chart" FontFamily="Times New Roman" FontWeight="Bold" FontSize="15">
+                    <TabItem Header="Chart"
+                             FontFamily="Times New Roman" 
+                             FontWeight="Bold" 
+                             FontSize="15"
+                             Width="120">
                         <Grid x:Name="Layoutroot" Background="White">
                             <ScottPlot:WpfPlot x:Name="originalChart" MouseDoubleClick="myPlot_MouseDoubleClick"/>
                         </Grid>
                     </TabItem>
-                    <TabItem Header="Custom Table" FontFamily="Times New Roman" FontWeight="Bold" FontSize="15">
+                    <TabItem Header="Custom Table" 
+                             FontFamily="Times New Roman" 
+                             FontWeight="Bold" 
+                             FontSize="15"  
+                             Width="120">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -138,7 +154,11 @@
                                                     ConverterParameter=0.67}" CellEditEnding="excelCustomDataGrid_CellEditEnding"/>
                         </Grid>
                     </TabItem>
-                    <TabItem Header="Custom Chart" FontFamily="Times New Roman" FontWeight="Bold" FontSize="15">
+                    <TabItem Header="Custom Chart" 
+                             FontFamily="Times New Roman" 
+                             FontWeight="Bold" 
+                             FontSize="15"  
+                             Width="120">
                         <Grid x:Name="CustomLayoutroot" Background="White">
                             <ScottPlot:WpfPlot x:Name="CustomChart" MouseDoubleClick="myPlot_MouseDoubleClick"/>
                         </Grid>
