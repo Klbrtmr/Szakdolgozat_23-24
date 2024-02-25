@@ -74,6 +74,11 @@ namespace Szakdolgozat
 
         private int currentID = 0;
 
+        private List<string> colorList = new List<string>{ 
+            "Black", "White", "Grey", "Blond", "Brown", 
+            "Dark Blue", "Cyan", "Ice", "Red", "Green", 
+            "LimeGreen", "Purple", "Pink", "Yellow", "Orange" };
+
         /// <summary>
         /// Listed all file what we imported. This method created an ellipse to every file.
         /// </summary>
@@ -136,7 +141,9 @@ namespace Szakdolgozat
                     counter++;
                 }
 
-                System.Windows.Media.Color displayColor = selectedFiles.FirstOrDefault(file => file.FileName == newFileName)?.DisplayColor ?? GenerateRandomColorForFiles();
+                System.Windows.Media.Color displayColor = 
+                    selectedFiles.FirstOrDefault(file => file.FileName == newFileName)?.DisplayColor 
+                    ?? GenerateRandomColorForFiles();
 
 
 
@@ -157,8 +164,10 @@ namespace Szakdolgozat
                         {
                             var firstCellValue = dataSet.Tables[0].Rows[0].ItemArray[0];
                             var secondCellValue = dataSet.Tables[0].Rows[0].ItemArray[1];
-                            if (firstCellValue == null || !firstCellValue.ToString().Equals("Sample", StringComparison.OrdinalIgnoreCase) &&
-                                secondCellValue == null || !secondCellValue.ToString().Equals("Events", StringComparison.OrdinalIgnoreCase))
+                            if (firstCellValue == null || !firstCellValue.ToString()
+                                .Equals("Sample", StringComparison.OrdinalIgnoreCase) &&
+                                secondCellValue == null || !secondCellValue.ToString()
+                                .Equals("Events", StringComparison.OrdinalIgnoreCase))
                             {
                                 MessageBox.Show("Error: Wrong file structure or file is corrupt.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                                 return;
@@ -398,8 +407,11 @@ namespace Szakdolgozat
 
             // DataTemplate létrehozása, ami tartalmazza a ComboBox-ot
             FrameworkElementFactory comboBoxFactory = new FrameworkElementFactory(typeof(ComboBox));
-            comboBoxFactory.SetValue(ComboBox.ItemsSourceProperty, Enumerable.Range(1, 5));
+            comboBoxFactory.SetValue(ComboBox.ItemsSourceProperty, colorList);
             comboBoxFactory.SetBinding(ComboBox.SelectedValueProperty, new Binding("Colors"));
+
+            comboBoxFactory.AddHandler(ComboBox.SelectionChangedEvent, new SelectionChangedEventHandler(ComboBox_SelectionChanged));
+
             DataTemplate cellTemplate = new DataTemplate { VisualTree = comboBoxFactory };
             templateColumn.CellTemplate = cellTemplate;
 
@@ -408,13 +420,15 @@ namespace Szakdolgozat
                 configGrid.Columns.Add(templateColumn);
             }
             
-            for (int columnIndex = 1; columnIndex < array.GetLength(1); columnIndex++)
+            for (int columnIndex = 2; columnIndex < array.GetLength(1); columnIndex++)
             {
                 DataRow dataRow = dataTable.NewRow();
 
                 dataRow["Signal Name"] = array[0, columnIndex];
                 dataTable.Rows.Add(dataRow);
             }
+
+            configGrid.ItemsSource = dataTable.DefaultView;
 
             return dataTable;
         }
@@ -489,7 +503,16 @@ namespace Szakdolgozat
                     // var currentLine = originalChart.Plot.Add.Scatter(x, y, ScottPlot.Color.FromHex("#000000"));
                     var currentLine = originalChart.Plot.Add.Scatter(x, y);
                     currentLine.Label = yColumn.ColumnName;
-                    // currentLine.Color = ScottPlot.Color.FromHex("#000000");
+
+                    if (DarkModeToggleButton.IsChecked == true)
+                    {
+                        currentLine.Color = ScottPlot.Color.FromHex("#ffffff");
+                    }
+                    else if (DarkModeToggleButton.IsChecked == false)
+                    {
+                        currentLine.Color = ScottPlot.Color.FromHex("#000000");
+                    }
+
                     currentLine.MarkerStyle.IsVisible = false;
                     for (int i = 0; i < events.Length; i++)
                     {
@@ -584,6 +607,16 @@ namespace Szakdolgozat
 
                     var currentLine = CustomChart.Plot.Add.Scatter(x, y);
                     currentLine.Label = yColumn.ColumnName;
+
+                    if (DarkModeToggleButton.IsChecked == true)
+                    {
+                        currentLine.Color = ScottPlot.Color.FromHex("#ffffff");
+                    }
+                    else if (DarkModeToggleButton.IsChecked == false)
+                    {
+                        currentLine.Color = ScottPlot.Color.FromHex("#000000");
+                    }
+
                     currentLine.MarkerStyle.IsVisible = false;
                     for (int i = 0; i < events.Length; i++)
                     {
@@ -1004,7 +1037,9 @@ namespace Szakdolgozat
                         }
 
                         int newID = GenerateNewID();
-                        System.Windows.Media.Color displayColor = selectedFiles.FirstOrDefault(file => file.FileName == System.IO.Path.GetFileNameWithoutExtension(excelFilePath))?.DisplayColor ?? GenerateRandomColorForFiles();
+                        System.Windows.Media.Color displayColor = selectedFiles
+                            .FirstOrDefault(file => file.FileName == System.IO.Path.GetFileNameWithoutExtension(excelFilePath))?.DisplayColor 
+                            ?? GenerateRandomColorForFiles();
 
                         var customCellValue = new object[cellValues.GetLength(0), cellValues.GetLength(1)];
                         Array.Copy(cellValues, customCellValue, cellValues.Length);
@@ -1124,11 +1159,12 @@ namespace Szakdolgozat
         private void LightModeForBackGround()
         {
             SolidColorBrush lightBackground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(128, 128, 128)); // gray
+            SolidColorBrush lighterBackground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(169, 169 ,169));
             SolidColorBrush blackColor = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 0, 0));
             SolidColorBrush whiteColor = new SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 255, 255));
             BackroundBehindTabs.Background = lightBackground;
-            mainTabControl.Background = lightBackground;
-            controllerStackPanel.Background= lightBackground;
+            mainTabControl.Background = lighterBackground;
+            controllerStackPanel.Background= lighterBackground;
             myNameText.Foreground = blackColor;
             homeButton.Foreground = blackColor;
             importExcel.Foreground = blackColor;
@@ -1154,6 +1190,73 @@ namespace Szakdolgozat
             icon.Width = 16;
             icon.Height = 16;
             return icon;
+        }
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ColorConverter colorConverter = new ColorConverter();
+            ComboBox comboBox = sender as ComboBox;
+
+            if (comboBox != null)
+            {
+                // Get the DataGridCell for the given ComboBox
+                DataGridCell cell = FindVisualParent<DataGridCell>(comboBox);
+
+                // Get the DataGridRow for the given DataGridCell
+                DataGridRow row = FindVisualParent<DataGridRow>(cell);
+
+                if (row != null)
+                {
+                    var selectedValue = comboBox.SelectedValue;
+                    var colorInHexa = colorConverter.ConvertFromString(selectedValue);
+
+                    if (originalChart != null)
+                    {
+                        int rowIndex = row.GetIndex();
+                        int seriesIndex = rowIndex;
+
+                        var scatterSeriesList = originalChart.Plot.GetPlottables()
+                            .Where(p => p is ScottPlot.Plottables.Scatter scatter).Cast<ScottPlot.Plottables.Scatter>().ToList();
+
+                        var customScatterSeriesList = CustomChart.Plot.GetPlottables()
+                            .Where(p => p is ScottPlot.Plottables.Scatter scatter).Cast<ScottPlot.Plottables.Scatter>().ToList();
+
+                        if ((seriesIndex >= 0 && seriesIndex < scatterSeriesList.Count)
+                            && (seriesIndex >= 0 && seriesIndex < customScatterSeriesList.Count))
+                        {
+                            // Modify the color of the specified series in the plot
+                            scatterSeriesList[seriesIndex].LineStyle.Color = ScottPlot.Color.FromHex(colorInHexa);
+                            customScatterSeriesList[seriesIndex].LineStyle.Color = ScottPlot.Color.FromHex(colorInHexa);
+                            originalChart.Refresh();
+                            CustomChart.Refresh();
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Helper method for find visual parent
+        /// </summary>
+        /// <typeparam name="T">Generic parameter</typeparam>
+        /// <param name="child"></param>
+        /// <returns></returns>
+        private T FindVisualParent<T>(DependencyObject child) where T : DependencyObject
+        {
+            DependencyObject parentObject = VisualTreeHelper.GetParent(child);
+
+            if (parentObject == null)
+                return null;
+
+            T parent = parentObject as T;
+            if (parent != null)
+            {
+                return parent;
+            }
+            else
+            {
+                return FindVisualParent<T>(parentObject);
+            }
         }
     }
 }
