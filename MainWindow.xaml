@@ -17,10 +17,12 @@
     <Window.Resources>
         <local:VisibilityToCheckedConverter x:Key="VisibilityToCheckedConverter"/>
     </Window.Resources>
-    
+
     <!-- Background Grid -->
 
     <Grid x:Name="BackroundBehindTabs" Background="Gray">
+        
+        
         
         <!-- Copyrights title -->
         
@@ -57,6 +59,8 @@
                              Width="120">
                         <Grid>
                             <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
@@ -122,7 +126,7 @@
                              FontSize="15"
                              Width="120">
                         <Grid x:Name="Layoutroot" Background="White">
-                            <ScottPlot:WpfPlot x:Name="originalChart" MouseDoubleClick="myPlot_MouseDoubleClick"/>
+                            <ScottPlot:WpfPlot x:Name="originalChart" MouseDoubleClick="myPlot_MouseDoubleClick" MouseMove="originalChart_MouseMove"/>
                         </Grid>
                     </TabItem>
                     <TabItem Header="Custom Table" 
@@ -296,5 +300,8 @@
                 </Border>
             </DockPanel>
         </StackPanel>
+        
+        <TextBlock x:Name="tooltipTextBlock" Visibility="Hidden" Background="WhiteSmoke" Padding="5"/>
+        
     </Grid>
 </Window>

@@ -19,6 +19,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Hardcodet.Wpf.TaskbarNotification;
 
 namespace Szakdolgozat
 {
@@ -32,6 +33,8 @@ namespace Szakdolgozat
         {
             InitializeComponent();
             importProgressBar = FindName("importProgressBar") as ProgressBar;
+            notifyIcon = new TaskbarIcon();
+            
         }
 
         //indoklások az elrendezés miatt a szakdogaban
@@ -66,6 +69,8 @@ namespace Szakdolgozat
         /// Actual opened custom dataTable.
         /// </summary>
         private DataTable m_CustomDataTable;
+
+        private TaskbarIcon notifyIcon;
 
         /// <summary>
         /// Number of imported file from one package file.
@@ -521,12 +526,14 @@ namespace Szakdolgozat
                         var marker = originalChart.Plot.Add.Marker(xIndex, yIndex);
                         if (events[i].ToString() == "Alarm_Event")
                         {
+                            marker.MarkerStyle.Shape = MarkerShape.FilledCircle;
+                            marker.MarkerStyle.Size = 10;
                             marker.MarkerStyle.Fill.Color = ScottPlot.Color.FromARGB(4278190219); // Dark Blue
-
                         }
                         else if (events[i].ToString() == "Error_Event")
                         {
                             marker.MarkerStyle.Shape = MarkerShape.FilledTriangleUp;
+                            marker.MarkerStyle.Size = 10;
                             marker.MarkerStyle.Fill.Color = ScottPlot.Color.FromARGB(4294901760); // Red
                         }
                         else
@@ -545,6 +552,10 @@ namespace Szakdolgozat
         /// <inheritdoc cref="UpdateChart(ImportedFile, DataTable)"/>
         private void UpdateCustomChart(ImportedFile importedFile, DataTable dataTable)
         {
+            var alarmEventNumber = 0;
+            var errorEventNumber = 0;
+
+
             //Clear for other call
             CustomChart.Plot.Clear();
 
@@ -626,12 +637,24 @@ namespace Szakdolgozat
                         if (events[i].ToString() == "Alarm_Event")
                         {
                             marker.MarkerStyle.Fill.Color = ScottPlot.Color.FromARGB(4278190219); // Dark Blue
+                            if (alarmEventNumber == 0)
+                            {
+                                marker.MarkerStyle.IsVisible = true;
+                                marker.Label = events[i].ToString();
+                                alarmEventNumber++;
+                            }
                             
                         }
                         else if (events[i].ToString() == "Error_Event")
                         {
                             marker.MarkerStyle.Shape = MarkerShape.FilledTriangleUp;
                             marker.MarkerStyle.Fill.Color = ScottPlot.Color.FromARGB(4294901760); // Red
+                            if (errorEventNumber == 0)
+                            {
+                                marker.MarkerStyle.IsVisible = true;
+                                marker.Label = events[i].ToString();
+                                errorEventNumber++;
+                            }
                         }
                         else
                         {
@@ -644,6 +667,8 @@ namespace Szakdolgozat
             {
                 MessageBox.Show("Excel contains invalid values! Invalid values are set to 0.", "Import warning!", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
+
+            CustomChart.Plot.Legend.ManualItems.Reverse();
 
             CustomChart.Plot.Axes.AutoScaleX();
             CustomChart.Plot.Axes.AutoScaleY();
@@ -1258,5 +1283,71 @@ namespace Szakdolgozat
                 return FindVisualParent<T>(parentObject);
             }
         }
+
+        private void originalChart_MouseMove(object sender, MouseEventArgs e)
+        {
+            var mousePos = Mouse.GetPosition(originalChart);
+
+            // var plotMousePos = originalChart.Plot.GetCoordinates((float)mousePos.X, (float)mousePos.Y);
+
+            foreach (var marker in originalChart.Plot.GetPlottables<ScottPlot.Plottables.Marker>())
+            {
+                if (marker.MarkerStyle.Shape == MarkerShape.FilledTriangleUp)
+                {
+                    double markerX = marker.X;
+                    double markerY = marker.Y;
+                    
+                    Coordinates coordinates = new Coordinates(markerX, markerY);
+
+                    var markerPixelPos = originalChart.Plot.GetPixel(coordinates);
+
+                    // Adott távolság (pl. 5 pixel) környékén van az egér a markertől
+                    if (Math.Abs(markerPixelPos.X - mousePos.X) < 50 && Math.Abs(markerPixelPos.Y - mousePos.Y) < 50)
+                    {
+                        // Ha közel van, akkor megjelenítjük a tooltip-et
+                        ShowTooltip("Error Event", mousePos.X, mousePos.Y);
+                        return;
+                        
+                    }
+                }
+            }
+
+            // Ha nem találunk közel lévő markert, elrejtjük a tooltip-et
+            HideTooltip();
+        }
+
+
+        private void ShowTooltip(string message, double x, double y)
+        {
+            // Létrehoz egy új ToolTip-t
+            var m_toolTip = new ToolTip();
+
+            // Hozzáad egy TextBlock-ot a ToolTip-hez
+            TextBlock textBlock = new TextBlock();
+            textBlock.Text = message;
+            m_toolTip.Content = textBlock;
+
+            // Beállítja a ToolTip pozícióját a megadott koordinátáknak megfelelően
+            m_toolTip.Placement = System.Windows.Controls.Primitives.PlacementMode.Right;
+            m_toolTip.PlacementTarget = originalChart;  // Az eredeti diagram a célpont
+            m_toolTip.HorizontalOffset = x;
+            m_toolTip.VerticalOffset = y;
+            m_toolTip.Height = 40;
+            m_toolTip.Width = 80;
+
+            notifyIcon.ToolTipText = textBlock.Text;
+            notifyIcon.ToolTip = m_toolTip;
+            // Beállítja a ToolTip-et az eredeti diagramhoz
+            // ToolTipService.SetToolTip(originalChart, m_toolTip);
+        }
+
+        private void HideTooltip()
+        {
+            //m_toolTip = null;
+            //ToolTipService.SetToolTip(originalChart, m_toolTip);
+            notifyIcon.ToolTip = null;
+        }
+
+        // private ToolTip m_toolTip;
     }
 }
