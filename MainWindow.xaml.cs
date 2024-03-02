@@ -84,6 +84,8 @@ namespace Szakdolgozat
             "Dark Blue", "Cyan", "Ice", "Red", "Green", 
             "LimeGreen", "Purple", "Pink", "Yellow", "Orange" };
 
+        private double m_Stamp = 1.0;
+
         /// <summary>
         /// Listed all file what we imported. This method created an ellipse to every file.
         /// </summary>
@@ -450,7 +452,14 @@ namespace Szakdolgozat
 
             //Chart Titles
             originalChart.Plot.Title($"{importedFile.FileName}");
-            originalChart.Plot.XLabel("Samples");
+            if (sample_RadioButton.IsChecked == true)
+            {
+                originalChart.Plot.XLabel("Samples");
+            }
+            else if (time_RadioButton.IsChecked == true)
+            {
+                originalChart.Plot.XLabel("Time (s)");
+            }
             originalChart.Plot.YLabel("Values");
 
 
@@ -458,14 +467,20 @@ namespace Szakdolgozat
             {
                 var xColumn = dataTable.Columns[0];
                 var eventColumn = dataTable.Columns[1];
-                // var eventColumn = dataTable.Columns.Cast<DataColumn>().Skip(1).Take(1).ToArray();
-                // List<int> eventSamples = new List<int>();
                 var yColumns = dataTable.Columns.Cast<DataColumn>().Skip(2).ToArray();
 
                 var x = dataTable.AsEnumerable().Select(row =>
                 {
-                    var xValue = row[xColumn];
-                    return xValue != DBNull.Value ? Convert.ToDouble(xValue) : 0.0;
+                    object xValue = row[xColumn];
+                    if (xValue != DBNull.Value && double.TryParse(xValue.ToString(), out double doubleValue))
+                    {
+                        xValue = doubleValue * m_Stamp;
+                    }
+                    else
+                    {
+                        xValue = 0.0;
+                    }
+                    return Convert.ToDouble(xValue);
                 }).ToArray();
 
                 var events = dataTable.AsEnumerable().Select(row =>
@@ -561,7 +576,15 @@ namespace Szakdolgozat
 
             //Chart Titles
             CustomChart.Plot.Title($"{importedFile.FileName}");
-            CustomChart.Plot.XLabel("Samples");
+            if (sample_RadioButton.IsChecked == true)
+            {
+                CustomChart.Plot.XLabel("Samples");
+            }
+            else if(time_RadioButton.IsChecked == true)
+            {
+                CustomChart.Plot.XLabel("Time (s)");
+            }
+            
             CustomChart.Plot.YLabel("Values");
 
             bool invalidvalues = false;
@@ -574,8 +597,16 @@ namespace Szakdolgozat
 
                 var x = dataTable.AsEnumerable().Select(row =>
                 {
-                    var xValue = row[xColumn];
-                    return xValue != DBNull.Value ? Convert.ToDouble(xValue) : 0.0;
+                    object xValue = row[xColumn];
+                    if (xValue != DBNull.Value && double.TryParse(xValue.ToString(), out double doubleValue))
+                    {
+                        xValue = doubleValue * m_Stamp;
+                    }
+                    else
+                    {
+                        xValue = 0.0;
+                    }
+                    return Convert.ToDouble(xValue);
                 }).ToArray();
 
                 var events = dataTable.AsEnumerable().Select(row =>
@@ -1172,6 +1203,8 @@ namespace Szakdolgozat
             closeProject.Foreground = whiteColor;
             filesListing.Background = soliddarkBackground;
             filesListing.Foreground = whiteColor;
+            sample_RadioButton.Foreground = whiteColor;
+            time_RadioButton.Foreground = whiteColor;
 
             homeButton.Icon = ImageForModeSwitch("Assets/home_light.png");
             importExcel.Icon = ImageForModeSwitch("Assets/document_light.png");
@@ -1199,6 +1232,8 @@ namespace Szakdolgozat
             closeProject.Foreground = blackColor;
             filesListing.Background = whiteColor;
             filesListing.Foreground = blackColor;
+            sample_RadioButton.Foreground = blackColor;
+            time_RadioButton.Foreground = blackColor;
 
             homeButton.Icon = ImageForModeSwitch("Assets/home.png");
             importExcel.Icon = ImageForModeSwitch("Assets/document.png");
@@ -1348,6 +1383,50 @@ namespace Szakdolgozat
             notifyIcon.ToolTip = null;
         }
 
-        // private ToolTip m_toolTip;
+        private void RadioButtonMode_Checked(object sender, RoutedEventArgs e)
+        {
+            if (sample_RadioButton.IsChecked == true)
+            {
+                m_Stamp = 1;
+                if (m_ImportedFile != null && m_OriginalDataTable != null && timeUnitTextBox != null)
+                {
+                    timeUnitTextBox.IsReadOnly = true;
+                }
+            }
+            else if (time_RadioButton.IsChecked == true)
+            {
+                if (m_ImportedFile != null && m_OriginalDataTable != null && timeUnitTextBox != null)
+                {
+                    timeUnitTextBox.IsReadOnly = false;
+                }
+            }
+        }
+
+        private void saveTimeUnitButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (m_ImportedFile != null && m_OriginalDataTable != null && m_CustomDataTable != null)
+            {
+                var getTimeStamp = timeUnitTextBox.Text;
+
+                if (sample_RadioButton.IsChecked == true)
+                {
+                    getTimeStamp = "1";
+                }
+
+                if (double.TryParse(getTimeStamp, out double result))
+                {
+                    m_Stamp = result;
+                    invalidvalueTextBlock.Visibility = Visibility.Hidden;
+                }
+                else
+                {
+                    invalidvalueTextBlock.Visibility = Visibility.Visible;
+                    invalidvalueTextBlock.Foreground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 0, 0));
+                }
+
+                UpdateChart(m_ImportedFile, m_OriginalDataTable);
+                UpdateCustomChart(m_ImportedFile, m_CustomDataTable);
+            }
+        }
     }
 }

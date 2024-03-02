@@ -63,9 +63,16 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            
-                            <DataGrid Name="configGrid" Grid.Row="1" ColumnWidth="Auto"
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <DataGrid Name="configGrid" Grid.Row="1"
+                                      Grid.ColumnSpan="2"
                                       AutoGenerateColumns="True"
                                       HorizontalAlignment="Stretch"
                                       VerticalAlignment="Stretch"
@@ -83,7 +90,26 @@
                                                     Path=ActualHeight, 
                                                     Converter={StaticResource PercentageConverter}, 
                                                     ConverterParameter=0.67}"  />
-                            <ToolBarTray Grid.Row="0">
+                            <RadioButton x:Name="sample_RadioButton" Grid.Row="2"
+                                         Grid.Column="1" IsChecked="True"
+                                         Margin="10"
+                                         Checked="RadioButtonMode_Checked">Sample</RadioButton>
+                            <TextBox x:Name="timeUnitTextBox" Grid.Row="3"
+                                     Grid.Column="0" Text="1"
+                                     Margin="0,10"
+                                     IsReadOnly="True"></TextBox>
+                            <RadioButton x:Name="time_RadioButton" Grid.Row="3"
+                                         Grid.Column="1" Margin="10"
+                                         Checked="RadioButtonMode_Checked">Time (s)</RadioButton>
+
+                            <TextBlock x:Name="invalidvalueTextBlock" Grid.Row="4" 
+                                       Grid.Column="0" Margin="0,5"
+                                       Visibility="Hidden">Invalid value!</TextBlock>
+                            <Button x:Name="saveTimeUnitButton" Grid.Row="5"
+                                    Grid.Column="0" Margin="0,5"
+                                    Click="saveTimeUnitButton_Click">Save</Button>
+                            
+                            <ToolBarTray Grid.Row="0" Grid.ColumnSpan="2">
                                 <ToolBar>
                                     <ToggleButton x:Name="DarkModeToggleButton" Click="DarkModeToggleButton_Click">
                                         <Image Source="Assets/moon.png" Width="16" Height="16"/>
