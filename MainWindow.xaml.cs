@@ -1,6 +1,5 @@
 ﻿using ExcelDataReader;
 using ICSharpCode.SharpZipLib.Zip;
-using InteractiveDataDisplay.WPF;
 using LiveCharts;
 using Microsoft.Win32;
 using OfficeOpenXml;
@@ -519,8 +518,6 @@ namespace Szakdolgozat
                         }
                     }).ToArray();
 
-
-                    // var currentLine = originalChart.Plot.Add.Scatter(x, y, ScottPlot.Color.FromHex("#000000"));
                     var currentLine = originalChart.Plot.Add.Scatter(x, y);
                     currentLine.Label = yColumn.ColumnName;
 
@@ -534,27 +531,64 @@ namespace Szakdolgozat
                     }
 
                     currentLine.MarkerStyle.IsVisible = false;
-                    for (int i = 0; i < events.Length; i++)
+                }
+
+                double[] xDoubles = new double[x.Length];
+                double[] yDoubles = new double[x.Length];
+                for (int i = 0; i < x.Length; i++)
+                {
+                    xDoubles[i] = x[i];
+                    yDoubles[i] = 0.0;
+                }
+
+                var eventLine = originalChart.Plot.Add.Scatter(xDoubles, yDoubles);
+                eventLine.Label = "Event Line";
+                eventLine.MarkerStyle.IsVisible = false;
+
+                if (DarkModeToggleButton.IsChecked == true)
+                {
+                    eventLine.Color = ScottPlot.Color.FromHex("#ffffff");
+                }
+                else if (DarkModeToggleButton.IsChecked == false)
+                {
+                    eventLine.Color = ScottPlot.Color.FromHex("#000000");
+                }
+
+                for (int i = 0; i < events.Length; i++)
+                {
+                    var xIndex = x[i];
+                    var yIndex = 0;
+                    var marker = originalChart.Plot.Add.Marker(xIndex, yIndex);
+                    if (events[i].ToString() == "Alarm_Event")
                     {
-                        var xIndex = x[i];
-                        var yIndex = (double)y[i];
-                        var marker = originalChart.Plot.Add.Marker(xIndex, yIndex);
-                        if (events[i].ToString() == "Alarm_Event")
+                        if (enabledOriginalEventLine.IsChecked == true)
                         {
-                            marker.MarkerStyle.Shape = MarkerShape.FilledCircle;
-                            marker.MarkerStyle.Size = 10;
-                            marker.MarkerStyle.Fill.Color = ScottPlot.Color.FromARGB(4278190219); // Dark Blue
+                            var alarmEventLine = originalChart.Plot.Add.VerticalLine(xIndex);
+                            alarmEventLine.Text = "Alarm Event";
+                            alarmEventLine.LabelOppositeAxis = true;
+                            alarmEventLine.LineWidth = 1;
+                            alarmEventLine.Color = ScottPlot.Color.FromARGB(4278190219);
                         }
-                        else if (events[i].ToString() == "Error_Event")
+
+                        marker.MarkerStyle.Fill.Color = ScottPlot.Color.FromARGB(4278190219); // Dark Blue
+                    }
+                    else if (events[i].ToString() == "Error_Event")
+                    {
+                        if (enabledOriginalEventLine.IsChecked == true)
                         {
-                            marker.MarkerStyle.Shape = MarkerShape.FilledTriangleUp;
-                            marker.MarkerStyle.Size = 10;
-                            marker.MarkerStyle.Fill.Color = ScottPlot.Color.FromARGB(4294901760); // Red
+                            var errorEventLine = originalChart.Plot.Add.VerticalLine(xIndex);
+                            errorEventLine.Text = "Error Event";
+                            errorEventLine.LabelOppositeAxis = true;
+                            errorEventLine.LineWidth = 1;
+                            errorEventLine.Color = ScottPlot.Color.FromARGB(4294901760);
                         }
-                        else
-                        {
-                            marker.MarkerStyle.IsVisible = false;
-                        }
+
+                        marker.MarkerStyle.Shape = MarkerShape.FilledTriangleUp;
+                        marker.MarkerStyle.Fill.Color = ScottPlot.Color.FromARGB(4294901760); // Red
+                    }
+                    else
+                    {
+                        marker.MarkerStyle.IsVisible = false;
                     }
                 }
             }
@@ -567,10 +601,6 @@ namespace Szakdolgozat
         /// <inheritdoc cref="UpdateChart(ImportedFile, DataTable)"/>
         private void UpdateCustomChart(ImportedFile importedFile, DataTable dataTable)
         {
-            var alarmEventNumber = 0;
-            var errorEventNumber = 0;
-
-
             //Clear for other call
             CustomChart.Plot.Clear();
 
@@ -660,37 +690,65 @@ namespace Szakdolgozat
                     }
 
                     currentLine.MarkerStyle.IsVisible = false;
-                    for (int i = 0; i < events.Length; i++)
+                }
+
+
+                double[] xDoubles = new double[x.Length];
+                double[] yDoubles = new double[x.Length];
+                for (int i = 0; i < x.Length; i++)
+                {
+                    xDoubles[i] = x[i];
+                    yDoubles[i] = 0.0;
+                }
+
+                var eventLine = CustomChart.Plot.Add.Scatter(xDoubles, yDoubles);
+                eventLine.Label = "Event Line";
+                eventLine.MarkerStyle.IsVisible = false;
+
+                if (DarkModeToggleButton.IsChecked == true)
+                {
+                    eventLine.Color = ScottPlot.Color.FromHex("#ffffff");
+                }
+                else if (DarkModeToggleButton.IsChecked == false)
+                {
+                    eventLine.Color = ScottPlot.Color.FromHex("#000000");
+                }
+
+                for (int i = 0; i < events.Length; i++)
+                {
+                    var xIndex = x[i];
+                    var yIndex = 0;
+                    var marker = CustomChart.Plot.Add.Marker(xIndex, yIndex);
+                    if (events[i].ToString() == "Alarm_Event")
                     {
-                        var xIndex = x[i];
-                        var yIndex = (double)y[i];
-                        var marker = CustomChart.Plot.Add.Marker(xIndex, yIndex);
-                        if (events[i].ToString() == "Alarm_Event")
+                        if (enabledCustomEventLine.IsChecked == true)
                         {
-                            marker.MarkerStyle.Fill.Color = ScottPlot.Color.FromARGB(4278190219); // Dark Blue
-                            if (alarmEventNumber == 0)
-                            {
-                                marker.MarkerStyle.IsVisible = true;
-                                marker.Label = events[i].ToString();
-                                alarmEventNumber++;
-                            }
-                            
+                            var alarmEventLine = CustomChart.Plot.Add.VerticalLine(xIndex);
+                            alarmEventLine.Text = "Alarm Event";
+                            alarmEventLine.LabelOppositeAxis = true;
+                            alarmEventLine.LineWidth = 1;
+                            alarmEventLine.Color = ScottPlot.Color.FromARGB(4278190219);
                         }
-                        else if (events[i].ToString() == "Error_Event")
+
+                        marker.MarkerStyle.Fill.Color = ScottPlot.Color.FromARGB(4278190219); // Dark Blue
+                    }
+                    else if (events[i].ToString() == "Error_Event")
+                    {
+                        if (enabledCustomEventLine.IsChecked == true)
                         {
-                            marker.MarkerStyle.Shape = MarkerShape.FilledTriangleUp;
-                            marker.MarkerStyle.Fill.Color = ScottPlot.Color.FromARGB(4294901760); // Red
-                            if (errorEventNumber == 0)
-                            {
-                                marker.MarkerStyle.IsVisible = true;
-                                marker.Label = events[i].ToString();
-                                errorEventNumber++;
-                            }
+                            var errorEventLine = CustomChart.Plot.Add.VerticalLine(xIndex);
+                            errorEventLine.Text = "Error Event";
+                            errorEventLine.LabelOppositeAxis = true;
+                            errorEventLine.LineWidth = 1;
+                            errorEventLine.Color = ScottPlot.Color.FromARGB(4294901760);
                         }
-                        else
-                        {
-                            marker.MarkerStyle.IsVisible = false;
-                        }
+
+                        marker.MarkerStyle.Shape = MarkerShape.FilledTriangleUp;
+                        marker.MarkerStyle.Fill.Color = ScottPlot.Color.FromARGB(4294901760); // Red
+                    }
+                    else
+                    {
+                        marker.MarkerStyle.IsVisible = false;
                     }
                 }
             }
@@ -698,8 +756,6 @@ namespace Szakdolgozat
             {
                 MessageBox.Show("Excel contains invalid values! Invalid values are set to 0.", "Import warning!", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
-
-            CustomChart.Plot.Legend.ManualItems.Reverse();
 
             CustomChart.Plot.Axes.AutoScaleX();
             CustomChart.Plot.Axes.AutoScaleY();
@@ -1194,17 +1250,8 @@ namespace Szakdolgozat
             BackroundBehindTabs.Background = darkBackground;
             mainTabControl.Background = soliddarkBackground;
             controllerStackPanel.Background = darkBackground;
-            myNameText.Foreground = whiteColor;
-            homeButton.Foreground = whiteColor;
-            importExcel.Foreground = whiteColor;
-            importProject.Foreground = whiteColor;
-            exporttoexcel.Foreground = whiteColor;
-            exportproject.Foreground = whiteColor;
-            closeProject.Foreground = whiteColor;
             filesListing.Background = soliddarkBackground;
-            filesListing.Foreground = whiteColor;
-            sample_RadioButton.Foreground = whiteColor;
-            time_RadioButton.Foreground = whiteColor;
+            ColorModeSwitchForGrounds(whiteColor);
 
             homeButton.Icon = ImageForModeSwitch("Assets/home_light.png");
             importExcel.Icon = ImageForModeSwitch("Assets/document_light.png");
@@ -1223,17 +1270,8 @@ namespace Szakdolgozat
             BackroundBehindTabs.Background = lightBackground;
             mainTabControl.Background = lighterBackground;
             controllerStackPanel.Background= lighterBackground;
-            myNameText.Foreground = blackColor;
-            homeButton.Foreground = blackColor;
-            importExcel.Foreground = blackColor;
-            importProject.Foreground = blackColor;
-            exporttoexcel.Foreground = blackColor;
-            exportproject.Foreground = blackColor;
-            closeProject.Foreground = blackColor;
             filesListing.Background = whiteColor;
-            filesListing.Foreground = blackColor;
-            sample_RadioButton.Foreground = blackColor;
-            time_RadioButton.Foreground = blackColor;
+            ColorModeSwitchForGrounds(blackColor);
 
             homeButton.Icon = ImageForModeSwitch("Assets/home.png");
             importExcel.Icon = ImageForModeSwitch("Assets/document.png");
@@ -1241,6 +1279,26 @@ namespace Szakdolgozat
             exporttoexcel.Icon = ImageForModeSwitch("Assets/export.png");
             exportproject.Icon = ImageForModeSwitch("Assets/exportfile.png");
             closeProject.Icon = ImageForModeSwitch("Assets/exit.png");
+        }
+
+        private void ColorModeSwitchForGrounds(SolidColorBrush solidColorBrush)
+        {
+            myNameText.Foreground = solidColorBrush;
+            homeButton.Foreground = solidColorBrush;
+            importExcel.Foreground = solidColorBrush;
+            importProject.Foreground = solidColorBrush;
+            exporttoexcel.Foreground = solidColorBrush;
+            exportproject.Foreground = solidColorBrush;
+            closeProject.Foreground = solidColorBrush;
+            filesListing.Foreground = solidColorBrush;
+            sample_RadioButton.Foreground = solidColorBrush;
+            time_RadioButton.Foreground = solidColorBrush;
+            customEventLineTextBlock.Foreground = solidColorBrush;
+            enabledCustomEventLine.Foreground = solidColorBrush;
+            disabledCustomEventLine.Foreground = solidColorBrush;
+            originalEventLineTextBlock.Foreground = solidColorBrush;
+            enabledOriginalEventLine.Foreground = solidColorBrush;
+            disabledOriginalEventLine.Foreground = solidColorBrush;
         }
 
         private System.Windows.Controls.Image ImageForModeSwitch(string root)
@@ -1319,70 +1377,6 @@ namespace Szakdolgozat
             }
         }
 
-        private void originalChart_MouseMove(object sender, MouseEventArgs e)
-        {
-            var mousePos = Mouse.GetPosition(originalChart);
-
-            // var plotMousePos = originalChart.Plot.GetCoordinates((float)mousePos.X, (float)mousePos.Y);
-
-            foreach (var marker in originalChart.Plot.GetPlottables<ScottPlot.Plottables.Marker>())
-            {
-                if (marker.MarkerStyle.Shape == MarkerShape.FilledTriangleUp)
-                {
-                    double markerX = marker.X;
-                    double markerY = marker.Y;
-                    
-                    Coordinates coordinates = new Coordinates(markerX, markerY);
-
-                    var markerPixelPos = originalChart.Plot.GetPixel(coordinates);
-
-                    // Adott távolság (pl. 5 pixel) környékén van az egér a markertől
-                    if (Math.Abs(markerPixelPos.X - mousePos.X) < 50 && Math.Abs(markerPixelPos.Y - mousePos.Y) < 50)
-                    {
-                        // Ha közel van, akkor megjelenítjük a tooltip-et
-                        ShowTooltip("Error Event", mousePos.X, mousePos.Y);
-                        return;
-                        
-                    }
-                }
-            }
-
-            // Ha nem találunk közel lévő markert, elrejtjük a tooltip-et
-            HideTooltip();
-        }
-
-
-        private void ShowTooltip(string message, double x, double y)
-        {
-            // Létrehoz egy új ToolTip-t
-            var m_toolTip = new ToolTip();
-
-            // Hozzáad egy TextBlock-ot a ToolTip-hez
-            TextBlock textBlock = new TextBlock();
-            textBlock.Text = message;
-            m_toolTip.Content = textBlock;
-
-            // Beállítja a ToolTip pozícióját a megadott koordinátáknak megfelelően
-            m_toolTip.Placement = System.Windows.Controls.Primitives.PlacementMode.Right;
-            m_toolTip.PlacementTarget = originalChart;  // Az eredeti diagram a célpont
-            m_toolTip.HorizontalOffset = x;
-            m_toolTip.VerticalOffset = y;
-            m_toolTip.Height = 40;
-            m_toolTip.Width = 80;
-
-            notifyIcon.ToolTipText = textBlock.Text;
-            notifyIcon.ToolTip = m_toolTip;
-            // Beállítja a ToolTip-et az eredeti diagramhoz
-            // ToolTipService.SetToolTip(originalChart, m_toolTip);
-        }
-
-        private void HideTooltip()
-        {
-            //m_toolTip = null;
-            //ToolTipService.SetToolTip(originalChart, m_toolTip);
-            notifyIcon.ToolTip = null;
-        }
-
         private void RadioButtonMode_Checked(object sender, RoutedEventArgs e)
         {
             if (sample_RadioButton.IsChecked == true)
@@ -1424,6 +1418,32 @@ namespace Szakdolgozat
                     invalidvalueTextBlock.Foreground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 0, 0));
                 }
 
+                UpdateChart(m_ImportedFile, m_OriginalDataTable);
+                UpdateCustomChart(m_ImportedFile, m_CustomDataTable);
+            }
+        }
+
+        private void enabledCustomEventLine_Checked(object sender, RoutedEventArgs e)
+        {
+        }
+
+        private void saveCustomEventLines_Click(object sender, RoutedEventArgs e)
+        {
+            if (m_ImportedFile != null && m_OriginalDataTable != null && m_CustomDataTable != null)
+            {
+                UpdateChart(m_ImportedFile, m_OriginalDataTable);
+                UpdateCustomChart(m_ImportedFile, m_CustomDataTable);
+            }
+        }
+
+        private void enabledOriginalEventLine_Checked(object sender, RoutedEventArgs e)
+        {
+        }
+
+        private void saveOriginalEventLines_Click(object sender, RoutedEventArgs e)
+        {
+            if (m_ImportedFile != null && m_OriginalDataTable != null && m_CustomDataTable != null)
+            {
                 UpdateChart(m_ImportedFile, m_OriginalDataTable);
                 UpdateCustomChart(m_ImportedFile, m_CustomDataTable);
             }

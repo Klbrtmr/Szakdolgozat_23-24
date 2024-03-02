@@ -67,7 +67,7 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="150"/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
 
@@ -93,20 +93,26 @@
                             <RadioButton x:Name="sample_RadioButton" Grid.Row="2"
                                          Grid.Column="1" IsChecked="True"
                                          Margin="10"
-                                         Checked="RadioButtonMode_Checked">Sample</RadioButton>
+                                         VerticalContentAlignment="Center"
+                                         FontSize="20" FontFamily="Times New Roman" FontWeight="Bold"
+                                         Checked="RadioButtonMode_Checked" >Sample</RadioButton>
                             <TextBox x:Name="timeUnitTextBox" Grid.Row="3"
                                      Grid.Column="0" Text="1"
                                      Margin="0,10"
                                      IsReadOnly="True"></TextBox>
                             <RadioButton x:Name="time_RadioButton" Grid.Row="3"
                                          Grid.Column="1" Margin="10"
+                                         VerticalContentAlignment="Center"
+                                         FontSize="20" FontFamily="Times New Roman" FontWeight="Bold"
                                          Checked="RadioButtonMode_Checked">Time (s)</RadioButton>
 
                             <TextBlock x:Name="invalidvalueTextBlock" Grid.Row="4" 
                                        Grid.Column="0" Margin="0,5"
+                                       FontSize="20" FontFamily="Times New Roman" FontWeight="Bold"
                                        Visibility="Hidden">Invalid value!</TextBlock>
                             <Button x:Name="saveTimeUnitButton" Grid.Row="5"
                                     Grid.Column="0" Margin="0,5"
+                                    FontSize="20" FontFamily="Times New Roman" FontWeight="Bold"
                                     Click="saveTimeUnitButton_Click">Save</Button>
                             
                             <ToolBarTray Grid.Row="0" Grid.ColumnSpan="2">
@@ -128,8 +134,15 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <DataGrid Name="excelDataGrid" Grid.Row="1" ColumnWidth="Auto"
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <DataGrid Name="excelDataGrid" Grid.Row="0"
+                                      Grid.ColumnSpan="2"
                                       AutoGenerateColumns="True"
                                       HorizontalAlignment="Stretch" 
                                       VerticalAlignment="Stretch"
@@ -144,6 +157,24 @@
                                                     Path=ActualHeight, 
                                                     Converter={StaticResource PercentageConverter}, 
                                                     ConverterParameter=0.67}"/>
+                            <TextBlock x:Name="originalEventLineTextBlock"
+                                       Grid.Row="1" Grid.Column="0"
+                                       FontSize="20" FontFamily="Times New Roman" FontWeight="Bold"
+                                       Margin="10" Visibility="Visible">Enable Event Lines</TextBlock>
+                            <RadioButton x:Name="enabledOriginalEventLine"
+                                         Grid.Row="2" Grid.Column="0" Margin="10"
+                                         IsChecked="True"
+                                         VerticalContentAlignment="Center"
+                                         FontSize="20" FontFamily="Times New Roman" FontWeight="Bold"
+                                         Checked="enabledOriginalEventLine_Checked">Enabled</RadioButton>
+                            <RadioButton x:Name="disabledOriginalEventLine"
+                                         Grid.Row="2" Grid.Column="1" Margin="10"
+                                         VerticalContentAlignment="Center"
+                                         FontSize="20" FontFamily="Times New Roman" FontWeight="Bold"
+                                         Checked="enabledOriginalEventLine_Checked">Disabled</RadioButton>
+                            <Button x:Name="saveOriginalEventLines" Grid.Row="3"
+                                    FontSize="20" FontFamily="Times New Roman" FontWeight="Bold"
+                                    Grid.Column="0" Margin="0,10" Click="saveOriginalEventLines_Click">Save</Button>
                         </Grid>
                     </TabItem>
                     <TabItem Header="Chart"
@@ -152,7 +183,7 @@
                              FontSize="15"
                              Width="120">
                         <Grid x:Name="Layoutroot" Background="White">
-                            <ScottPlot:WpfPlot x:Name="originalChart" MouseDoubleClick="myPlot_MouseDoubleClick" MouseMove="originalChart_MouseMove"/>
+                            <ScottPlot:WpfPlot x:Name="originalChart" MouseDoubleClick="myPlot_MouseDoubleClick"/>
                         </Grid>
                     </TabItem>
                     <TabItem Header="Custom Table" 
@@ -164,8 +195,16 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <DataGrid Name="excelCustomDataGrid" Grid.Row="1" ColumnWidth="Auto"
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <DataGrid Name="excelCustomDataGrid" Grid.Row="0"
+                                      Grid.ColumnSpan="2"
                                       AutoGenerateColumns="True"
                                       HorizontalAlignment="Stretch" 
                                       VerticalAlignment="Stretch"
@@ -182,6 +221,25 @@
                                                     Path=ActualHeight, 
                                                     Converter={StaticResource PercentageConverter}, 
                                                     ConverterParameter=0.67}" CellEditEnding="excelCustomDataGrid_CellEditEnding"/>
+                            
+                            <TextBlock x:Name="customEventLineTextBlock" 
+                                       Grid.Row="1" Grid.Column="0"
+                                       FontSize="20" FontFamily="Times New Roman" FontWeight="Bold"
+                                       Margin="10" Visibility="Visible">Enable Event Lines</TextBlock>
+                            <RadioButton x:Name="enabledCustomEventLine"
+                                         Grid.Row="2" Grid.Column="0" Margin="10"
+                                         IsChecked="True"
+                                         VerticalContentAlignment="Center"
+                                         FontSize="20" FontFamily="Times New Roman" FontWeight="Bold"
+                                         Checked="enabledCustomEventLine_Checked">Enabled</RadioButton>
+                            <RadioButton x:Name="disabledCustomEventLine"
+                                         Grid.Row="2" Grid.Column="1" Margin="10"
+                                         VerticalContentAlignment="Center"
+                                         FontSize="20" FontFamily="Times New Roman" FontWeight="Bold"
+                                         Checked="enabledCustomEventLine_Checked">Disabled</RadioButton>
+                            <Button x:Name="saveCustomEventLines" Grid.Row="3"
+                                    FontSize="20" FontFamily="Times New Roman" FontWeight="Bold"
+                                    Grid.Column="0" Margin="0,10" Click="saveCustomEventLines_Click">Save</Button>
                         </Grid>
                     </TabItem>
                     <TabItem Header="Custom Chart" 
