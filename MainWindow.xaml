@@ -50,7 +50,7 @@
             <Border x:Name="tabControlBorder" CornerRadius="2" BorderThickness="2">
                 <TabControl x:Name="mainTabControl" Background="DarkGray"
                         VerticalContentAlignment="Stretch"
-                        DockPanel.Dock="Top" SelectionChanged="mainTabControl_SelectionChanged">
+                        DockPanel.Dock="Top">
                     
                     <TabItem Header="Configuration" 
                              FontFamily="Times New Roman" 

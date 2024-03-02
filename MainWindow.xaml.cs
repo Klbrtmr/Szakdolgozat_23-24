@@ -18,7 +18,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using Hardcodet.Wpf.TaskbarNotification;
 
 namespace Szakdolgozat
 {
@@ -32,7 +31,6 @@ namespace Szakdolgozat
         {
             InitializeComponent();
             importProgressBar = FindName("importProgressBar") as ProgressBar;
-            notifyIcon = new TaskbarIcon();
             
         }
 
@@ -69,20 +67,27 @@ namespace Szakdolgozat
         /// </summary>
         private DataTable m_CustomDataTable;
 
-        private TaskbarIcon notifyIcon;
-
         /// <summary>
         /// Number of imported file from one package file.
         /// </summary>
         private int m_importedFileNumber;
 
+        /// <summary>
+        /// Current ID for files.
+        /// </summary>
         private int currentID = 0;
 
+        /// <summary>
+        /// Color list for configuration page.
+        /// </summary>
         private List<string> colorList = new List<string>{ 
             "Black", "White", "Grey", "Blond", "Brown", 
             "Dark Blue", "Cyan", "Ice", "Red", "Green", 
             "LimeGreen", "Purple", "Pink", "Yellow", "Orange" };
 
+        /// <summary>
+        /// Sample or time stamp for chart.
+        /// </summary>
         private double m_Stamp = 1.0;
 
         /// <summary>
@@ -231,8 +236,6 @@ namespace Szakdolgozat
                     }
                 }
 
-                // customCellValues = cellValues;
-
                 customCellValues = new object[cellValues.GetLength(0), cellValues.GetLength(1)];
                 Array.Copy(cellValues, customCellValues, cellValues.Length);
 
@@ -308,8 +311,7 @@ namespace Szakdolgozat
         }
 
         /// <summary>
-        /// Double click to file.
-        /// TODO: More functions will be implement later.
+        /// Double click to file and opened it.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -333,17 +335,6 @@ namespace Szakdolgozat
             }
         }
 
-        private void mainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (mainTabControl.SelectedItem is TabItem selectedTabItem)
-            {
-                if (selectedTabItem.DataContext is ImportedFile selectedImportedFile)
-                {
-                    //DisplayExcelData(selectedImportedFile);
-                }
-            }
-        }
-
         /// <summary>
         /// Display Excel Data in a dataTable.
         /// </summary>
@@ -353,7 +344,6 @@ namespace Szakdolgozat
             m_OriginalDataTable = ConvertArrayToDataTable(importedFile.ExcelData);
             excelDataGrid.ItemsSource = m_OriginalDataTable.DefaultView;
 
-            //DataTable customDataTable = ConvertArrayToDataTable(importedFile.ExcelData);
             m_CustomDataTable = ConvertArrayToDataTable(importedFile.CustomExcelData);
             excelCustomDataGrid.ItemsSource = m_CustomDataTable.DefaultView;
 
@@ -363,7 +353,6 @@ namespace Szakdolgozat
             this.m_ImportedFile = importedFile;
             UpdateChart(importedFile, m_OriginalDataTable);
             UpdateCustomChart(importedFile, m_CustomDataTable);
-            // UpdateSpecialChart(importedFile, m_OriginalDataTable);
         }
 
         /// <summary>
@@ -402,6 +391,11 @@ namespace Szakdolgozat
             return dataTable;
         }
 
+        /// <summary>
+        /// Convert from the imported file datas to datatable for config page.
+        /// </summary>
+        /// <param name="array"></param>
+        /// <returns>Returns with config page grid for signal color choice</returns>
         private DataTable ConvertArrayToDataTableConfigPage(object[,] array)
         {
             DataTable dataTable = new DataTable();
@@ -411,7 +405,7 @@ namespace Szakdolgozat
             DataGridTemplateColumn templateColumn = new DataGridTemplateColumn();
             templateColumn.Header = "Colors";
 
-            // DataTemplate létrehozása, ami tartalmazza a ComboBox-ot
+            // Create DataTemplate, which contains the ComboBox
             FrameworkElementFactory comboBoxFactory = new FrameworkElementFactory(typeof(ComboBox));
             comboBoxFactory.SetValue(ComboBox.ItemsSourceProperty, colorList);
             comboBoxFactory.SetBinding(ComboBox.SelectedValueProperty, new Binding("Colors"));
@@ -877,61 +871,10 @@ namespace Szakdolgozat
         }
 
         /// <summary>
-        /// "Save as PNG" toolbar button eventhandler. 
+        /// Export project to special '.EDF' file.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void saveaspng_Click(object sender, RoutedEventArgs e)
-        {
-            SaveFileDialog saveFileDialog = new SaveFileDialog
-            {
-                Filter = "PNG Files (*.png)|*.png",
-                Title = "Save as PNG"
-            };
-
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                // SaveChartAsPng(saveFileDialog.FileName, plotter);
-            }
-        }
-
-        /// <inheritdoc cref="saveaspng_Click(object, RoutedEventArgs)"/>
-        private void customsaveaspng_Click(object sender, RoutedEventArgs e)
-        {
-            SaveFileDialog saveFileDialog = new SaveFileDialog
-            {
-                Filter = "PNG Files (*.png)|*.png",
-                Title = "Save as PNG"
-            };
-
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                //SaveChartAsPng(saveFileDialog.FileName, customplotter);
-            }
-        }
-
-        /// <summary>
-        /// Save chart to PNG.
-        /// </summary>
-        /// <param name="filePath"></param>
-        /// <param name="chartName"></param>
-        private void SaveChartAsPng(string filePath, InteractiveDataDisplay.WPF.Chart chartName)
-        {
-            // Create a RenderTargetBitmap for the chart
-            var renderTargetBitmap = new RenderTargetBitmap((int)chartName.ActualWidth, (int)chartName.ActualHeight, 96, 96, PixelFormats.Pbgra32);
-            renderTargetBitmap.Render(chartName);
-
-            // Create a PNG encoder
-            var pngEncoder = new PngBitmapEncoder();
-            pngEncoder.Frames.Add(BitmapFrame.Create(renderTargetBitmap));
-
-            // Save to file
-            using (var stream = File.Create(filePath))
-            {
-                pngEncoder.Save(stream);
-            }
-        }
-
         private void exportproject_Click(object sender, RoutedEventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -970,7 +913,11 @@ namespace Szakdolgozat
             }
         }
 
-
+        /// <summary>
+        /// Export custom table to excel file.
+        /// </summary>
+        /// <param name="importedFile"></param>
+        /// <param name="outputDirectory"></param>
         private void ExportToExcel(ImportedFile importedFile, string outputDirectory)
         {
             string outputPath = System.IO.Path.Combine(outputDirectory, importedFile.FileName + "_customtable.xlsx");
@@ -994,6 +941,11 @@ namespace Szakdolgozat
             }
         }
 
+        /// <summary>
+        /// Import project from special '.EDF' file.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void importProject_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -1069,6 +1021,11 @@ namespace Szakdolgozat
             }
         }
 
+        /// <summary>
+        /// Investigate excel file.
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
         private bool IsValidExcelFile(string filePath)
         {
             try
@@ -1087,6 +1044,10 @@ namespace Szakdolgozat
             }
         }
 
+        /// <summary>
+        /// Import excel file from edf package file.
+        /// </summary>
+        /// <param name="excelFilePath"></param>
         private void ImportExcelFile(string excelFilePath)
         {
             try
@@ -1178,6 +1139,11 @@ namespace Szakdolgozat
             }
         }
 
+        /// <summary>
+        /// Double mouse click to centered viewsettings.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void myPlot_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             originalChart.Plot.Axes.AutoScaleX();
@@ -1188,6 +1154,11 @@ namespace Szakdolgozat
             CustomChart.Refresh();
         }
 
+        /// <summary>
+        /// Switch between dark and light mode.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DarkModeToggleButton_Click(object sender, RoutedEventArgs e)
         {
             if (DarkModeToggleButton.IsChecked == true)
@@ -1213,6 +1184,9 @@ namespace Szakdolgozat
             }
         }
 
+        /// <summary>
+        /// Light mode for chart view.
+        /// </summary>
         private void LightModeForCharts()
         {
             originalChart.Plot.Style.ColorAxes(ScottPlot.Color.FromHex("#000000"));
@@ -1242,6 +1216,9 @@ namespace Szakdolgozat
                 border: ScottPlot.Color.FromHex("#000000"));
         }
 
+        /// <summary>
+        /// Text and image settings for dark mode.
+        /// </summary>
         private void DarkModeForBackGround()
         {
             SolidColorBrush darkBackground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(40, 40, 40)); // dark gray
@@ -1261,6 +1238,9 @@ namespace Szakdolgozat
             closeProject.Icon = ImageForModeSwitch("Assets/exit_light.png");
         }
 
+        /// <summary>
+        /// Text and image settings for light mode.
+        /// </summary>
         private void LightModeForBackGround()
         {
             SolidColorBrush lightBackground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(128, 128, 128)); // gray
@@ -1281,6 +1261,10 @@ namespace Szakdolgozat
             closeProject.Icon = ImageForModeSwitch("Assets/exit.png");
         }
 
+        /// <summary>
+        /// Helper method for dark-light mode for texts.
+        /// </summary>
+        /// <param name="solidColorBrush"></param>
         private void ColorModeSwitchForGrounds(SolidColorBrush solidColorBrush)
         {
             myNameText.Foreground = solidColorBrush;
@@ -1301,6 +1285,11 @@ namespace Szakdolgozat
             disabledOriginalEventLine.Foreground = solidColorBrush;
         }
 
+        /// <summary>
+        /// Helper method for dark-light mode for images.
+        /// </summary>
+        /// <param name="root"></param>
+        /// <returns>Returns with right images.</returns>
         private System.Windows.Controls.Image ImageForModeSwitch(string root)
         {
             System.Windows.Controls.Image icon = new System.Windows.Controls.Image();
@@ -1310,6 +1299,11 @@ namespace Szakdolgozat
             return icon;
         }
 
+        /// <summary>
+        /// Color selection at combobox in the config page.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ColorConverter colorConverter = new ColorConverter();
@@ -1377,6 +1371,11 @@ namespace Szakdolgozat
             }
         }
 
+        /// <summary>
+        /// Radio Button change between sample and time modes.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void RadioButtonMode_Checked(object sender, RoutedEventArgs e)
         {
             if (sample_RadioButton.IsChecked == true)
@@ -1396,6 +1395,11 @@ namespace Szakdolgozat
             }
         }
 
+        /// <summary>
+        /// Save button between sample and time mode.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void saveTimeUnitButton_Click(object sender, RoutedEventArgs e)
         {
             if (m_ImportedFile != null && m_OriginalDataTable != null && m_CustomDataTable != null)
@@ -1423,10 +1427,20 @@ namespace Szakdolgozat
             }
         }
 
+        /// <summary>
+        /// I dont know its should be here.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void enabledCustomEventLine_Checked(object sender, RoutedEventArgs e)
         {
         }
 
+        /// <summary>
+        /// Save button between show and hide extra lines on custom chart.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void saveCustomEventLines_Click(object sender, RoutedEventArgs e)
         {
             if (m_ImportedFile != null && m_OriginalDataTable != null && m_CustomDataTable != null)
@@ -1436,10 +1450,20 @@ namespace Szakdolgozat
             }
         }
 
+        /// <summary>
+        /// I dont know its should be here.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void enabledOriginalEventLine_Checked(object sender, RoutedEventArgs e)
         {
         }
 
+        /// <summary>
+        /// Save button between show and hide extra lines on original chart.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void saveOriginalEventLines_Click(object sender, RoutedEventArgs e)
         {
             if (m_ImportedFile != null && m_OriginalDataTable != null && m_CustomDataTable != null)
