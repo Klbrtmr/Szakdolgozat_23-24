@@ -13,7 +13,7 @@ namespace Szakdolgozat
 
             string colorString = colorObject.ToString();
 
-            // private List<string> colorList = new List<string>{ "Black", "White", "Grey", "Blond", "Brown", "Dark Blue", "Cyan", "Ice, "Red", "Green", "LimeGreen", "Purple", "Pink", "Yellow" };
+            // private List<string> colorList = new List<string>{ "Black", "White", "Grey", "Gold", "Brown", "Dark Blue", "Cyan", "Ice", "Red", "Green", "LimeGreen", "Purple", "Pink", "Yellow", "Orange" };
 
             if (colorString == "Black")
             {
@@ -21,59 +21,59 @@ namespace Szakdolgozat
             }
             else if (colorString == "White")
             {
-                return "#ffffff";
+                return "#FFFFFF";
             }
-            else if (colorString == "Grey")
+            else if (colorString == "Gray")
             {
-                return "#333333";
+                return "#808080";
             }
-            else if (colorString == "Blond")
+            else if (colorString == "Gold")
             {
-                return "#faf0be";
+                return "#FFD700";
             }
             else if (colorString == "Brown")
             {
-                return "#964b00";
+                return "#A52A2A";
             }
-            else if (colorString == "Dark Blue")
+            else if (colorString == "Blue")
             {
-                return "#0000ff";
+                return "#0000FF";
             }
             else if (colorString == "Cyan")
             {
-                return "#00ffff";
+                return "#00FFFF";
             }
-            else if (colorString == "Ice")
+            else if (colorString == "Alice Blue")
             {
-                return "#c6e2ff";
+                return "#F0F8FF";
             }
             else if (colorString == "Red")
             {
-                return "#ff0000";
+                return "#FF0000";
             }
             else if (colorString == "Green")
             {
-                return "#00ff00";
+                return "#7CFC00";
             }
             else if (colorString == "LimeGreen")
             {
-                return "#32cd32";
+                return "#32CD32";
             }
             else if (colorString == "Purple")
             {
-                return "#a020f0";
+                return "#800080";
             }
             else if (colorString == "Pink")
             {
-                return "#ff6ec7";
+                return "#FF1493";
             }
             else if (colorString == "Yellow")
             {
-                return "#ffff00";
+                return "#FFFF00";
             }
             else if (colorString == "Orange")
             {
-                return "#ff9500";
+                return "#FFA500";
             }
 
             return "#000000";

@@ -84,8 +84,8 @@ namespace Szakdolgozat
         /// Color list for configuration page.
         /// </summary>
         private List<string> colorList = new List<string>{ 
-            "Black", "White", "Grey", "Blond", "Brown", 
-            "Dark Blue", "Cyan", "Ice", "Red", "Green", 
+            "Black", "White", "Gray", "Gold", "Brown", 
+            "Blue", "Cyan", "Alice Blue", "Red", "Green", 
             "LimeGreen", "Purple", "Pink", "Yellow", "Orange" };
 
         /// <summary>

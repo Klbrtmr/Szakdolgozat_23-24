@@ -19,28 +19,28 @@ namespace Szakdolgozat
                     return Brushes.Black;
                 case "White":
                     return Brushes.White;
-                case "Grey":
+                case "Gray":
                     return Brushes.Gray;
-                case "Blond":
+                case "Gold":
                     return Brushes.Gold;
                 case "Brown":
                     return Brushes.Brown;
-                case "Dark Blue":
-                    return Brushes.DarkBlue;
+                case "Blue":
+                    return Brushes.Blue;
                 case "Cyan":
                     return Brushes.Cyan;
-                case "Ice":
+                case "Alice Blue":
                     return Brushes.AliceBlue;
                 case "Red":
                     return Brushes.Red;
                 case "Green":
-                    return Brushes.Green;
+                    return Brushes.LawnGreen;
                 case "LimeGreen":
                     return Brushes.LimeGreen;
                 case "Purple":
                     return Brushes.Purple;
                 case "Pink":
-                    return Brushes.Pink;
+                    return Brushes.DeepPink;
                 case "Yellow":
                     return Brushes.Yellow;
                 case "Orange":
