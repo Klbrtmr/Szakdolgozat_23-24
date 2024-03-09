@@ -1,4 +1,5 @@
-﻿using ExcelDataReader;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using ExcelDataReader;
 using ICSharpCode.SharpZipLib.Zip;
 using LiveCharts;
 using Microsoft.Win32;
@@ -7,12 +8,14 @@ using ScottPlot;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -398,9 +401,12 @@ namespace Szakdolgozat
         /// <returns>Returns with config page grid for signal color choice</returns>
         private DataTable ConvertArrayToDataTableConfigPage(object[,] array)
         {
+            SolidColorBrush blueBackground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 0, 255));
+
             DataTable dataTable = new DataTable();
 
             dataTable.Columns.Add("Signal Name", typeof(string));
+            dataTable.Columns.Add("Color Preview", typeof(Brush));
 
             DataGridTemplateColumn templateColumn = new DataGridTemplateColumn();
             templateColumn.Header = "Colors";
@@ -1317,10 +1323,32 @@ namespace Szakdolgozat
                 // Get the DataGridRow for the given DataGridCell
                 DataGridRow row = FindVisualParent<DataGridRow>(cell);
 
-                if (row != null)
+                DataGridRow colorRow = FindVisualParent<DataGridRow>(comboBox);
+
+                if (row != null && colorRow != null)
                 {
                     var selectedValue = comboBox.SelectedValue;
                     var colorInHexa = colorConverter.ConvertFromString(selectedValue);
+                    var colorInHexa2 = ColorConverterForBrushes.Instance.Convert(selectedValue, typeof(Brush), null, CultureInfo.CurrentCulture);
+
+                    // Az adott sorban lévő "Color Preview" oszlop háttérszínének beállítása
+                    DataRowView dataRowView = colorRow.Item as DataRowView;
+                    DataRowView dataRowView2 = row.Item as DataRowView;
+
+                    DataGridCell cell2 = GetCell(configGrid, row, 2); // 1: "Color Preview" oszlop indexe
+
+                    if (cell2 != null)
+                    {
+                        cell2.Background = colorInHexa2 as Brush;
+                    }
+
+
+                    if (dataRowView != null)
+                    {
+                        // dataRowView["Color Preview"] = colorInHexa2;
+                    }
+
+
 
                     if (originalChart != null)
                     {
@@ -1345,6 +1373,39 @@ namespace Szakdolgozat
                     }
                 }
             }
+        }
+
+        private DataGridCell GetCell(DataGrid grid, DataGridRow row, int columnIndex)
+        {
+            if (row != null)
+            {
+                DataGridCellsPresenter presenter = GetVisualChild<DataGridCellsPresenter>(row);
+                if (presenter != null)
+                {
+                    return presenter.ItemContainerGenerator.ContainerFromIndex(columnIndex) as DataGridCell;
+                }
+            }
+            return null;
+        }
+
+        private T GetVisualChild<T>(Visual parent) where T : Visual
+        {
+            T child = default(T);
+            int numVisuals = VisualTreeHelper.GetChildrenCount(parent);
+            for (int i = 0; i < numVisuals; i++)
+            {
+                Visual v = (Visual)VisualTreeHelper.GetChild(parent, i);
+                child = v as T;
+                if (child == null)
+                {
+                    child = GetVisualChild<T>(v);
+                }
+                if (child != null)
+                {
+                    break;
+                }
+            }
+            return child;
         }
 
         /// <summary>
