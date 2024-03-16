@@ -1,5 +1,4 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
-using ExcelDataReader;
+﻿using ExcelDataReader;
 using ICSharpCode.SharpZipLib.Zip;
 using LiveCharts;
 using Microsoft.Win32;
@@ -34,7 +33,6 @@ namespace Szakdolgozat
         {
             InitializeComponent();
             importProgressBar = FindName("importProgressBar") as ProgressBar;
-            
         }
 
         //indoklások az elrendezés miatt a szakdogaban
@@ -83,9 +81,9 @@ namespace Szakdolgozat
         /// <summary>
         /// Color list for configuration page.
         /// </summary>
-        private List<string> colorList = new List<string>{ 
-            "Black", "White", "Gray", "Gold", "Brown", 
-            "Blue", "Cyan", "Alice Blue", "Red", "Green", 
+        private List<string> colorList = new List<string>{
+            "Black", "White", "Gray", "Gold", "Brown",
+            "Blue", "Cyan", "Alice Blue", "Red", "Green",
             "LimeGreen", "Purple", "Pink", "Yellow", "Orange" };
 
         /// <summary>
@@ -155,8 +153,8 @@ namespace Szakdolgozat
                     counter++;
                 }
 
-                System.Windows.Media.Color displayColor = 
-                    selectedFiles.FirstOrDefault(file => file.FileName == newFileName)?.DisplayColor 
+                System.Windows.Media.Color displayColor =
+                    selectedFiles.FirstOrDefault(file => file.FileName == newFileName)?.DisplayColor
                     ?? GenerateRandomColorForFiles();
 
 
@@ -200,7 +198,7 @@ namespace Szakdolgozat
                             {
                                 for (int i = 0; i < dataSet.Tables[0].Columns.Count; i++)
                                 {
-                                    cellValues[0,i] = dataSet.Tables[0].Rows[0].ItemArray[i];
+                                    cellValues[0, i] = dataSet.Tables[0].Rows[0].ItemArray[i];
                                 }
 
                                 for (int i = 1; i < dataSet.Tables[0].Rows.Count; i++)
@@ -211,7 +209,7 @@ namespace Szakdolgozat
 
                                         if (double.TryParse(actualValue.ToString(), out double parsedValue))
                                         {
-                                            cellValues[i,j] = parsedValue;
+                                            cellValues[i, j] = parsedValue;
                                         }
                                         else if (actualValue.ToString().EndsWith("Event"))
                                         {
@@ -220,7 +218,7 @@ namespace Szakdolgozat
                                         else
                                         {
                                             // Logic for invalid values
-                                            cellValues[i,j] = 0.0;
+                                            cellValues[i, j] = 0.0;
                                         }
                                     }
                                 }
@@ -425,7 +423,7 @@ namespace Szakdolgozat
             {
                 configGrid.Columns.Add(templateColumn);
             }
-            
+
             for (int columnIndex = 2; columnIndex < array.GetLength(1); columnIndex++)
             {
                 DataRow dataRow = dataTable.NewRow();
@@ -610,11 +608,11 @@ namespace Szakdolgozat
             {
                 CustomChart.Plot.XLabel("Samples");
             }
-            else if(time_RadioButton.IsChecked == true)
+            else if (time_RadioButton.IsChecked == true)
             {
                 CustomChart.Plot.XLabel("Time (s)");
             }
-            
+
             CustomChart.Plot.YLabel("Values");
 
             bool invalidvalues = false;
@@ -762,7 +760,7 @@ namespace Szakdolgozat
             CustomChart.Plot.ShowLegend();
             CustomChart.Refresh();
         }
-        
+
         /// <summary>
         /// Handle when in the custom data grid edited cell(s). Save the new value to the customCellValues array.
         /// </summary>
@@ -829,6 +827,11 @@ namespace Szakdolgozat
         /// <param name="e"></param>
         private void exporttoexcel_Click(object sender, RoutedEventArgs e)
         {
+            if (m_ImportedFile == null)
+            {
+                return;
+            }
+
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
                 Filter = "Excel file (*.xlsx)|*.xlsx",
@@ -1117,7 +1120,7 @@ namespace Szakdolgozat
 
                         int newID = GenerateNewID();
                         System.Windows.Media.Color displayColor = selectedFiles
-                            .FirstOrDefault(file => file.FileName == System.IO.Path.GetFileNameWithoutExtension(excelFilePath))?.DisplayColor 
+                            .FirstOrDefault(file => file.FileName == System.IO.Path.GetFileNameWithoutExtension(excelFilePath))?.DisplayColor
                             ?? GenerateRandomColorForFiles();
 
                         var customCellValue = new object[cellValues.GetLength(0), cellValues.GetLength(1)];
@@ -1250,12 +1253,12 @@ namespace Szakdolgozat
         private void LightModeForBackGround()
         {
             SolidColorBrush lightBackground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(128, 128, 128)); // gray
-            SolidColorBrush lighterBackground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(169, 169 ,169));
+            SolidColorBrush lighterBackground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(169, 169, 169));
             SolidColorBrush blackColor = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 0, 0));
             SolidColorBrush whiteColor = new SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 255, 255));
             BackroundBehindTabs.Background = lightBackground;
             mainTabControl.Background = lighterBackground;
-            controllerStackPanel.Background= lighterBackground;
+            controllerStackPanel.Background = lighterBackground;
             filesListing.Background = whiteColor;
             ColorModeSwitchForGrounds(blackColor);
 
