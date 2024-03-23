@@ -266,8 +266,22 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ColorConverter.cs" />
-    <Compile Include="ColorConverterForBrushes.cs" />
+    <Compile Include="Converters\ColorConverter.cs" />
+    <Compile Include="Converters\ColorConverterForBrushes.cs" />
+    <Compile Include="Converters\ColorGenerator.cs" />
+    <Compile Include="Helper\ChildParentHelper.cs" />
+    <Compile Include="Interfaces\IChartControl.cs" />
+    <Compile Include="Interfaces\IExportControl.cs" />
+    <Compile Include="Interfaces\IFileHandler.cs" />
+    <Compile Include="Interfaces\IImportControl.cs" />
+    <Compile Include="Interfaces\IUIColorUpdate.cs" />
+    <Compile Include="Interfaces\IUIHelper.cs" />
+    <Compile Include="ViewModel\ChartControl.cs" />
+    <Compile Include="ViewModel\ExportControl.cs" />
+    <Compile Include="ViewModel\FileHandler.cs" />
+    <Compile Include="ViewModel\ImportControl.cs" />
+    <Compile Include="View\UIColorUpdate.cs" />
+    <Compile Include="View\UIHelper.cs" />
     <Compile Include="VisibilityToCheckedConverter.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -280,14 +294,14 @@
     <Compile Include="Chart.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ImportedFile.cs" />
+    <Compile Include="Model\ImportedFile.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PercentageConverter.cs" />
+    <Compile Include="Converters\PercentageConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -315,9 +329,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Fonts\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Resource Include="Assets\add-document.png" />
     <Resource Include="Assets\chart-histogram.png" />

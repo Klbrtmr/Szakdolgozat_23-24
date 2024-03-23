@@ -3,8 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Szakdolgozat" xmlns:my="clr-namespace:Steema.TeeChart.WPF;assembly=TeeChart.WPF"
-        xmlns:d3="clr-namespace:InteractiveDataDisplay.WPF;assembly=InteractiveDataDisplay.WPF"
+        xmlns:local="clr-namespace:Szakdolgozat"
         xmlns:ScottPlot="clr-namespace:ScottPlot.WPF;assembly=ScottPlot.WPF"
         mc:Ignorable="d"
         Title="Szakdolgozat"
@@ -12,7 +11,8 @@
         MinWidth="1080"
         Width="Auto"
         Height="Auto"
-        WindowStartupLocation="CenterScreen" Icon="/Assets/broken-heart.png" Background="Gray">
+        WindowStartupLocation="CenterScreen" 
+        Icon="/Assets/broken-heart.png" Background="Gray">
 
     <Window.Resources>
         <local:VisibilityToCheckedConverter x:Key="VisibilityToCheckedConverter"/>
@@ -21,9 +21,7 @@
     <!-- Background Grid -->
 
     <Grid x:Name="BackroundBehindTabs" Background="Gray">
-        
-        
-        
+
         <!-- Copyrights title -->
         
         <TextBlock Text="K o l b e r t  Z o l t á n  M á r i ó"
@@ -43,8 +41,6 @@
                 Margin="0,0,0,8" Panel.ZIndex="999"/>
 
         <!-- Working area -->
-
-        
 
         <DockPanel Margin="230,0,0,0">
             <Border x:Name="tabControlBorder" CornerRadius="2" BorderThickness="2">
@@ -220,7 +216,8 @@
                                       MaxHeight="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, 
                                                     Path=ActualHeight, 
                                                     Converter={StaticResource PercentageConverter}, 
-                                                    ConverterParameter=0.67}" CellEditEnding="excelCustomDataGrid_CellEditEnding"/>
+                                                    ConverterParameter=0.67}"
+                                      CellEditEnding="excelCustomDataGrid_CellEditEnding"/>
                             
                             <TextBlock x:Name="customEventLineTextBlock" 
                                        Grid.Row="1" Grid.Column="0"
@@ -256,11 +253,12 @@
         </DockPanel>
 
         <Grid>
-            <ProgressBar x:Name="importProgressBar" Width="300" Height="30"
-                                         VerticalAlignment="Center" HorizontalAlignment="Center"
-                                        Visibility="Hidden" IsIndeterminate="True"
-                                        Foreground="#0096FF" Background="White" 
-                                        BorderBrush="#0096FF"/>
+            <ProgressBar x:Name="importProgressBar" 
+                         Width="300" Height="30"
+                         VerticalAlignment="Center" HorizontalAlignment="Center"
+                         Visibility="Hidden" IsIndeterminate="True"
+                         Foreground="#0096FF" Background="White" 
+                         BorderBrush="#0096FF"/>
         </Grid>
 
         <StackPanel x:Name="controllerStackPanel" 
@@ -307,7 +305,8 @@
 
                 <MenuItem x:Name="homeButton" Header="Home"
                           VerticalAlignment="Center"
-                          FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" FontWeight="Bold">
+                          FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" 
+                          FontWeight="Bold" Click="homeButton_Click">
                     <MenuItem.Icon>
                         <Image Source="Assets/home.png"/>
                     </MenuItem.Icon>
@@ -317,7 +316,8 @@
 
                 <MenuItem x:Name="importExcel" Header="Import excel"
                           VerticalAlignment="Center"
-                          FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" FontWeight="Bold" Click="importExcel_Click">
+                          FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" 
+                          FontWeight="Bold" Click="importExcel_Click">
                     <MenuItem.Icon>
                         <Image Source="Assets/document.png"/>
                     </MenuItem.Icon>
@@ -327,7 +327,8 @@
 
                 <MenuItem x:Name="importProject" Header="Import project"
                           VerticalAlignment="Center"
-                          FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" FontWeight="Bold" Click="importProject_Click">
+                          FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" 
+                          FontWeight="Bold" Click="importProject_Click">
                     <MenuItem.Icon>
                         <Image Source="Assets/file-import.png"/>
                     </MenuItem.Icon>
@@ -337,7 +338,8 @@
                 
                 <MenuItem x:Name="exporttoexcel" Header="Export Custom Table"
                           VerticalAlignment="Center"
-                          FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" FontWeight="Bold" Click="exporttoexcel_Click">
+                          FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" 
+                          FontWeight="Bold" Click="exporttoexcel_Click">
                     <MenuItem.Icon>
                         <Image Source="Assets/export.png"/>
                     </MenuItem.Icon>
@@ -347,7 +349,8 @@
                 
                 <MenuItem x:Name="exportproject" Header="Export project"
                           VerticalAlignment="Center"
-                          FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" FontWeight="Bold" Click="exportproject_Click">
+                          FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" 
+                          FontWeight="Bold" Click="exportproject_Click">
                     <MenuItem.Icon>
                         <Image Source="Assets/exportfile.png"/>
                     </MenuItem.Icon>
@@ -357,7 +360,8 @@
 
                 <MenuItem x:Name="closeProject" Header="Close project"
                           VerticalAlignment="Center"
-                          FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" FontWeight="Bold" Click="closeProject_Click">
+                          FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" 
+                          FontWeight="Bold" Click="closeProject_Click">
                     <MenuItem.Icon>
                         <Image Source="Assets/exit.png"/>
                     </MenuItem.Icon>
@@ -372,7 +376,10 @@
                     <Grid VerticalAlignment="Stretch" 
                           MinHeight="200">
                         <ScrollViewer VerticalScrollBarVisibility="Visible">
-                            <ListBox x:Name="filesListing" Loaded="filesListing_Loaded" ContextMenuOpening="filesListing_ContextMenuOpening" SelectedValuePath="FileName" MouseDoubleClick="filesListing_MouseDoubleClick">
+                            <ListBox x:Name="filesListing" Loaded="filesListing_Loaded" 
+                                     ContextMenuOpening="filesListing_ContextMenuOpening" 
+                                     SelectedValuePath="FileName" 
+                                     MouseDoubleClick="filesListing_MouseDoubleClick">
                                 <ListBox.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem x:Name="DeleteMenuItem" Header="DeleteItem" Click="DeleteMenuItem_Click"/>
