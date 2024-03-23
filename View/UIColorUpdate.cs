@@ -161,7 +161,7 @@ namespace Szakdolgozat.View
         private void SetColors(SolidColorBrush background1, SolidColorBrush background2, SolidColorBrush background3, SolidColorBrush foreground, params FrameworkElement[] elements)
         {
             //m_MainWindow.BackgroundBehindTabs.Background = background1;
-            m_MainWindow.BackroundBehindTabs.Background = background1;
+            m_MainWindow.BackgroundBehindTabs.Background = background1;
             m_MainWindow.mainTabControl.Background = background2;
             m_MainWindow.controllerStackPanel.Background = background2;
             m_MainWindow.filesListing.Background = background3;

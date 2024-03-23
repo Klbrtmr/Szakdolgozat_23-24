@@ -20,7 +20,7 @@
 
     <!-- Background Grid -->
 
-    <Grid x:Name="BackroundBehindTabs" Background="Gray">
+    <Grid x:Name="BackgroundBehindTabs" Background="Gray">
 
         <!-- Copyrights title -->
         
