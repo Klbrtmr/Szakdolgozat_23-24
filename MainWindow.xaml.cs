@@ -104,7 +104,7 @@ namespace Szakdolgozat
             filesListing.ItemsSource = null;
             filesListing.Items.Clear();
 
-            foreach (var importedFile in m_SelectedFiles)
+            foreach (ImportedFile importedFile in m_SelectedFiles)
             {
                 StackPanel panel = m_UIHelper.CreateFilePanel(importedFile);
                 filesListing.Items.Add(panel);
@@ -144,8 +144,6 @@ namespace Szakdolgozat
                     m_CellValues = await m_FileHandler.ReadExcelFile(excelFilePath);
                     m_CustomCellValues = (object[,])m_CellValues.Clone();
 
-                   
-                    
                     ImportedFile importedFile = m_FileHandler.CreateSingleImportedFile(newFileName, excelFilePath, m_CellValues, m_CustomCellValues, m_FileHandler.GenerateNewID(), GetDisplayColorForFile(newFileName));
                     Dispatcher.Invoke(() =>
                     {
@@ -261,7 +259,7 @@ namespace Szakdolgozat
 
                 for (int j = 0; j < array.GetLength(1); j++)
                 {
-                    var actualValue = array[i, j];
+                    object actualValue = array[i, j];
                     if (double.TryParse(actualValue.ToString(), out double parsedValue))
                     {
                         dataRow[j] = parsedValue;
@@ -407,11 +405,11 @@ namespace Szakdolgozat
             {
                 string outputPath = saveFileDialog.FileName;
 
-                using (var stream = File.Create(outputPath))
+                using (FileStream stream = File.Create(outputPath))
                 {
-                    using (var package = new ExcelPackage(stream))
+                    using (ExcelPackage package = new ExcelPackage(stream))
                     {
-                        var worksheet = package.Workbook.Worksheets.Add("Sheet1");
+                        ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Sheet1");
 
                         for (int i = 0; i < m_ImportedFile.CustomExcelData.GetLength(0); i++)
                         {
@@ -436,7 +434,7 @@ namespace Szakdolgozat
         /// <param name="e"></param>
         private void closeProject_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show("Are you sure?", "Close", MessageBoxButton.OKCancel, MessageBoxImage.Hand);
+            MessageBoxResult result = MessageBox.Show("Are you sure?", "Close", MessageBoxButton.OKCancel, MessageBoxImage.Hand);
             if (result == MessageBoxResult.OK)
             {
                 Application.Current.Shutdown();
@@ -455,7 +453,6 @@ namespace Szakdolgozat
 
             if (saveFileDialog.ShowDialog() == true)
             {
-                string edfFileName = saveFileDialog.FileName;
                 m_ExportControl.ExportProject(saveFileDialog.FileName);
             }
         }
@@ -484,11 +481,11 @@ namespace Szakdolgozat
         {
             try
             {
-                using (var streamval = File.Open(excelFilePath, FileMode.Open, FileAccess.Read))
+                using (FileStream streamval = File.Open(excelFilePath, FileMode.Open, FileAccess.Read))
                 {
-                    using (var reader = ExcelReaderFactory.CreateReader(streamval))
+                    using (IExcelDataReader reader = ExcelReaderFactory.CreateReader(streamval))
                     {
-                        var dataSet = m_FileHandler.GetDataSetFromReader(reader);
+                        DataSet dataSet = m_FileHandler.GetDataSetFromReader(reader);
 
                         if (!m_FileHandler.IsValidDataSet(dataSet))
                         {
@@ -513,7 +510,7 @@ namespace Szakdolgozat
             }
         }
 
-        private System.Windows.Media.Color GetDisplayColorForFile(string newFileName)
+        private Color GetDisplayColorForFile(string newFileName)
         {
             return m_SelectedFiles.FirstOrDefault(file => file.FileName == newFileName)?.DisplayColor
                    ?? m_ColorGenerator.GenerateRandomColorForFiles();
@@ -567,9 +564,9 @@ namespace Szakdolgozat
 
                 if (row != null)
                 {
-                    var selectedValue = comboBox.SelectedValue;
-                    var colorInHex = new ColorConverter().ColorNameToHex(selectedValue);
-                    var colorInHex2 = ColorConverterForBrushes.Instance.Convert(selectedValue, typeof(Brush), null, CultureInfo.CurrentCulture);
+                    object selectedValue = comboBox.SelectedValue;
+                    string colorInHex = new ColorConverter().ColorNameToHex(selectedValue);
+                    object colorInHex2 = ColorConverterForBrushes.Instance.Convert(selectedValue, typeof(Brush), null, CultureInfo.CurrentCulture);
 
                     UpdateCellBackground(row, colorInHex2 as Brush);
                     m_ChartControl.UpdateChartColor(row.GetIndex(), colorInHex);
@@ -630,15 +627,15 @@ namespace Szakdolgozat
                 {
                     m_ChartControl.Stamp = result;
                     invalidvalueTextBlock.Visibility = Visibility.Hidden;
-                    timeUnitTextBox.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 255, 255));
-                    timeUnitTextBox.Foreground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 0, 0));
+                    timeUnitTextBox.Background = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+                    timeUnitTextBox.Foreground = new SolidColorBrush(Color.FromRgb(0, 0, 0));
                 }
                 else
                 {
                     invalidvalueTextBlock.Visibility = Visibility.Visible;
-                    invalidvalueTextBlock.Foreground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 0, 0));
-                    timeUnitTextBox.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 0, 0));
-                    timeUnitTextBox.Foreground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 255, 255));
+                    invalidvalueTextBlock.Foreground = new SolidColorBrush(Color.FromRgb(255, 0, 0));
+                    timeUnitTextBox.Background = new SolidColorBrush(Color.FromRgb(255, 0, 0));
+                    timeUnitTextBox.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 255));
                 }
 
                 m_ChartControl.UpdateCharts(m_ImportedFile, m_OriginalDataTable, m_CustomDataTable);
@@ -712,6 +709,7 @@ namespace Szakdolgozat
             excelDataGrid.ItemsSource = null;
             excelCustomDataGrid.ItemsSource = null;
             configGrid.ItemsSource = null;
+            configGrid.Columns.Clear();
             originalChart.Plot.Title(string.Empty);
             originalChart.Plot.Clear();
             CustomChart.Plot.Title(string.Empty);

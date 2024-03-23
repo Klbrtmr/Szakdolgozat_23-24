@@ -63,7 +63,7 @@ namespace Szakdolgozat.ViewModel
         /// <inheritdoc cref="IImportControl.CreateTemporaryDirectory"/>
         public string CreateTemporaryDirectory()
         {
-            string tempDirectory = System.IO.Path.Combine(System.IO.Path.GetTempPath(), Guid.NewGuid().ToString());
+            string tempDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
             Directory.CreateDirectory(tempDirectory);
             return tempDirectory;
         }
@@ -80,7 +80,7 @@ namespace Szakdolgozat.ViewModel
                 ZipEntry entry;
                 while ((entry = zipInputStream.GetNextEntry()) != null)
                 {
-                    string entryPath = System.IO.Path.Combine(tempDirectory, entry.Name);
+                    string entryPath = Path.Combine(tempDirectory, entry.Name);
 
                     if (!entry.IsDirectory)
                     {
@@ -103,7 +103,7 @@ namespace Szakdolgozat.ViewModel
         /// <param name="directoryPath">The path of the directory from which to import the Excel files.</param>
         private void ImportExcelFilesFromDirectory(string directoryPath)
         {
-            foreach (var excelFile in Directory.GetFiles(directoryPath, "*.xlsx"))
+            foreach (string excelFile in Directory.GetFiles(directoryPath, "*.xlsx"))
             {
                 if (IsValidExcelFile(excelFile))
                 {
@@ -125,9 +125,9 @@ namespace Szakdolgozat.ViewModel
         {
             try
             {
-                using (var stream = File.Open(filePath, FileMode.Open, FileAccess.Read))
+                using (FileStream stream = File.Open(filePath, FileMode.Open, FileAccess.Read))
                 {
-                    using (var reader = ExcelReaderFactory.CreateReader(stream))
+                    using (IExcelDataReader reader = ExcelReaderFactory.CreateReader(stream))
                     {
                         return true;
                     }

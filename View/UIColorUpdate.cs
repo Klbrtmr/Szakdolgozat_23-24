@@ -104,7 +104,7 @@ namespace Szakdolgozat.View
         /// <param name="elements">The UI elements whose foreground color is to be updated.</param>
         private void UpdateForegroundColors(SolidColorBrush solidColorBrush, params FrameworkElement[] elements)
         {
-            foreach (var element in elements)
+            foreach (FrameworkElement element in elements)
             {
                 if (element is Control control)
                 {
@@ -127,10 +127,10 @@ namespace Szakdolgozat.View
         /// <param name="legendColor">The color of the legend as a hexadecimal color code.</param>
         private void SetChartStyle(WpfPlot chart, string axesColor, string gridColor, string backgroundColor, string legendColor)
         {
-            var axesColorObj = ScottPlot.Color.FromHex(axesColor);
-            var gridColorObj = ScottPlot.Color.FromHex(gridColor);
-            var backgroundColorObj = ScottPlot.Color.FromHex(backgroundColor);
-            var legendColorObj = ScottPlot.Color.FromHex(legendColor);
+            ScottPlot.Color axesColorObj = ScottPlot.Color.FromHex(axesColor);
+            ScottPlot.Color gridColorObj = ScottPlot.Color.FromHex(gridColor);
+            ScottPlot.Color backgroundColorObj = ScottPlot.Color.FromHex(backgroundColor);
+            ScottPlot.Color legendColorObj = ScottPlot.Color.FromHex(legendColor);
 
             chart.Plot.Style.ColorAxes(axesColorObj);
             chart.Plot.Style.ColorGrids(gridColorObj);
@@ -147,7 +147,7 @@ namespace Szakdolgozat.View
         /// <returns>A SolidColorBrush object with the specified color.</returns>
         private SolidColorBrush CreateSolidColorBrush(byte red, byte green, byte blue)
         {
-            return new SolidColorBrush(System.Windows.Media.Color.FromRgb(red, green, blue));
+            return new SolidColorBrush(Color.FromRgb(red, green, blue));
         }
 
         /// <summary>
@@ -160,7 +160,6 @@ namespace Szakdolgozat.View
         /// <param name="elements">The UI elements whose foreground color is to be updated.</param>
         private void SetColors(SolidColorBrush background1, SolidColorBrush background2, SolidColorBrush background3, SolidColorBrush foreground, params FrameworkElement[] elements)
         {
-            //m_MainWindow.BackgroundBehindTabs.Background = background1;
             m_MainWindow.BackgroundBehindTabs.Background = background1;
             m_MainWindow.mainTabControl.Background = background2;
             m_MainWindow.controllerStackPanel.Background = background2;

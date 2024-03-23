@@ -17,7 +17,7 @@ namespace Szakdolgozat.ViewModel
         /// <inheritdoc cref="IFileHandler.GenerateUniqueFileName"/>
         public string GenerateUniqueFileName(string excelFilePath, List<ImportedFile> selectedFiles)
         {
-            string fileName = System.IO.Path.GetFileNameWithoutExtension(excelFilePath);
+            string fileName = Path.GetFileNameWithoutExtension(excelFilePath);
             string newFileName = fileName;
             int counter = 1;
 
@@ -35,18 +35,18 @@ namespace Szakdolgozat.ViewModel
         {
             object[,] cellValues;
 
-            using (var streamval = File.Open(excelFilePath, FileMode.Open, FileAccess.Read))
+            using (FileStream streamval = File.Open(excelFilePath, FileMode.Open, FileAccess.Read))
             {
-                using (var reader = ExcelReaderFactory.CreateReader(streamval))
+                using (IExcelDataReader reader = ExcelReaderFactory.CreateReader(streamval))
                 {
-                    var configuration = new ExcelDataSetConfiguration
+                    ExcelDataSetConfiguration configuration = new ExcelDataSetConfiguration
                     {
                         ConfigureDataTable = _ => new ExcelDataTableConfiguration
                         {
                             UseHeaderRow = false
                         }
                     };
-                    var dataSet = reader.AsDataSet(configuration);
+                    DataSet dataSet = reader.AsDataSet(configuration);
 
                     ValidateDataSet(dataSet);
 
@@ -92,8 +92,8 @@ namespace Szakdolgozat.ViewModel
         {
             if (dataSet.Tables.Count > 0)
             {
-                var firstCellValue = dataSet.Tables[0].Rows[0].ItemArray[0];
-                var secondCellValue = dataSet.Tables[0].Rows[0].ItemArray[1];
+                object firstCellValue = dataSet.Tables[0].Rows[0].ItemArray[0];
+                object secondCellValue = dataSet.Tables[0].Rows[0].ItemArray[1];
                 if (firstCellValue == null || !firstCellValue.ToString().Equals("Sample", StringComparison.OrdinalIgnoreCase) &&
                     secondCellValue == null || !secondCellValue.ToString().Equals("Events", StringComparison.OrdinalIgnoreCase))
                 {
@@ -118,7 +118,7 @@ namespace Szakdolgozat.ViewModel
             {
                 for (int j = 0; j < dataSet.Tables[0].Columns.Count; j++)
                 {
-                    var actualValue = dataSet.Tables[0].Rows[i].ItemArray[j];
+                    object actualValue = dataSet.Tables[0].Rows[i].ItemArray[j];
 
                     if (double.TryParse(actualValue.ToString(), out double parsedValue))
                     {
@@ -144,7 +144,7 @@ namespace Szakdolgozat.ViewModel
         /// <inheritdoc cref="IFileHandler.GetDataSetFromReader"/>
         public DataSet GetDataSetFromReader(IExcelDataReader reader)
         {
-            var configuration = new ExcelDataSetConfiguration
+            ExcelDataSetConfiguration configuration = new ExcelDataSetConfiguration
             {
                 ConfigureDataTable = _ => new ExcelDataTableConfiguration
                 {
@@ -160,8 +160,8 @@ namespace Szakdolgozat.ViewModel
         {
             if (dataSet.Tables.Count > 0)
             {
-                var firstCellValue = dataSet.Tables[0].Rows[0].ItemArray[0];
-                var secondCellValue = dataSet.Tables[0].Rows[0].ItemArray[1];
+                object firstCellValue = dataSet.Tables[0].Rows[0].ItemArray[0];
+                object secondCellValue = dataSet.Tables[0].Rows[0].ItemArray[1];
                 if (firstCellValue == null || !firstCellValue.ToString().Equals("Sample", StringComparison.OrdinalIgnoreCase) &&
                     secondCellValue == null || !secondCellValue.ToString().Equals("Events", StringComparison.OrdinalIgnoreCase))
                 {
@@ -186,7 +186,7 @@ namespace Szakdolgozat.ViewModel
             {
                 for (int j = 0; j < dataSet.Tables[0].Columns.Count; j++)
                 {
-                    var actualValue = dataSet.Tables[0].Rows[i].ItemArray[j];
+                    object actualValue = dataSet.Tables[0].Rows[i].ItemArray[j];
 
                     if (double.TryParse(actualValue.ToString(), out double parsedValue))
                     {

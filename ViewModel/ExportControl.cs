@@ -58,7 +58,7 @@ namespace Szakdolgozat.ViewModel
         /// <param name="tempDirectory">The path of the temporary directory to which to export the files.</param>
         private void ExportFilesToTemporaryDirectory(string tempDirectory)
         {
-            foreach (var selectedFile in m_MainWindow.SelectedFiles)
+            foreach (ImportedFile selectedFile in m_MainWindow.SelectedFiles)
             {
                 ExportToExcel(selectedFile, tempDirectory);
             }
@@ -82,13 +82,13 @@ namespace Szakdolgozat.ViewModel
         /// <param name="outputDirectory">The directory in which to create the Excel file.</param>
         private void ExportToExcel(ImportedFile importedFile, string outputDirectory)
         {
-            string outputPath = System.IO.Path.Combine(outputDirectory, importedFile.FileName + "_customtable.xlsx");
+            string outputPath = Path.Combine(outputDirectory, importedFile.FileName + "_customtable.xlsx");
 
-            using (var stream = File.Create(outputPath))
+            using (FileStream stream = File.Create(outputPath))
             {
-                using (var package = new ExcelPackage(stream))
+                using (ExcelPackage package = new ExcelPackage(stream))
                 {
-                    var worksheet = package.Workbook.Worksheets.Add("Sheet1");
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Sheet1");
 
                     for (int i = 0; i < importedFile.CustomExcelData.GetLength(0); i++)
                     {

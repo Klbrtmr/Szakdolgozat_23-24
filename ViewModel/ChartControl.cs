@@ -54,13 +54,13 @@ namespace Szakdolgozat.ViewModel
         {
             if (m_MainWindow.originalChart != null)
             {
-                var scatterSeriesList = GetScatterSeriesList(m_MainWindow.originalChart);
-                var customScatterSeriesList = GetScatterSeriesList(m_MainWindow.CustomChart);
+                List<Scatter> scatterSeriesList = GetScatterSeriesList(m_MainWindow.originalChart);
+                List<Scatter> customScatterSeriesList = GetScatterSeriesList(m_MainWindow.CustomChart);
 
                 if (seriesIndex >= 0 && seriesIndex < scatterSeriesList.Count && seriesIndex < customScatterSeriesList.Count)
                 {
-                    scatterSeriesList[seriesIndex].LineStyle.Color = ScottPlot.Color.FromHex(colorInHex);
-                    customScatterSeriesList[seriesIndex].LineStyle.Color = ScottPlot.Color.FromHex(colorInHex);
+                    scatterSeriesList[seriesIndex].LineStyle.Color = Color.FromHex(colorInHex);
+                    customScatterSeriesList[seriesIndex].LineStyle.Color = Color.FromHex(colorInHex);
                     m_MainWindow.originalChart.Refresh();
                     m_MainWindow.CustomChart.Refresh();
                 }
@@ -93,16 +93,16 @@ namespace Szakdolgozat.ViewModel
 
             if (dataTable.Rows.Count > 0)
             {
-                var xColumn = dataTable.Columns[0];
-                var eventColumn = dataTable.Columns[1];
-                var yColumns = dataTable.Columns.Cast<DataColumn>().Skip(2).ToArray();
+                DataColumn xColumn = dataTable.Columns[0];
+                DataColumn eventColumn = dataTable.Columns[1];
+                DataColumn[] yColumns = dataTable.Columns.Cast<DataColumn>().Skip(2).ToArray();
 
-                var x = GetXValues(dataTable, xColumn);
-                var events = GetEventValues(dataTable, eventColumn);
+                double[] x = GetXValues(dataTable, xColumn);
+                object[] events = GetEventValues(dataTable, eventColumn);
 
-                foreach (var yColumn in yColumns)
+                foreach (DataColumn yColumn in yColumns)
                 {
-                    var y = GetYValues(dataTable, yColumn, ref invalidValues);
+                    object[] y = GetYValues(dataTable, yColumn, ref invalidValues);
                     AddScatterSeriesToChart(m_MainWindow.originalChart, x, y, yColumn.ColumnName);
                 }
 
@@ -129,16 +129,16 @@ namespace Szakdolgozat.ViewModel
 
             if (dataTable.Rows.Count > 0)
             {
-                var xColumn = dataTable.Columns[0];
-                var eventColumn = dataTable.Columns[1];
-                var yColumns = dataTable.Columns.Cast<DataColumn>().Skip(2).ToArray();
+                DataColumn xColumn = dataTable.Columns[0];
+                DataColumn eventColumn = dataTable.Columns[1];
+                DataColumn[] yColumns = dataTable.Columns.Cast<DataColumn>().Skip(2).ToArray();
 
-                var x = GetXValues(dataTable, xColumn);
-                var events = GetEventValues(dataTable, eventColumn);
+                double[] x = GetXValues(dataTable, xColumn);
+                object[] events = GetEventValues(dataTable, eventColumn);
 
-                foreach (var yColumn in yColumns)
+                foreach (DataColumn yColumn in yColumns)
                 {
-                    var y = GetYValues(dataTable, yColumn, ref invalidValues);
+                    object[] y = GetYValues(dataTable, yColumn, ref invalidValues);
                     AddScatterSeriesToChart(m_MainWindow.CustomChart, x, y, yColumn.ColumnName);
                 }
 
@@ -161,6 +161,7 @@ namespace Szakdolgozat.ViewModel
         private void SetChartTitles(WpfPlot chart, ImportedFile importedFile)
         {
             chart.Plot.Title($"{importedFile.FileName}");
+
             if (m_MainWindow.sample_RadioButton.IsChecked == true)
             {
                 chart.Plot.XLabel("Samples");
@@ -206,7 +207,7 @@ namespace Szakdolgozat.ViewModel
         {
             return dataTable.AsEnumerable().Select(row =>
             {
-                var eventValue = row[eventColumn];
+                object eventValue = row[eventColumn];
                 return eventValue != DBNull.Value ? eventValue : 0.0;
             }).ToArray();
         }
@@ -222,9 +223,9 @@ namespace Szakdolgozat.ViewModel
         {
             bool localInvalidValues = false;
 
-            var yValues = dataTable.AsEnumerable().Select(row =>
+            object[] yValues = dataTable.AsEnumerable().Select(row =>
             {
-                var yValue = row[yColumn];
+                object yValue = row[yColumn];
                 if (yValue != DBNull.Value)
                 {
                     if (double.TryParse(yValue.ToString(), out double parsedValue))
@@ -266,16 +267,16 @@ namespace Szakdolgozat.ViewModel
         ///     This is used as the label of the scatter series.</param>
         private void AddScatterSeriesToChart(WpfPlot chart, double[] x, object[] y, string columnName)
         {
-            var currentLine = chart.Plot.Add.Scatter(x, y);
+            Scatter currentLine = chart.Plot.Add.Scatter(x, y);
             currentLine.Label = columnName;
 
             if (m_MainWindow.DarkModeToggleButton.IsChecked == true)
             {
-                currentLine.Color = ScottPlot.Color.FromHex("#ffffff");
+                currentLine.Color = Color.FromHex("#ffffff");
             }
             else if (m_MainWindow.DarkModeToggleButton.IsChecked == false)
             {
-                currentLine.Color = ScottPlot.Color.FromHex("#000000");
+                currentLine.Color = Color.FromHex("#000000");
             }
 
             currentLine.MarkerStyle.IsVisible = false;
@@ -290,11 +291,11 @@ namespace Szakdolgozat.ViewModel
         /// <param name="isCustomChart">A boolean indicating whether the chart is a custom chart.</param>
         private void AddEventLineToChart(WpfPlot chart, double[] x, object[] events, bool isCustomChart)
         {
-            var eventLine = CreateEventLine(chart, x);
+            Scatter eventLine = CreateEventLine(chart, x);
 
             for (int i = 0; i < events.Length; i++)
             {
-                var marker = chart.Plot.Add.Marker(x[i], 0);
+                Marker marker = chart.Plot.Add.Marker(x[i], 0);
                 if (events[i].ToString() == "Alarm_Event")
                 {
                     AddAlarmEvent(chart, x[i], marker, isCustomChart);
@@ -319,16 +320,17 @@ namespace Szakdolgozat.ViewModel
         /// <param name="isCustomChart">A boolean indicating whether the chart is a custom chart.</param>
         private void AddAlarmEvent(WpfPlot chart, double xIndex, Marker marker, bool isCustomChart)
         {
-            if ((isCustomChart && m_MainWindow.enabledCustomEventLine.IsChecked == true) || (!isCustomChart && m_MainWindow.enabledOriginalEventLine.IsChecked == true))
+            if ((isCustomChart && m_MainWindow.enabledCustomEventLine.IsChecked == true) ||
+                (!isCustomChart && m_MainWindow.enabledOriginalEventLine.IsChecked == true))
             {
-                var alarmEventLine = chart.Plot.Add.VerticalLine(xIndex);
+                VerticalLine alarmEventLine = chart.Plot.Add.VerticalLine(xIndex);
                 alarmEventLine.Text = "Alarm Event";
                 alarmEventLine.LabelOppositeAxis = true;
                 alarmEventLine.LineWidth = 1;
-                alarmEventLine.Color = ScottPlot.Color.FromARGB(4278190219);
+                alarmEventLine.Color = Color.FromARGB(4278190219);
             }
 
-            marker.MarkerStyle.Fill.Color = ScottPlot.Color.FromARGB(4278190219); // Dark Blue
+            marker.MarkerStyle.Fill.Color = Color.FromARGB(4278190219); // Dark Blue
         }
 
         /// <summary>
@@ -340,17 +342,18 @@ namespace Szakdolgozat.ViewModel
         /// <param name="isCustomChart">A boolean indicating whether the chart is a custom chart.</param>
         private void AddErrorEvent(WpfPlot chart, double xIndex, Marker marker, bool isCustomChart)
         {
-            if ((isCustomChart && m_MainWindow.enabledCustomEventLine.IsChecked == true) || (!isCustomChart && m_MainWindow.enabledOriginalEventLine.IsChecked == true))
+            if ((isCustomChart && m_MainWindow.enabledCustomEventLine.IsChecked == true) ||
+                (!isCustomChart && m_MainWindow.enabledOriginalEventLine.IsChecked == true))
             {
-                var errorEventLine = chart.Plot.Add.VerticalLine(xIndex);
+                VerticalLine errorEventLine = chart.Plot.Add.VerticalLine(xIndex);
                 errorEventLine.Text = "Error Event";
                 errorEventLine.LabelOppositeAxis = true;
                 errorEventLine.LineWidth = 1;
-                errorEventLine.Color = ScottPlot.Color.FromARGB(4294901760);
+                errorEventLine.Color = Color.FromARGB(4294901760);
             }
 
             marker.MarkerStyle.Shape = MarkerShape.FilledTriangleUp;
-            marker.MarkerStyle.Fill.Color = ScottPlot.Color.FromARGB(4294901760); // Red
+            marker.MarkerStyle.Fill.Color = Color.FromARGB(4294901760); // Red
         }
 
         /// <summary>
@@ -362,10 +365,10 @@ namespace Szakdolgozat.ViewModel
         private Scatter CreateEventLine(WpfPlot chart, double[] x)
         {
             double[] y = new double[x.Length];
-            var eventLine = chart.Plot.Add.Scatter(x, y);
+            Scatter eventLine = chart.Plot.Add.Scatter(x, y);
             eventLine.Label = "Event Line";
             eventLine.MarkerStyle.IsVisible = false;
-            eventLine.Color = m_MainWindow.DarkModeToggleButton.IsChecked == true ? ScottPlot.Color.FromHex("#ffffff") : ScottPlot.Color.FromHex("#000000");
+            eventLine.Color = m_MainWindow.DarkModeToggleButton.IsChecked == true ? Color.FromHex("#ffffff") : Color.FromHex("#000000");
             return eventLine;
         }
 
@@ -374,11 +377,11 @@ namespace Szakdolgozat.ViewModel
         /// </summary>
         /// <param name="chart">The chart from which to get the scatter series.</param>
         /// <returns>A list of the scatter series in the chart.</returns>
-        private List<ScottPlot.Plottables.Scatter> GetScatterSeriesList(WpfPlot chart)
+        private List<Scatter> GetScatterSeriesList(WpfPlot chart)
         {
             return chart.Plot.GetPlottables()
-                .Where(p => p is ScottPlot.Plottables.Scatter scatter)
-                .Cast<ScottPlot.Plottables.Scatter>()
+                .Where(p => p is Scatter scatter)
+                .Cast<Scatter>()
                 .ToList();
         }
     }

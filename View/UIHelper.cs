@@ -42,7 +42,7 @@ namespace Szakdolgozat.View
             ellipse.Fill = brush;
 
             StackPanel panel = new StackPanel();
-            panel.Orientation = System.Windows.Controls.Orientation.Horizontal;
+            panel.Orientation = Orientation.Horizontal;
             panel.Children.Add(ellipse);
             panel.Children.Add(new TextBlock() { Text = importedFile.FileName });
 
@@ -50,9 +50,9 @@ namespace Szakdolgozat.View
         }
 
         /// <inheritdoc cref="IUIHelper.CreateImage"/>
-        public System.Windows.Controls.Image CreateImage(string imagePath, int width = 16, int height = 16)
+        public Image CreateImage(string imagePath, int width = 16, int height = 16)
         {
-            return new System.Windows.Controls.Image
+            return new Image
             {
                 Source = new BitmapImage(new Uri(imagePath, UriKind.RelativeOrAbsolute)),
                 Width = width,
