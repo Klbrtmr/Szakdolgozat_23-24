@@ -47,7 +47,7 @@ namespace Szakdolgozat
             m_FileHandler = new FileHandler();
             m_ChildParentHelper = new ChildParentHelper();
             m_UIHelper = new UIHelper(this);
-            m_UIColorUpdate = new UIColorUpdate(this);
+            m_UIColorUpdate = new UIColorUpdate(this, m_ChildParentHelper);
             m_ChartControl = new ChartControl(this);
             m_ImportControl = new ImportControl(this, m_FileHandler, m_ColorGenerator);
             m_ExportControl = new ExportControl(this, m_ImportControl);
@@ -404,7 +404,7 @@ namespace Szakdolgozat
             {
                 Filter = "Excel file (*.xlsx)|*.xlsx",
                 Title = "Save",
-                FileName = System.IO.Path.GetFileNameWithoutExtension(m_ImportedFile.FileName) + "_customtable.xlsx"
+                FileName = Path.GetFileNameWithoutExtension(m_ImportedFile.FileName) + "_customtable.xlsx"
             };
 
             if (saveFileDialog.ShowDialog() == true)
@@ -480,49 +480,6 @@ namespace Szakdolgozat
         }
 
         /// <summary>
-        /// Import excel file from edf package file.
-        /// </summary>
-        /// <param name="excelFilePath"></param>
-        /*public void ImportExcelFile(string excelFilePath)
-        {
-            try
-            {
-                using (FileStream streamval = File.Open(excelFilePath, FileMode.Open, FileAccess.Read))
-                {
-                    using (IExcelDataReader reader = ExcelReaderFactory.CreateReader(streamval))
-                    {
-                        DataSet dataSet = m_FileHandler.GetDataSetFromReader(reader);
-
-                        if (!m_FileHandler.IsValidDataSet(dataSet))
-                        {
-                            MessageBox.Show("Error: Wrong file structure or file is corrupt.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                            return;
-                        }
-
-                        m_CellValues = m_FileHandler.GetCellValuesFromDataSet(dataSet);
-                        m_CustomCellValues = (object[,])m_CellValues.Clone();
-
-                        ImportedFile importedFile = m_FileHandler.CreateImportedFile(excelFilePath, m_CellValues, m_CustomCellValues, m_FileHandler.GenerateNewID(), GetDisplayColorForFile(excelFilePath), m_SelectedFiles);
-
-                        m_SelectedFiles.Add(importedFile);
-                        m_ImportControl.ImportFileNumber++;
-                    }
-                }
-                ListFiles();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"An error occurred while importing the file: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }*/
-        /*
-        private Color GetDisplayColorForFile(string newFileName)
-        {
-            return m_SelectedFiles.FirstOrDefault(file => file.FileName == newFileName)?.DisplayColor
-                   ?? m_ColorGenerator.GenerateRandomColorForFiles();
-        }*/
-
-        /// <summary>
         /// Double mouse click to centered view settings.
         /// </summary>
         /// <param name="sender"></param>
@@ -574,19 +531,9 @@ namespace Szakdolgozat
                     string colorInHex = new ColorConverter().ColorNameToHex(selectedValue);
                     object colorInHex2 = ColorConverterForBrushes.Instance.Convert(selectedValue, typeof(Brush), null, CultureInfo.CurrentCulture);
 
-                    UpdateCellBackground(row, colorInHex2 as Brush);
+                    m_UIColorUpdate.UpdateCellBackground(row, colorInHex2 as Brush);
                     m_ChartControl.UpdateChartColor(row.GetIndex(), colorInHex);
                 }
-            }
-        }
-
-        private void UpdateCellBackground(DataGridRow row, Brush color)
-        {
-            DataGridCell cell = m_ChildParentHelper.GetCell(configGrid, row, 2); // 1: "Color Preview" column index
-
-            if (cell != null)
-            {
-                cell.Background = color;
             }
         }
 

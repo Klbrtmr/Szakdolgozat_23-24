@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using ScottPlot.WPF;
 using Szakdolgozat.Interfaces;
+using Szakdolgozat.Helper;
 
 namespace Szakdolgozat.View
 {
@@ -18,13 +19,16 @@ namespace Szakdolgozat.View
         /// </summary>
         private MainWindow m_MainWindow;
 
+        private ChildParentHelper m_ChildParentHelper;
+
         /// <summary>
         /// Initializes a new instance of the UIColorUpdate class.
         /// </summary>
         /// <param name="mainWindow">The MainWindow whose UI colors are to be updated.</param>
-        public UIColorUpdate(MainWindow mainWindow)
+        public UIColorUpdate(MainWindow mainWindow, ChildParentHelper childParentHelper)
         {
             m_MainWindow = mainWindow;
+            m_ChildParentHelper = childParentHelper;
         }
 
         /// <inheritdoc cref="IUIColorUpdate.LightModeForCharts"/>
@@ -95,6 +99,16 @@ namespace Szakdolgozat.View
                 m_MainWindow.originalEventLineTextBlock, m_MainWindow.enabledOriginalEventLine, m_MainWindow.disabledOriginalEventLine);
 
             m_MainWindow.RefreshCharts();
+        }
+
+        public void UpdateCellBackground(DataGridRow row, Brush color)
+        {
+            DataGridCell cell = m_ChildParentHelper.GetCell(m_MainWindow.configGrid, row, 2); // 1: "Color Preview" column index
+
+            if (cell != null)
+            {
+                cell.Background = color;
+            }
         }
 
         /// <summary>
