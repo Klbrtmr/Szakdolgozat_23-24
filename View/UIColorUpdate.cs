@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using ScottPlot.WPF;
 using Szakdolgozat.Interfaces;
 using Szakdolgozat.Helper;
+using Szakdolgozat.Properties;
 
 namespace Szakdolgozat.View
 {
@@ -34,8 +35,8 @@ namespace Szakdolgozat.View
         /// <inheritdoc cref="IUIColorUpdate.LightModeForCharts"/>
         public void LightModeForCharts(WpfPlot originalChart, WpfPlot customChart)
         {
-            SetChartStyle(originalChart, "#000000", "#e0e0e0", "#ffffff", "#000000");
-            SetChartStyle(customChart, "#000000", "#e0e0e0", "#ffffff", "#000000");
+            SetChartStyle(originalChart, Resources.BlackHexValue, Resources.GrayBackGroundHexValue, Resources.WhiteHexValue, Resources.BlackHexValue);
+            SetChartStyle(customChart, Resources.BlackHexValue, Resources.GrayBackGroundHexValue, Resources.WhiteHexValue, Resources.BlackHexValue);
         }
 
         /// <inheritdoc cref="IUIColorUpdate.SetChartStyleForDarkMode"/>
@@ -65,6 +66,17 @@ namespace Szakdolgozat.View
 
             SetColors(lightBackground, lighterBackground, whiteColor, blackColor, elements);
             uiHelper.SetIconImagesForLightMode();
+        }
+
+        /// <inheritdoc cref="IUIColorUpdate.UpdateCellBackground(DataGridRow, Brush)"/>
+        public void UpdateCellBackground(DataGridRow row, Brush color)
+        {
+            DataGridCell cell = m_ChildParentHelper.GetCell(m_MainWindow.configGrid, row, 2); // 1: "Color Preview" column index
+
+            if (cell != null)
+            {
+                cell.Background = color;
+            }
         }
 
         public void EnableDarkMode(UIHelper uiHelper)
@@ -99,16 +111,6 @@ namespace Szakdolgozat.View
                 m_MainWindow.originalEventLineTextBlock, m_MainWindow.enabledOriginalEventLine, m_MainWindow.disabledOriginalEventLine);
 
             m_MainWindow.RefreshCharts();
-        }
-
-        public void UpdateCellBackground(DataGridRow row, Brush color)
-        {
-            DataGridCell cell = m_ChildParentHelper.GetCell(m_MainWindow.configGrid, row, 2); // 1: "Color Preview" column index
-
-            if (cell != null)
-            {
-                cell.Background = color;
-            }
         }
 
         /// <summary>

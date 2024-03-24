@@ -2,12 +2,12 @@
 using System.Data;
 using System.IO;
 using System.Windows;
-using DocumentFormat.OpenXml.Spreadsheet;
 using ExcelDataReader;
 using ICSharpCode.SharpZipLib.Zip;
 using Szakdolgozat.Converters;
 using Szakdolgozat.Interfaces;
 using Szakdolgozat.Model;
+using Szakdolgozat.Properties;
 
 namespace Szakdolgozat.ViewModel
 {
@@ -66,7 +66,7 @@ namespace Szakdolgozat.ViewModel
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"An error occurred while importing files: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"An error occurred while importing files: {ex.Message}", Resources.Error, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -121,7 +121,7 @@ namespace Szakdolgozat.ViewModel
                 }
                 else
                 {
-                    MessageBox.Show($"Error: {excelFile} is not a valid Excel file.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Error: {excelFile} is not a valid Excel file.", Resources.Error, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
@@ -156,15 +156,15 @@ namespace Szakdolgozat.ViewModel
         {
             if (m_importedFileNumber == 0)
             {
-                MessageBox.Show("EDF file is not valid. 0 file imported.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("EDF file is not valid. 0 file imported.", Resources.Error, MessageBoxButton.OK, MessageBoxImage.Error);
             }
             else if (m_importedFileNumber == 1)
             {
-                MessageBox.Show("File imported successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("File imported successfully.", Resources.Success, MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else if (m_importedFileNumber > 1)
             {
-                MessageBox.Show("Files imported successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Files imported successfully.", Resources.Success, MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
@@ -184,7 +184,7 @@ namespace Szakdolgozat.ViewModel
 
                         if (!m_FileHandler.IsValidDataSet(dataSet))
                         {
-                            MessageBox.Show("Error: Wrong file structure or file is corrupt.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                            MessageBox.Show("Error: Wrong file structure or file is corrupt.", Resources.Error, MessageBoxButton.OK, MessageBoxImage.Error);
                             return;
                         }
 
@@ -207,7 +207,7 @@ namespace Szakdolgozat.ViewModel
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"An error occurred while importing the file: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"An error occurred while importing the file: {ex.Message}", Resources.Error, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

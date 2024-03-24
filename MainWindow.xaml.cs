@@ -26,6 +26,7 @@ namespace Szakdolgozat
     public partial class MainWindow : Window
     {
         private ColorGenerator m_ColorGenerator;
+        private ColorConverter m_ColorConverter;
         private FileHandler m_FileHandler;
         private ChildParentHelper m_ChildParentHelper;
         private UIHelper m_UIHelper;
@@ -43,6 +44,7 @@ namespace Szakdolgozat
             importProgressBar = FindName("importProgressBar") as ProgressBar;
 
             m_ColorGenerator = new ColorGenerator(this);
+            m_ColorConverter = new ColorConverter();
             m_FileHandler = new FileHandler();
             m_ChildParentHelper = new ChildParentHelper();
             m_UIHelper = new UIHelper(this);
@@ -86,14 +88,6 @@ namespace Szakdolgozat
         /// Actual opened custom dataTable.
         /// </summary>
         private DataTable m_CustomDataTable;
-
-        /// <summary>
-        /// Color list for configuration page.
-        /// </summary>
-        private List<string> colorList = new List<string>{
-            "Black", "White", "Gray", "Gold", "Brown",
-            "Blue", "Cyan", "Alice Blue", "Red", "Green",
-            "LimeGreen", "Purple", "Pink", "Yellow", "Orange" };
 
         /// <summary>
         /// Listed all file what we imported. This method created an ellipse to every file.
@@ -297,7 +291,7 @@ namespace Szakdolgozat
 
             // Create DataTemplate, which contains the ComboBox
             FrameworkElementFactory comboBoxFactory = new FrameworkElementFactory(typeof(ComboBox));
-            comboBoxFactory.SetValue(ComboBox.ItemsSourceProperty, colorList);
+            comboBoxFactory.SetValue(ComboBox.ItemsSourceProperty,m_ColorConverter.colorList);
             comboBoxFactory.SetBinding(ComboBox.SelectedValueProperty, new Binding("Colors"));
 
             comboBoxFactory.AddHandler(ComboBox.SelectionChangedEvent, new SelectionChangedEventHandler(ComboBox_SelectionChanged));

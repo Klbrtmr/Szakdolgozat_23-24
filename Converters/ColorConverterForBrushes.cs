@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
+using Szakdolgozat.Properties;
 
 namespace Szakdolgozat.Converters
 {
@@ -15,21 +16,21 @@ namespace Szakdolgozat.Converters
         /// </summary>
         private static readonly Dictionary<string, Brush> colorMap = new Dictionary<string, Brush>
         {
-            {"Black",       Brushes.Black },
-            {"White",       Brushes.White},
-            {"Gray",        Brushes.Gray},
-            {"Gold",        Brushes.Gold},
-            {"Brown",       Brushes.Brown},
-            {"Blue",        Brushes.Blue},
-            {"Cyan",        Brushes.Cyan},
-            {"Alice Blue",  Brushes.AliceBlue},
-            {"Red",         Brushes.Red},
-            {"Green",       Brushes.LawnGreen},
-            {"LimeGreen",   Brushes.LimeGreen},
-            {"Purple",      Brushes.Purple},
-            {"Pink",        Brushes.DeepPink},
-            {"Yellow",      Brushes.Yellow},
-            {"Orange",      Brushes.Orange}
+            {Resources.Black,      Brushes.Black },
+            {Resources.White,      Brushes.White},
+            {Resources.Gray,       Brushes.Gray},
+            {Resources.Gold,       Brushes.Gold},
+            {Resources.Brown,      Brushes.Brown},
+            {Resources.Blue,       Brushes.Blue},
+            {Resources.Cyan,       Brushes.Cyan},
+            {Resources.AliceBlue,  Brushes.AliceBlue},
+            {Resources.Red,        Brushes.Red},
+            {Resources.Green,      Brushes.LawnGreen},
+            {Resources.LimeGreen,  Brushes.LimeGreen},
+            {Resources.Purple,     Brushes.Purple},
+            {Resources.Pink,       Brushes.DeepPink},
+            {Resources.Yellow,     Brushes.Yellow},
+            {Resources.Orange,     Brushes.Orange}
         };
 
 

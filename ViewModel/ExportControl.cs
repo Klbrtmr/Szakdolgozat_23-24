@@ -5,6 +5,7 @@ using ICSharpCode.SharpZipLib.Zip;
 using OfficeOpenXml;
 using Szakdolgozat.Interfaces;
 using Szakdolgozat.Model;
+using Szakdolgozat.Properties;
 
 namespace Szakdolgozat.ViewModel
 {
@@ -43,11 +44,11 @@ namespace Szakdolgozat.ViewModel
 
                 Directory.Delete(tempDirectory, true);
 
-                MessageBox.Show("Files saved successfully in EDF format.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(Resources.SaveEDF, Resources.Success, MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"An error occurred while exporting files: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"An error occurred while exporting files: {ex.Message}", Resources.Error, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

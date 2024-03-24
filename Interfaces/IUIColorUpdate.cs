@@ -1,5 +1,7 @@
 ﻿using ScottPlot.WPF;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 using Szakdolgozat.View;
 
 namespace Szakdolgozat.Interfaces
@@ -36,5 +38,12 @@ namespace Szakdolgozat.Interfaces
         /// <param name="uiHelper">The UIHelper object used to set the icon images.</param>
         /// <param name="elements">The UI elements whose foreground color is to be set.</param>
         void SetLightModeBackground(UIHelper uiHelper, params FrameworkElement[] elements);
+
+        /// <summary>
+        /// Sets the background colors of cell in the datatable.
+        /// </summary>
+        /// <param name="row">The row to be styled.</param>
+        /// <param name="color">The color what will be set.</param>
+        void UpdateCellBackground(DataGridRow row, Brush color);
     }
 }

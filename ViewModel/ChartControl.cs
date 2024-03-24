@@ -8,6 +8,7 @@ using ScottPlot.Plottables;
 using ScottPlot.WPF;
 using Szakdolgozat.Interfaces;
 using Szakdolgozat.Model;
+using Szakdolgozat.Properties;
 
 namespace Szakdolgozat.ViewModel
 {
@@ -147,7 +148,7 @@ namespace Szakdolgozat.ViewModel
 
             if (invalidValues)
             {
-                MessageBox.Show("Excel contains invalid values! Invalid values are set to 0.", "Import warning!", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Excel contains invalid values! Invalid values are set to 0.", Resources.ImportWarning, MessageBoxButton.OK, MessageBoxImage.Warning);
             }
 
             AutoScaleAndRefreshChart(m_MainWindow.CustomChart);
@@ -164,14 +165,14 @@ namespace Szakdolgozat.ViewModel
 
             if (m_MainWindow.sample_RadioButton.IsChecked == true)
             {
-                chart.Plot.XLabel("Samples");
+                chart.Plot.XLabel(Resources.Samples);
             }
             else if (m_MainWindow.time_RadioButton.IsChecked == true)
             {
-                chart.Plot.XLabel("Time (s)");
+                chart.Plot.XLabel(Resources.Time);
             }
 
-            chart.Plot.YLabel("Values");
+            chart.Plot.YLabel(Resources.Values);
         }
 
         /// <summary>
@@ -232,7 +233,7 @@ namespace Szakdolgozat.ViewModel
                     {
                         return (object)parsedValue;
                     }
-                    else if (yValue.ToString().EndsWith("Event"))
+                    else if (yValue.ToString().EndsWith(Resources.Event))
                     {
                         return yValue;
                     }
@@ -272,11 +273,11 @@ namespace Szakdolgozat.ViewModel
 
             if (m_MainWindow.DarkModeToggleButton.IsChecked == true)
             {
-                currentLine.Color = Color.FromHex("#ffffff");
+                currentLine.Color = Color.FromHex(Resources.WhiteHexValue);
             }
             else if (m_MainWindow.DarkModeToggleButton.IsChecked == false)
             {
-                currentLine.Color = Color.FromHex("#000000");
+                currentLine.Color = Color.FromHex(Resources.BlackHexValue);
             }
 
             currentLine.MarkerStyle.IsVisible = false;
@@ -296,11 +297,11 @@ namespace Szakdolgozat.ViewModel
             for (int i = 0; i < events.Length; i++)
             {
                 Marker marker = chart.Plot.Add.Marker(x[i], 0);
-                if (events[i].ToString() == "Alarm_Event")
+                if (events[i].ToString() == Resources.AlarmEvent)
                 {
                     AddAlarmEvent(chart, x[i], marker, isCustomChart);
                 }
-                else if (events[i].ToString() == "Error_Event")
+                else if (events[i].ToString() == Resources.ErrorEvent)
                 {
                     AddErrorEvent(chart, x[i], marker, isCustomChart);
                 }
@@ -324,7 +325,7 @@ namespace Szakdolgozat.ViewModel
                 (!isCustomChart && m_MainWindow.enabledOriginalEventLine.IsChecked == true))
             {
                 VerticalLine alarmEventLine = chart.Plot.Add.VerticalLine(xIndex);
-                alarmEventLine.Text = "Alarm Event";
+                alarmEventLine.Text = Resources.AlarmEvent.Replace("_", " ");
                 alarmEventLine.LabelOppositeAxis = true;
                 alarmEventLine.LineWidth = 1;
                 alarmEventLine.Color = Color.FromARGB(4278190219);
@@ -346,7 +347,7 @@ namespace Szakdolgozat.ViewModel
                 (!isCustomChart && m_MainWindow.enabledOriginalEventLine.IsChecked == true))
             {
                 VerticalLine errorEventLine = chart.Plot.Add.VerticalLine(xIndex);
-                errorEventLine.Text = "Error Event";
+                errorEventLine.Text = Resources.ErrorEvent.Replace("_", " ");
                 errorEventLine.LabelOppositeAxis = true;
                 errorEventLine.LineWidth = 1;
                 errorEventLine.Color = Color.FromARGB(4294901760);
@@ -366,9 +367,9 @@ namespace Szakdolgozat.ViewModel
         {
             double[] y = new double[x.Length];
             Scatter eventLine = chart.Plot.Add.Scatter(x, y);
-            eventLine.Label = "Event Line";
+            eventLine.Label = Resources.EventLine;
             eventLine.MarkerStyle.IsVisible = false;
-            eventLine.Color = m_MainWindow.DarkModeToggleButton.IsChecked == true ? Color.FromHex("#ffffff") : Color.FromHex("#000000");
+            eventLine.Color = m_MainWindow.DarkModeToggleButton.IsChecked == true ? Color.FromHex(Resources.WhiteHexValue) : Color.FromHex(Resources.BlackHexValue);
             return eventLine;
         }
 

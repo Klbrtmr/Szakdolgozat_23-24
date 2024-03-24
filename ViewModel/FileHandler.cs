@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using ExcelDataReader;
 using Szakdolgozat.Interfaces;
 using Szakdolgozat.Model;
+using Szakdolgozat.Properties;
 
 namespace Szakdolgozat.ViewModel
 {
@@ -94,8 +95,8 @@ namespace Szakdolgozat.ViewModel
             {
                 object firstCellValue = dataSet.Tables[0].Rows[0].ItemArray[0];
                 object secondCellValue = dataSet.Tables[0].Rows[0].ItemArray[1];
-                if (firstCellValue == null || !firstCellValue.ToString().Equals("Sample", StringComparison.OrdinalIgnoreCase) &&
-                    secondCellValue == null || !secondCellValue.ToString().Equals("Events", StringComparison.OrdinalIgnoreCase))
+                if (firstCellValue == null || !firstCellValue.ToString().Equals(Resources.Sample, StringComparison.OrdinalIgnoreCase) &&
+                    secondCellValue == null || !secondCellValue.ToString().Equals(Resources.Events, StringComparison.OrdinalIgnoreCase))
                 {
                     throw new Exception("Wrong file structure or file is corrupt.");
                 }
@@ -124,7 +125,7 @@ namespace Szakdolgozat.ViewModel
                     {
                         cellValues[i, j] = parsedValue;
                     }
-                    else if (actualValue.ToString().EndsWith("Event"))
+                    else if (actualValue.ToString().EndsWith(Resources.Event))
                     {
                         cellValues[i, j] = actualValue.ToString();
                     }
@@ -162,8 +163,8 @@ namespace Szakdolgozat.ViewModel
             {
                 object firstCellValue = dataSet.Tables[0].Rows[0].ItemArray[0];
                 object secondCellValue = dataSet.Tables[0].Rows[0].ItemArray[1];
-                if (firstCellValue == null || !firstCellValue.ToString().Equals("Sample", StringComparison.OrdinalIgnoreCase) &&
-                    secondCellValue == null || !secondCellValue.ToString().Equals("Events", StringComparison.OrdinalIgnoreCase))
+                if (firstCellValue == null || !firstCellValue.ToString().Equals(Resources.Sample, StringComparison.OrdinalIgnoreCase) &&
+                    secondCellValue == null || !secondCellValue.ToString().Equals(Resources.Events, StringComparison.OrdinalIgnoreCase))
                 {
                     return false;
                 }
@@ -192,7 +193,7 @@ namespace Szakdolgozat.ViewModel
                     {
                         cellValues[i, j] = parsedValue;
                     }
-                    else if (actualValue.ToString().EndsWith("Event"))
+                    else if (actualValue.ToString().EndsWith(Resources.Event))
                     {
                         cellValues[i, j] = actualValue;
                     }
