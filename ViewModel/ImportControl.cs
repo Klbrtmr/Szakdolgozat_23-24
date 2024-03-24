@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Data;
 using System.IO;
 using System.Windows;
+using DocumentFormat.OpenXml.Spreadsheet;
 using ExcelDataReader;
 using ICSharpCode.SharpZipLib.Zip;
+using Szakdolgozat.Converters;
 using Szakdolgozat.Interfaces;
+using Szakdolgozat.Model;
 
 namespace Szakdolgozat.ViewModel
 {
@@ -17,6 +21,10 @@ namespace Szakdolgozat.ViewModel
         /// </summary>
         private MainWindow m_MainWindow;
 
+        private IFileHandler m_FileHandler;
+
+        private ColorGenerator m_ColorGenerator;
+
         /// <summary>
         /// The number of files imported from the current EDF file.
         /// </summary>
@@ -26,9 +34,11 @@ namespace Szakdolgozat.ViewModel
         /// Initializes a new instance of the ImportControl class.
         /// </summary>
         /// <param name="mainWindow">The main window of the application.</param>
-        public ImportControl(MainWindow mainWindow)
+        public ImportControl(MainWindow mainWindow, IFileHandler fileHandler, ColorGenerator colorGenerator)
         {
             m_MainWindow = mainWindow;
+            m_FileHandler = fileHandler;
+            m_ColorGenerator = colorGenerator;
         }
 
         /// <inheritdoc cref="IImportControl.ImportFileNumber"/>
@@ -107,7 +117,7 @@ namespace Szakdolgozat.ViewModel
             {
                 if (IsValidExcelFile(excelFile))
                 {
-                    m_MainWindow.ImportExcelFile(excelFile);
+                    ImportExcelFile(excelFile);
                 }
                 else
                 {
@@ -155,6 +165,49 @@ namespace Szakdolgozat.ViewModel
             else if (m_importedFileNumber > 1)
             {
                 MessageBox.Show("Files imported successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
+        /// <summary>
+        /// Import excel file from edf package file.
+        /// </summary>
+        /// <param name="excelFilePath"></param>
+        private void ImportExcelFile(string excelFilePath)
+        {
+            try
+            {
+                using (FileStream streamval = File.Open(excelFilePath, FileMode.Open, FileAccess.Read))
+                {
+                    using (IExcelDataReader reader = ExcelReaderFactory.CreateReader(streamval))
+                    {
+                        DataSet dataSet = m_FileHandler.GetDataSetFromReader(reader);
+
+                        if (!m_FileHandler.IsValidDataSet(dataSet))
+                        {
+                            MessageBox.Show("Error: Wrong file structure or file is corrupt.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                            return;
+                        }
+
+                        m_MainWindow.m_CellValues = m_FileHandler.GetCellValuesFromDataSet(dataSet);
+                        m_MainWindow.m_CustomCellValues = (object[,])m_MainWindow.m_CellValues.Clone();
+
+                        ImportedFile importedFile = m_FileHandler.CreateImportedFile(
+                            excelFilePath,
+                            m_MainWindow.m_CellValues,
+                            m_MainWindow.m_CustomCellValues,
+                            m_FileHandler.GenerateNewID(),
+                            m_ColorGenerator.GetDisplayColorForFile(excelFilePath),
+                            m_MainWindow.SelectedFiles);
+
+                        m_MainWindow.SelectedFiles.Add(importedFile);
+                        ImportFileNumber++;
+                    }
+                }
+                m_MainWindow.ListFiles();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred while importing the file: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

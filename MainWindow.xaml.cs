@@ -43,13 +43,13 @@ namespace Szakdolgozat
             InitializeComponent();
             importProgressBar = FindName("importProgressBar") as ProgressBar;
 
-            m_ColorGenerator = new ColorGenerator();
+            m_ColorGenerator = new ColorGenerator(this);
             m_FileHandler = new FileHandler();
             m_ChildParentHelper = new ChildParentHelper();
             m_UIHelper = new UIHelper(this);
             m_UIColorUpdate = new UIColorUpdate(this);
             m_ChartControl = new ChartControl(this);
-            m_ImportControl = new ImportControl(this);
+            m_ImportControl = new ImportControl(this, m_FileHandler, m_ColorGenerator);
             m_ExportControl = new ExportControl(this, m_ImportControl);
         }
 
@@ -66,12 +66,12 @@ namespace Szakdolgozat
         /// <summary>
         /// Two-dimension array for original excel datas.
         /// </summary>
-        public object[,] m_CellValues { get; private set; }
+        public object[,] m_CellValues { get; set; }
 
         /// <summary>
         /// Two-dimension array for custom changed excel datas.
         /// </summary>
-        public object[,] m_CustomCellValues { get; private set; }
+        public object[,] m_CustomCellValues { get; set; }
 
         /// <summary>
         /// Actual importedFile.
@@ -99,7 +99,7 @@ namespace Szakdolgozat
         /// <summary>
         /// Listed all file what we imported. This method created an ellipse to every file.
         /// </summary>
-        private void ListFiles()
+        public void ListFiles()
         {
             filesListing.ItemsSource = null;
             filesListing.Items.Clear();
@@ -144,7 +144,13 @@ namespace Szakdolgozat
                     m_CellValues = await m_FileHandler.ReadExcelFile(excelFilePath);
                     m_CustomCellValues = (object[,])m_CellValues.Clone();
 
-                    ImportedFile importedFile = m_FileHandler.CreateSingleImportedFile(newFileName, excelFilePath, m_CellValues, m_CustomCellValues, m_FileHandler.GenerateNewID(), GetDisplayColorForFile(newFileName));
+                    ImportedFile importedFile = m_FileHandler.CreateSingleImportedFile(
+                        newFileName,
+                        excelFilePath,
+                        m_CellValues,
+                        m_CustomCellValues,
+                        m_FileHandler.GenerateNewID(),
+                        m_ColorGenerator.GetDisplayColorForFile(newFileName));
                     Dispatcher.Invoke(() =>
                     {
                         m_SelectedFiles.Add(importedFile);
@@ -477,7 +483,7 @@ namespace Szakdolgozat
         /// Import excel file from edf package file.
         /// </summary>
         /// <param name="excelFilePath"></param>
-        public void ImportExcelFile(string excelFilePath)
+        /*public void ImportExcelFile(string excelFilePath)
         {
             try
             {
@@ -508,13 +514,13 @@ namespace Szakdolgozat
             {
                 MessageBox.Show($"An error occurred while importing the file: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-        }
-
+        }*/
+        /*
         private Color GetDisplayColorForFile(string newFileName)
         {
             return m_SelectedFiles.FirstOrDefault(file => file.FileName == newFileName)?.DisplayColor
                    ?? m_ColorGenerator.GenerateRandomColorForFiles();
-        }
+        }*/
 
         /// <summary>
         /// Double mouse click to centered view settings.
@@ -715,7 +721,7 @@ namespace Szakdolgozat
             CustomChart.Plot.Title(string.Empty);
             CustomChart.Plot.Clear();
             RefreshCharts();
-            tabControlBorder.BorderBrush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(128, 128, 128));
+            tabControlBorder.BorderBrush = new SolidColorBrush(Color.FromRgb(128, 128, 128));
         }
     }
 }
