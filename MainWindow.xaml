@@ -14,10 +14,6 @@
         WindowStartupLocation="CenterScreen" 
         Icon="/Assets/broken-heart.png" Background="Gray">
 
-    <Window.Resources>
-        <local:VisibilityToCheckedConverter x:Key="VisibilityToCheckedConverter"/>
-    </Window.Resources>
-
     <!-- Background Grid -->
 
     <Grid x:Name="BackgroundBehindTabs" Background="Gray">
@@ -301,10 +297,6 @@
                     </ItemsPanelTemplate>
                 </Menu.ItemsPanel>
 
-                <!-- Main Menu - Dark Mode -->
-
-                
-
                 <!-- Main Menu - Import excel file -->
 
                 <MenuItem x:Name="importExcel" Header="Import excel"
@@ -328,7 +320,7 @@
                 </MenuItem>
 
                 <!-- Main Menu - Export custom table to excel file -->
-                
+
                 <MenuItem x:Name="exporttoexcel" Header="Export Custom Table"
                           VerticalAlignment="Center"
                           FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" 
@@ -339,7 +331,7 @@
                 </MenuItem>
 
                 <!-- Main Menu - Export project file-->
-                
+
                 <MenuItem x:Name="exportproject" Header="Export project"
                           VerticalAlignment="Center"
                           FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" 
@@ -350,7 +342,7 @@
                 </MenuItem>
 
                 <!-- Main Menu - Clean project-->
-                
+
                 <MenuItem x:Name="cleanButton" Header="Clean project"
                         VerticalAlignment="Center"
                         FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" 
@@ -395,8 +387,5 @@
                 </Border>
             </DockPanel>
         </StackPanel>
-        
-        <TextBlock x:Name="tooltipTextBlock" Visibility="Hidden" Background="WhiteSmoke" Padding="5"/>
-        
     </Grid>
 </Window>

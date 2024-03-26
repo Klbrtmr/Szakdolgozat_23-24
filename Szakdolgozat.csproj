@@ -282,7 +282,6 @@
     <Compile Include="ViewModel\ImportControl.cs" />
     <Compile Include="View\UIColorUpdate.cs" />
     <Compile Include="View\UIHelper.cs" />
-    <Compile Include="VisibilityToCheckedConverter.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
