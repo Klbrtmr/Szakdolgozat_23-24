@@ -329,7 +329,10 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Assets\broom.png" />
+    <Resource Include="Assets\broom_light.png" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\add-document.png" />
     <Resource Include="Assets\chart-histogram.png" />

@@ -303,14 +303,7 @@
 
                 <!-- Main Menu - Dark Mode -->
 
-                <MenuItem x:Name="homeButton" Header="Home"
-                          VerticalAlignment="Center"
-                          FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" 
-                          FontWeight="Bold" Click="homeButton_Click">
-                    <MenuItem.Icon>
-                        <Image Source="Assets/home.png"/>
-                    </MenuItem.Icon>
-                </MenuItem>
+                
 
                 <!-- Main Menu - Import excel file -->
 
@@ -355,7 +348,18 @@
                         <Image Source="Assets/exportfile.png"/>
                     </MenuItem.Icon>
                 </MenuItem>
+
+                <!-- Main Menu - Clean project-->
                 
+                <MenuItem x:Name="cleanButton" Header="Clean project"
+                        VerticalAlignment="Center"
+                        FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" 
+                        FontWeight="Bold" Click="cleanButton_Click">
+                    <MenuItem.Icon>
+                        <Image Source="Assets/broom.png"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+
                 <!-- Main Menu - Close project-->
 
                 <MenuItem x:Name="closeProject" Header="Close project"

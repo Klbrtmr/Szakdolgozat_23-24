@@ -81,7 +81,7 @@ namespace Szakdolgozat.View
         {
             string suffix = string.IsNullOrEmpty(mode) ? "" : $"_{mode}";
 
-            m_MainWindow.homeButton.Icon = CreateImage($"Assets/home{suffix}.png");
+            m_MainWindow.cleanButton.Icon = CreateImage($"Assets/broom{suffix}.png");
             m_MainWindow.importExcel.Icon = CreateImage($"Assets/document{suffix}.png");
             m_MainWindow.importProject.Icon = CreateImage($"Assets/file-import{suffix}.png");
             m_MainWindow.exporttoexcel.Icon = CreateImage($"Assets/export{suffix}.png");

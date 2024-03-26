@@ -88,7 +88,7 @@ namespace Szakdolgozat.View
 
             SetDarkModeBackground(uiHelper,
                 m_MainWindow.myNameText,
-                m_MainWindow.homeButton, m_MainWindow.importExcel, m_MainWindow.importProject,
+                m_MainWindow.cleanButton, m_MainWindow.importExcel, m_MainWindow.importProject,
                 m_MainWindow.exporttoexcel, m_MainWindow.exportproject, m_MainWindow.closeProject,
                 m_MainWindow.filesListing, m_MainWindow.sample_RadioButton, m_MainWindow.time_RadioButton,
                 m_MainWindow.customEventLineTextBlock, m_MainWindow.enabledCustomEventLine, m_MainWindow.disabledCustomEventLine,
@@ -104,7 +104,7 @@ namespace Szakdolgozat.View
             LightModeForCharts(m_MainWindow.originalChart, m_MainWindow.CustomChart);
             SetLightModeBackground(uiHelper,
                 m_MainWindow.myNameText,
-                m_MainWindow.homeButton, m_MainWindow.importExcel, m_MainWindow.importProject,
+                m_MainWindow.cleanButton, m_MainWindow.importExcel, m_MainWindow.importProject,
                 m_MainWindow.exporttoexcel, m_MainWindow.exportproject, m_MainWindow.closeProject,
                 m_MainWindow.filesListing, m_MainWindow.sample_RadioButton, m_MainWindow.time_RadioButton,
                 m_MainWindow.customEventLineTextBlock, m_MainWindow.enabledCustomEventLine, m_MainWindow.disabledCustomEventLine,

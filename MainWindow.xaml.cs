@@ -638,12 +638,12 @@ namespace Szakdolgozat
         }
 
         /// <summary>
-        /// Handles the event when the user clicks the home button.
+        /// Handles the event when the user clicks the Clean project button.
         /// This method resets the imported file, data tables, cell values, and charts.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void homeButton_Click(object sender, RoutedEventArgs e)
+        private void cleanButton_Click(object sender, RoutedEventArgs e)
         {
             m_ImportedFile = null;
             m_OriginalDataTable = null;
