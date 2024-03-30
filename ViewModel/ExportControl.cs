@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows;
 using ICSharpCode.SharpZipLib.Zip;
 using OfficeOpenXml;
+using Szakdolgozat.Helper;
 using Szakdolgozat.Interfaces;
 using Szakdolgozat.Model;
 using Szakdolgozat.Properties;
@@ -16,19 +17,15 @@ namespace Szakdolgozat.ViewModel
         /// </summary>
         private readonly MainWindow m_MainWindow;
 
-        /// <summary>
-        /// The ImportControl instance used for importing projects from EDF files.
-        /// </summary>
-        private readonly ImportControl m_ImportControl;
+        private readonly ITemporaryDirectoryHelper m_TemporaryDirectoryHelper = new TemporaryDirectoryHelper();
 
         /// <summary>
         /// Initializes a new instance of the ExportControl class.
         /// </summary>
         /// <param name="mainWindow">The main window of the application.</param>
-        public ExportControl(MainWindow mainWindow, ImportControl importControl)
+        public ExportControl(MainWindow mainWindow)
         {
             m_MainWindow = mainWindow;
-            m_ImportControl = importControl;
         }
 
         /// <inheritdoc cref="IExportControl.ExportProject(string)"/>
@@ -36,7 +33,7 @@ namespace Szakdolgozat.ViewModel
         {
             try
             {
-                string tempDirectory = m_ImportControl.CreateTemporaryDirectory();
+                string tempDirectory = m_TemporaryDirectoryHelper.CreateTemporaryDirectory();
 
                 ExportFilesToTemporaryDirectory(tempDirectory);
 

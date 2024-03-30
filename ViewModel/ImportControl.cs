@@ -5,6 +5,7 @@ using System.Windows;
 using ExcelDataReader;
 using ICSharpCode.SharpZipLib.Zip;
 using Szakdolgozat.Converters;
+using Szakdolgozat.Helper;
 using Szakdolgozat.Interfaces;
 using Szakdolgozat.Model;
 using Szakdolgozat.Properties;
@@ -24,6 +25,8 @@ namespace Szakdolgozat.ViewModel
         private IFileHandler m_FileHandler;
 
         private ColorGenerator m_ColorGenerator;
+
+        private ITemporaryDirectoryHelper m_TemporaryDirectoryHelper = new TemporaryDirectoryHelper();
 
         /// <summary>
         /// The number of files imported from the current EDF file.
@@ -53,7 +56,7 @@ namespace Szakdolgozat.ViewModel
         {
             try
             {
-                string tempDirectory = CreateTemporaryDirectory();
+                string tempDirectory = m_TemporaryDirectoryHelper.CreateTemporaryDirectory();
                 m_importedFileNumber = 0;
 
                 ExtractFilesFromEdfToTemporaryDirectory(edfFilePath, tempDirectory);
@@ -69,14 +72,14 @@ namespace Szakdolgozat.ViewModel
                 MessageBox.Show($"An error occurred while importing files: {ex.Message}", Resources.Error, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
+        /*
         /// <inheritdoc cref="IImportControl.CreateTemporaryDirectory"/>
         public string CreateTemporaryDirectory()
         {
             string tempDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
             Directory.CreateDirectory(tempDirectory);
             return tempDirectory;
-        }
+        }*/
 
         /// <summary>
         /// Extracts files from an EDF file to a temporary directory.

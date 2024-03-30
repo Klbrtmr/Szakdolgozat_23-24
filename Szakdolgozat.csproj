@@ -270,10 +270,12 @@
     <Compile Include="Converters\ColorConverterForBrushes.cs" />
     <Compile Include="Converters\ColorGenerator.cs" />
     <Compile Include="Helper\ChildParentHelper.cs" />
+    <Compile Include="Helper\TemporaryDirectoryHelper.cs" />
     <Compile Include="Interfaces\IChartControl.cs" />
     <Compile Include="Interfaces\IExportControl.cs" />
     <Compile Include="Interfaces\IFileHandler.cs" />
     <Compile Include="Interfaces\IImportControl.cs" />
+    <Compile Include="Interfaces\ITemporaryDirectoryHelper.cs" />
     <Compile Include="Interfaces\IUIColorUpdate.cs" />
     <Compile Include="Interfaces\IUIHelper.cs" />
     <Compile Include="ViewModel\ChartControl.cs" />

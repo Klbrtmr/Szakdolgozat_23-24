@@ -51,7 +51,7 @@ namespace Szakdolgozat
             m_UIColorUpdate = new UIColorUpdate(this, m_ChildParentHelper);
             m_ChartControl = new ChartControl(this);
             m_ImportControl = new ImportControl(this, m_FileHandler, m_ColorGenerator);
-            m_ExportControl = new ExportControl(this, m_ImportControl);
+            m_ExportControl = new ExportControl(this);
         }
 
         /// <summary>

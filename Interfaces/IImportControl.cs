@@ -12,11 +12,5 @@
         /// </summary>
         /// <param name="edfFilePath">The path of the EDF file to import.</param>
         void ImportProject(string edfFilePath);
-
-        /// <summary>
-        /// Creates a temporary directory in the system's temp path.
-        /// </summary>
-        /// <returns>The path of the created temporary directory.</returns>
-        string CreateTemporaryDirectory();
     }
 }
