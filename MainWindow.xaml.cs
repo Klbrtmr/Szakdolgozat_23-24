@@ -384,6 +384,7 @@ namespace Szakdolgozat
             {
                 m_ImportedFile.CustomExcelData[rowIndex, columnIndex] = modifiedValue.ToString().EndsWith("Event") ? modifiedValue : parsedValue;
                 m_ChartControl.UpdateCharts(m_ImportedFile, m_OriginalDataTable, m_CustomDataTable);
+                SetChartColor();
             }
         }
 
@@ -599,15 +600,7 @@ namespace Szakdolgozat
 
                 m_ChartControl.UpdateCharts(m_ImportedFile, m_OriginalDataTable, m_CustomDataTable);
 
-                for (int i = 0; i < selectedValues.Count; i++)
-                {
-                    var selectedValue = selectedValues[i];
-                    if (selectedValue != null)
-                    {
-                        string colorInHex = new ColorConverter().ColorNameToHex(selectedValue);
-                        m_ChartControl.UpdateChartColor(i, colorInHex);
-                    }
-                }
+                SetChartColor();
             }
         }
 
@@ -630,6 +623,20 @@ namespace Szakdolgozat
             if (IsDataAvailable())
             {
                 m_ChartControl.UpdateCharts(m_ImportedFile, m_OriginalDataTable, m_CustomDataTable);
+                SetChartColor();
+            }
+        }
+
+        private void SetChartColor()
+        {
+            for (int i = 0; i < selectedValues.Count; i++)
+            {
+                var selectedValue = selectedValues[i];
+                if (selectedValue != null)
+                {
+                    string colorInHex = new ColorConverter().ColorNameToHex(selectedValue);
+                    m_ChartControl.UpdateChartColor(i, colorInHex);
+                }
             }
         }
 
@@ -652,6 +659,7 @@ namespace Szakdolgozat
             if (IsDataAvailable())
             {
                 m_ChartControl.UpdateCharts(m_ImportedFile, m_OriginalDataTable, m_CustomDataTable);
+                SetChartColor();
             }
         }
 
