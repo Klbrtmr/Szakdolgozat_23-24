@@ -90,6 +90,11 @@ namespace Szakdolgozat
         private DataTable m_CustomDataTable;
 
         /// <summary>
+        /// Selected values for color of combobox.
+        /// </summary>
+        private List<object> selectedValues = new List<object>();
+
+        /// <summary>
         /// Listed all file what we imported. This method created an ellipse to every file.
         /// </summary>
         public void ListFiles()
@@ -247,9 +252,16 @@ namespace Szakdolgozat
         {
             DataTable dataTable = new DataTable();
 
+            selectedValues.Clear();
+
             for (int i = 0; i < array.GetLength(1); i++)
             {
                 dataTable.Columns.Add($"{array[0, i]}");
+
+                if (i>=2)
+                {
+                    selectedValues.Add((object)"Black");
+                }
             }
 
             for (int i = 1; i < array.GetLength(0); i++)
@@ -525,7 +537,8 @@ namespace Szakdolgozat
                     object colorInHex2 = ColorConverterForBrushes.Instance.Convert(selectedValue, typeof(Brush), null, CultureInfo.CurrentCulture);
 
                     m_UIColorUpdate.UpdateCellBackground(row, colorInHex2 as Brush);
-                    m_ChartControl.UpdateChartColor(row.GetIndex(), colorInHex);
+                    // m_ChartControl.UpdateChartColor(row.GetIndex(), colorInHex);
+                    selectedValues[row.GetIndex()] = comboBox.SelectedValue;
                 }
             }
         }
@@ -585,6 +598,16 @@ namespace Szakdolgozat
                 }
 
                 m_ChartControl.UpdateCharts(m_ImportedFile, m_OriginalDataTable, m_CustomDataTable);
+
+                for (int i = 0; i < selectedValues.Count; i++)
+                {
+                    var selectedValue = selectedValues[i];
+                    if (selectedValue != null)
+                    {
+                        string colorInHex = new ColorConverter().ColorNameToHex(selectedValue);
+                        m_ChartControl.UpdateChartColor(i, colorInHex);
+                    }
+                }
             }
         }
 
