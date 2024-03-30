@@ -142,6 +142,24 @@ namespace Szakdolgozat.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Changed_Event.
+        /// </summary>
+        internal static string ChangedEvent {
+            get {
+                return ResourceManager.GetString("ChangedEvent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ConnectionError_Event.
+        /// </summary>
+        internal static string ConnectionErrorEvent {
+            get {
+                return ResourceManager.GetString("ConnectionErrorEvent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cyan.
         /// </summary>
         internal static string Cyan {

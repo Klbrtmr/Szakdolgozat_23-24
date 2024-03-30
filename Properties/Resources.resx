@@ -144,6 +144,12 @@
   <data name="BrownHexValue" xml:space="preserve">
     <value>#A52A2A</value>
   </data>
+  <data name="ChangedEvent" xml:space="preserve">
+    <value>Changed_Event</value>
+  </data>
+  <data name="ConnectionErrorEvent" xml:space="preserve">
+    <value>ConnectionError_Event</value>
+  </data>
   <data name="Cyan" xml:space="preserve">
     <value>Cyan</value>
   </data>

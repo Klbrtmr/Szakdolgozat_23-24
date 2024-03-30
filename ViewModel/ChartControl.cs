@@ -305,6 +305,14 @@ namespace Szakdolgozat.ViewModel
                 {
                     AddErrorEvent(chart, x[i], marker, isCustomChart);
                 }
+                else if (events[i].ToString() == Resources.ConnectionErrorEvent)
+                {
+                    AddConnectionErrorEvent(chart, x[i], marker, isCustomChart);
+                }
+                else if (events[i].ToString() == Resources.ChangedEvent)
+                {
+                    ChangedEvent(chart, x[i], marker, isCustomChart);
+                }
                 else
                 {
                     marker.MarkerStyle.IsVisible = false;
@@ -355,6 +363,52 @@ namespace Szakdolgozat.ViewModel
 
             marker.MarkerStyle.Shape = MarkerShape.FilledTriangleUp;
             marker.MarkerStyle.Fill.Color = Color.FromARGB(4294901760); // Red
+        }
+
+        /// <summary>
+        /// Adds an connection error event to the given chart at the specified x index.
+        /// </summary>
+        /// <param name="chart">The chart to which to add the connection error event.</param>
+        /// <param name="xIndex">The x index at which to add the connection error event.</param>
+        /// <param name="marker">The marker that represents the connection error event.</param>
+        /// <param name="isCustomChart">A boolean indicating whether the chart is a custom chart.</param>
+        private void AddConnectionErrorEvent(WpfPlot chart, double xIndex, Marker marker, bool isCustomChart)
+        {
+            if ((isCustomChart && m_MainWindow.enabledCustomEventLine.IsChecked == true) ||
+                (!isCustomChart && m_MainWindow.enabledOriginalEventLine.IsChecked == true))
+            {
+                VerticalLine connectionErrorEventLine = chart.Plot.Add.VerticalLine(xIndex);
+                connectionErrorEventLine.Text = Resources.ConnectionErrorEvent.Replace("_", " ");
+                connectionErrorEventLine.LabelOppositeAxis = true;
+                connectionErrorEventLine.LineWidth = 1;
+                connectionErrorEventLine.Color = Color.FromARGB(4294956800);
+            }
+
+            marker.MarkerStyle.Shape = MarkerShape.FilledDiamond;
+            marker.MarkerStyle.Fill.Color = Color.FromARGB(4294956800); // Gold
+        }
+
+        /// <summary>
+        /// Adds an changed event to the given chart at the specified x index.
+        /// </summary>
+        /// <param name="chart">The chart to which to add the changed event.</param>
+        /// <param name="xIndex">The x index at which to add the changed event.</param>
+        /// <param name="marker">The marker that represents the changed event.</param>
+        /// <param name="isCustomChart">A boolean indicating whether the chart is a custom chart.</param>
+        private void ChangedEvent(WpfPlot chart, double xIndex, Marker marker, bool isCustomChart)
+        {
+            if ((isCustomChart && m_MainWindow.enabledCustomEventLine.IsChecked == true) ||
+                (!isCustomChart && m_MainWindow.enabledOriginalEventLine.IsChecked == true))
+            {
+                VerticalLine connectionErrorEventLine = chart.Plot.Add.VerticalLine(xIndex);
+                connectionErrorEventLine.Text = Resources.ChangedEvent.Replace("_", " ");
+                connectionErrorEventLine.LabelOppositeAxis = true;
+                connectionErrorEventLine.LineWidth = 1;
+                connectionErrorEventLine.Color = Color.FromARGB(4294907027);
+            }
+
+            marker.MarkerStyle.Shape = MarkerShape.FilledSquare;
+            marker.MarkerStyle.Fill.Color = Color.FromARGB(4294907027); // Pink
         }
 
         /// <summary>
