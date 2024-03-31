@@ -24,7 +24,7 @@ namespace Szakdolgozat.ViewModel
 
         private IFileHandler m_FileHandler;
 
-        private ColorGenerator m_ColorGenerator;
+        private ColorGeneratorHelper m_ColorGenerator;
 
         private ITemporaryDirectoryHelper m_TemporaryDirectoryHelper = new TemporaryDirectoryHelper();
 
@@ -37,7 +37,7 @@ namespace Szakdolgozat.ViewModel
         /// Initializes a new instance of the ImportControl class.
         /// </summary>
         /// <param name="mainWindow">The main window of the application.</param>
-        public ImportControl(MainWindow mainWindow, IFileHandler fileHandler, ColorGenerator colorGenerator)
+        public ImportControl(MainWindow mainWindow, IFileHandler fileHandler, ColorGeneratorHelper colorGenerator)
         {
             m_MainWindow = mainWindow;
             m_FileHandler = fileHandler;

@@ -25,7 +25,7 @@ namespace Szakdolgozat
     /// </summary>
     public partial class MainWindow : Window
     {
-        private ColorGenerator m_ColorGenerator;
+        private ColorGeneratorHelper m_ColorGenerator;
         private ColorConverter m_ColorConverter;
         private FileHandler m_FileHandler;
         private ChildParentHelper m_ChildParentHelper;
@@ -43,7 +43,7 @@ namespace Szakdolgozat
             InitializeComponent();
             importProgressBar = FindName("importProgressBar") as ProgressBar;
 
-            m_ColorGenerator = new ColorGenerator(this);
+            m_ColorGenerator = new ColorGeneratorHelper(this);
             m_ColorConverter = new ColorConverter();
             m_FileHandler = new FileHandler();
             m_ChildParentHelper = new ChildParentHelper();

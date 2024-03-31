@@ -276,10 +276,11 @@
     </ApplicationDefinition>
     <Compile Include="Converters\ColorConverter.cs" />
     <Compile Include="Converters\ColorConverterForBrushes.cs" />
-    <Compile Include="Converters\ColorGenerator.cs" />
+    <Compile Include="Helper\ColorGeneratorHelper.cs" />
     <Compile Include="Helper\ChildParentHelper.cs" />
     <Compile Include="Helper\TemporaryDirectoryHelper.cs" />
     <Compile Include="Interfaces\IChartControl.cs" />
+    <Compile Include="Interfaces\IColorGeneratorHelper.cs" />
     <Compile Include="Interfaces\IExportControl.cs" />
     <Compile Include="Interfaces\IFileHandler.cs" />
     <Compile Include="Interfaces\IImportControl.cs" />

@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Media;
+using Szakdolgozat.Interfaces;
 
-namespace Szakdolgozat.Converters
+namespace Szakdolgozat.Helper
 {
     /// <summary>
     /// A class that generates random colors.
     /// It uses a Random object to generate random RGB values for the Color object.
     /// </summary>
-    internal class ColorGenerator
+    internal class ColorGeneratorHelper : IColorGeneratorHelper
     {
         /// <summary>
         /// A Random object used to generate random numbers.
@@ -17,16 +18,12 @@ namespace Szakdolgozat.Converters
 
         private MainWindow m_MainWindow;
 
-        public ColorGenerator(MainWindow mainWindow)
+        public ColorGeneratorHelper(MainWindow mainWindow)
         {
             m_MainWindow = mainWindow;
         }
 
-        /// <summary>
-        /// Generates a random color by creating a Color object with random RGB values.
-        /// Each RGB value is a random byte, which means it can range from 0 to 255.
-        /// </summary>
-        /// <returns>A Color object with random RGB values.</returns>
+        /// <inheritdoc cref="IColorGeneratorHelper.GenerateRandomColorForFiles"/>
         public Color GenerateRandomColorForFiles()
         {
             return Color.FromRgb(
