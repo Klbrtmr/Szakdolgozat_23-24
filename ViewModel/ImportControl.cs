@@ -4,7 +4,6 @@ using System.IO;
 using System.Windows;
 using ExcelDataReader;
 using ICSharpCode.SharpZipLib.Zip;
-using Szakdolgozat.Converters;
 using Szakdolgozat.Helper;
 using Szakdolgozat.Interfaces;
 using Szakdolgozat.Model;
@@ -72,14 +71,6 @@ namespace Szakdolgozat.ViewModel
                 MessageBox.Show($"An error occurred while importing files: {ex.Message}", Resources.Error, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        /*
-        /// <inheritdoc cref="IImportControl.CreateTemporaryDirectory"/>
-        public string CreateTemporaryDirectory()
-        {
-            string tempDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-            Directory.CreateDirectory(tempDirectory);
-            return tempDirectory;
-        }*/
 
         /// <summary>
         /// Extracts files from an EDF file to a temporary directory.
