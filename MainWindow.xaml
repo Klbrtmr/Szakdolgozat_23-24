@@ -378,7 +378,7 @@
                                      MouseDoubleClick="filesListing_MouseDoubleClick">
                                 <ListBox.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem x:Name="DeleteMenuItem" Header="DeleteItem" Click="DeleteMenuItem_Click"/>
+                                        <MenuItem x:Name="DeleteMenuItem" Header="Delete File" Click="DeleteMenuItem_Click"/>
                                     </ContextMenu>
                                 </ListBox.ContextMenu>
                             </ListBox>
