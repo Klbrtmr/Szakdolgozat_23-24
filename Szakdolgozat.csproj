@@ -287,7 +287,10 @@
     <Compile Include="Interfaces\ITemporaryDirectoryHelper.cs" />
     <Compile Include="Interfaces\IUIColorUpdate.cs" />
     <Compile Include="Interfaces\IUIHelper.cs" />
+    <Compile Include="Tests\ChildParentHelperTest.cs" />
+    <Compile Include="Tests\ColorConverterForBrushesTest.cs" />
     <Compile Include="Tests\ColorConverterTest.cs" />
+    <Compile Include="Tests\PercentageConverterTest.cs" />
     <Compile Include="ViewModel\ChartControl.cs" />
     <Compile Include="ViewModel\ExportControl.cs" />
     <Compile Include="ViewModel\FileHandler.cs" />

@@ -17,13 +17,32 @@ namespace Szakdolgozat.Tests
         }
 
         [Test]
-        public void ColorTest()
+        public void ColorTestForBlack()
         {
+            // Arrange
             string stringColorName = "Black";
             string expectedResult = "#000000";
             object colorName = (object)stringColorName;
+
+            // Act
             string result = _converter.ColorNameToHex(colorName);
 
+            // Assert
+            ClassicAssert.AreEqual(expectedResult, result);
+        }
+
+        [Test]
+        public void ColorTestForPurple()
+        {
+            // Arrange
+            string stringColorName = "Purple";
+            string expectedResult = "#800080";
+            object colorName = (object)stringColorName;
+
+            // Act
+            string result = _converter.ColorNameToHex(colorName);
+
+            // Assert
             ClassicAssert.AreEqual(expectedResult, result);
         }
     }
