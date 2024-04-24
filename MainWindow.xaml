@@ -302,7 +302,7 @@
                 <MenuItem x:Name="importExcel" Header="Import excel"
                           VerticalAlignment="Center"
                           FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" 
-                          FontWeight="Bold" Click="importExcel_Click">
+                          FontWeight="Bold" Click="importExcel_Click" ToolTip="ASDASD">
                     <MenuItem.Icon>
                         <Image Source="Assets/document.png"/>
                     </MenuItem.Icon>
