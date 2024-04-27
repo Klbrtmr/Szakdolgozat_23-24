@@ -568,7 +568,6 @@ namespace Szakdolgozat
                     object colorInHex2 = ColorConverterForBrushes.Instance.Convert(selectedValue, typeof(Brush), null, CultureInfo.CurrentCulture);
 
                     m_UIColorUpdate.UpdateCellBackground(row, colorInHex2 as Brush);
-                    // m_ChartControl.UpdateChartColor(row.GetIndex(), colorInHex);
                     selectedValues[row.GetIndex()] = comboBox.SelectedValue;
                 }
             }
