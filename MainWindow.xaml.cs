@@ -75,11 +75,6 @@ namespace Szakdolgozat
         public object[,] m_CustomCellValues { get; set; }
 
         /// <summary>
-        /// 
-        /// </summary>
-        public IDictionary<double, string> m_NamedValues = new Dictionary<double, string>();
-
-        /// <summary>
         /// Actual importedFile.
         /// </summary>
         private ImportedFile m_ImportedFile;

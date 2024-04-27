@@ -150,8 +150,6 @@ namespace Szakdolgozat.ViewModel
         /// <param name="cellValues">The 2D object array to populate with the cell values.</param>
         private void PopulateCellValues(DataSet dataSet, object[,] cellValues)
         {
-            m_MainWindow.m_NamedValues.Clear();
-
             for (int i = 0; i < dataSet.Tables[0].Columns.Count; i++)
             {
                 cellValues[0, i] = dataSet.Tables[0].Rows[0].ItemArray[i];
