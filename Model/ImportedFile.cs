@@ -4,7 +4,8 @@ namespace Szakdolgozat.Model
 {
     /// <summary>
     /// Represents an imported file in the application.
-    /// It includes properties for the file's ID, name, path, display color, and excel data.
+    /// It includes properties for the file's
+    /// ID, name, path, display color, excel data, and named values.
     /// </summary>
     public class ImportedFile
     {
