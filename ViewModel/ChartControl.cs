@@ -108,6 +108,7 @@ namespace Szakdolgozat.ViewModel
                 }
 
                 AddEventLineToChart(m_MainWindow.originalChart, x, events, false);
+                AddNamedValueLineToChart(m_MainWindow.originalChart, importedFile);
             }
 
             AutoScaleAndRefreshChart(m_MainWindow.originalChart);
@@ -144,6 +145,7 @@ namespace Szakdolgozat.ViewModel
                 }
 
                 AddEventLineToChart(m_MainWindow.CustomChart, x, events, true);
+                AddNamedValueLineToChart(m_MainWindow.CustomChart, importedFile);
             }
 
             if (invalidValues)
@@ -425,6 +427,40 @@ namespace Szakdolgozat.ViewModel
             eventLine.MarkerStyle.IsVisible = false;
             eventLine.Color = m_MainWindow.DarkModeToggleButton.IsChecked == true ? Color.FromHex(Resources.WhiteHexValue) : Color.FromHex(Resources.BlackHexValue);
             return eventLine;
+        }
+
+        /// <summary>
+        /// Add new named value line to chart.
+        /// </summary>
+        /// <param name="chart">The chart on which to create the named value line.</param>
+        /// <param name="importedFile">Imported file.</param>
+        private void AddNamedValueLineToChart(WpfPlot chart, ImportedFile importedFile)
+        {
+            foreach (KeyValuePair<double, string> item in importedFile.NamedValues)
+            {
+                if (item.Value != null && item.Value != string.Empty && item.Value != "" &&
+                    (m_MainWindow.enabledNamedValues.IsChecked == true))
+                {
+                    var NamedValueLine = CreateNamedValueLine(chart, item);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Creates a line for named values.
+        /// </summary>
+        /// <param name="chart">The chart on which to create the named value line.</param>
+        /// <param name="item">The dictionary's item which has named value</param>
+        /// <returns>The created named value line as a Horizontal object.</returns>
+        private HorizontalLine CreateNamedValueLine(WpfPlot chart, KeyValuePair<double, string> item)
+        {
+            HorizontalLine namedValueline = chart.Plot.Add.HorizontalLine(item.Key);
+            namedValueline.Text = item.Value;
+            namedValueline.LabelOppositeAxis = true;
+            namedValueline.LineWidth = 1;
+            namedValueline.Color = Color.FromARGB(4287746815); // Light Blue
+            namedValueline.IsDraggable = true;
+            return namedValueline;
         }
 
         /// <summary>

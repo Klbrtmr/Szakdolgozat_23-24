@@ -1,4 +1,6 @@
-﻿namespace Szakdolgozat.Model
+﻿using System.Collections.Generic;
+
+namespace Szakdolgozat.Model
 {
     /// <summary>
     /// Represents an imported file in the application.
@@ -35,5 +37,10 @@
         /// Gets or sets the custom excel data of the imported file.
         /// </summary>
         public object[,] CustomExcelData { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name of values of the imported file.
+        /// </summary>
+        public IDictionary<double, string> NamedValues { get; set; }
     }
 }

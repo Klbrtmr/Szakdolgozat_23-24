@@ -33,10 +33,11 @@ namespace Szakdolgozat.Interfaces
         /// <param name="customCellValues">A 2D object array containing the custom cell values.</param>
         /// <param name="newID">The ID of the new file.</param>
         /// <param name="displayColor">The color to display for a new file.</param>
+        /// <param name="namedValues">Named values.</param>
         /// <returns>A new ImportedFile object.</returns>
         ImportedFile CreateSingleImportedFile(string newFileName,
             string excelFilePath, object[,] cellValues, object[,] customCellValues,
-            int newID, Color displayColor);
+            int newID, Color displayColor, IDictionary<double, string> namedValues);
 
         /// <summary>
         /// Generates a new unique ID.
@@ -75,10 +76,18 @@ namespace Szakdolgozat.Interfaces
         /// <param name="customCellValues">A 2D object array containing the custom cell values.</param>
         /// <param name="newID">The ID of the new file.</param>
         /// <param name="displayColor">The color to display for a new file.</param>
+        /// <param name="namedValues">Named values.</param>
         /// <param name="selectedFiles">The list of selected files.</param>
         /// <returns>A new ImportedFile object.</returns>
         ImportedFile CreateImportedFile(string excelFilePath,
             object[,] cellValues, object[,] customCellValues,
-            int newID, Color displayColor, List<ImportedFile> selectedFiles);
+            int newID, Color displayColor, IDictionary<double, string> namedValues, List<ImportedFile> selectedFiles);
+
+        /// <summary>
+        ///  Get values for named values from cellValues.
+        /// </summary>
+        /// <param name="cellValues">A 2D object array containing the cell values from the excel file.</param>
+        /// <returns>Returns with the dictionary which contains double values and named values.</returns>
+        IDictionary<double, string> GetValuesForNamedValues(object[,] cellValues);
     }
 }

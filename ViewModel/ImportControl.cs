@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Windows;
@@ -184,6 +185,7 @@ namespace Szakdolgozat.ViewModel
 
                         m_MainWindow.m_CellValues = m_FileHandler.GetCellValuesFromDataSet(dataSet);
                         m_MainWindow.m_CustomCellValues = (object[,])m_MainWindow.m_CellValues.Clone();
+                        IDictionary<double, string> localNamedValues = m_FileHandler.GetValuesForNamedValues(m_MainWindow.m_CellValues);
 
                         ImportedFile importedFile = m_FileHandler.CreateImportedFile(
                             excelFilePath,
@@ -191,6 +193,7 @@ namespace Szakdolgozat.ViewModel
                             m_MainWindow.m_CustomCellValues,
                             m_FileHandler.GenerateNewID(),
                             m_ColorGenerator.GetDisplayColorForFile(excelFilePath),
+                            localNamedValues,
                             m_MainWindow.SelectedFiles);
 
                         m_MainWindow.SelectedFiles.Add(importedFile);

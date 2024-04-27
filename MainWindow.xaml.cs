@@ -45,7 +45,7 @@ namespace Szakdolgozat
 
             m_ColorGenerator = new ColorGeneratorHelper(this);
             m_ColorConverter = new ColorConverter();
-            m_FileHandler = new FileHandler();
+            m_FileHandler = new FileHandler(this);
             m_ChildParentHelper = new ChildParentHelper();
             m_UIHelper = new UIHelper(this);
             m_UIColorUpdate = new UIColorUpdate(this, m_ChildParentHelper);
@@ -73,6 +73,11 @@ namespace Szakdolgozat
         /// Two-dimension array for custom changed excel datas.
         /// </summary>
         public object[,] m_CustomCellValues { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public IDictionary<double, string> m_NamedValues = new Dictionary<double, string>();
 
         /// <summary>
         /// Actual importedFile.
@@ -141,6 +146,7 @@ namespace Szakdolgozat
 
                     m_CellValues = await m_FileHandler.ReadExcelFile(excelFilePath);
                     m_CustomCellValues = (object[,])m_CellValues.Clone();
+                    IDictionary<double, string> localNamedValues = m_FileHandler.GetValuesForNamedValues(m_CellValues);
 
                     ImportedFile importedFile = m_FileHandler.CreateSingleImportedFile(
                         newFileName,
@@ -148,7 +154,8 @@ namespace Szakdolgozat
                         m_CellValues,
                         m_CustomCellValues,
                         m_FileHandler.GenerateNewID(),
-                        m_ColorGenerator.GetDisplayColorForFile(newFileName));
+                        m_ColorGenerator.GetDisplayColorForFile(newFileName),
+                        localNamedValues);
                     Dispatcher.Invoke(() =>
                     {
                         m_SelectedFiles.Add(importedFile);
@@ -239,6 +246,9 @@ namespace Szakdolgozat
             DataTable configTable = ConvertArrayToDataTableConfigPage(importedFile.ExcelData);
             configGrid.ItemsSource = configTable.DefaultView;
 
+            DataTable namedValuesDataTable = ConvertDictionaryToDataTable(importedFile.NamedValues);
+            namedValuesDataGrid.ItemsSource = namedValuesDataTable.DefaultView;
+
             this.m_ImportedFile = importedFile;
             m_ChartControl.UpdateCharts(m_ImportedFile, m_OriginalDataTable, m_CustomDataTable);
         }
@@ -325,6 +335,26 @@ namespace Szakdolgozat
             }
 
             configGrid.ItemsSource = dataTable.DefaultView;
+
+            return dataTable;
+        }
+
+        /// <summary>
+        /// Convert from the dictionary to datatable for an easier handle.
+        /// </summary>
+        /// <param name="dictionary"></param>
+        /// <returns></returns>
+        private DataTable ConvertDictionaryToDataTable(IDictionary<double, string> dictionary)
+        {
+            DataTable dataTable = new DataTable();
+
+            dataTable.Columns.Add("Values", typeof(double));
+            dataTable.Columns.Add("Named Values", typeof(string));
+
+            foreach (var kvp in dictionary)
+            {
+                dataTable.Rows.Add(kvp.Key, kvp.Value);
+            }
 
             return dataTable;
         }
@@ -687,12 +717,70 @@ namespace Szakdolgozat
             excelCustomDataGrid.ItemsSource = null;
             configGrid.ItemsSource = null;
             configGrid.Columns.Clear();
+            namedValuesDataGrid.ItemsSource = null;
+            namedValuesDataGrid.Columns.Clear();
             originalChart.Plot.Title(string.Empty);
             originalChart.Plot.Clear();
             CustomChart.Plot.Title(string.Empty);
             CustomChart.Plot.Clear();
             RefreshCharts();
             tabControlBorder.BorderBrush = new SolidColorBrush(Color.FromRgb(128, 128, 128));
+        }
+
+        private void namedValuesDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            if (e.Row.Item is DataRowView rowView)
+            {
+                if (e.Column.DisplayIndex == 0)
+                {
+                    HandleFirstColumnEdit(e, rowView);
+                }
+                else
+                {
+                    HandleOtherNamedValuesColumnsEdit(e, rowView);
+                }
+            }
+        }
+
+        private void HandleOtherNamedValuesColumnsEdit(DataGridCellEditEndingEventArgs e, DataRowView rowView)
+        {
+            object modifiedValue = ((TextBox)e.EditingElement).Text;
+
+            if (modifiedValue != DBNull.Value)
+            {
+                if (e.Column.DisplayIndex == 1)
+                {
+                    UpdateRowViewAndCustomExcelData2(e, rowView, modifiedValue);
+                }
+                else
+                {
+                    HandleInvalidValue(e, rowView);
+                }
+            }
+        }
+        
+        private void UpdateRowViewAndCustomExcelData2(DataGridCellEditEndingEventArgs e, DataRowView rowView, object modifiedValue)
+        {
+            rowView.Row[e.Column.DisplayIndex] = modifiedValue;
+            object value = rowView.Row[0];
+
+            if (m_ImportedFile != null)
+            {
+                m_ImportedFile.NamedValues[double.Parse(value.ToString())] = modifiedValue.ToString();
+            }
+        }
+
+        private void saveNamedValues_Click(object sender, RoutedEventArgs e)
+        {
+            if (IsDataAvailable())
+            {
+                m_ChartControl.UpdateCharts(m_ImportedFile, m_OriginalDataTable, m_CustomDataTable);
+                SetChartColor();
+            }
+        }
+
+        private void enabledNamedValues_Checked(object sender, RoutedEventArgs e)
+        {
         }
     }
 }

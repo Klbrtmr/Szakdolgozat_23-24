@@ -244,6 +244,62 @@
                             <ScottPlot:WpfPlot x:Name="CustomChart" MouseDoubleClick="myPlot_MouseDoubleClick"/>
                         </Grid>
                     </TabItem>
+                    <TabItem Header="Named Values"
+                             FontFamily="Times New Roman" 
+                             FontWeight="Bold" 
+                             FontSize="15"  
+                             Width="120">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <DataGrid Name="namedValuesDataGrid" Grid.Row="0"
+                                      Grid.ColumnSpan="2"
+                                      AutoGenerateColumns="True"
+                                      HorizontalAlignment="Stretch" 
+                                      VerticalAlignment="Stretch"
+                                      ItemsSource="{Binding}"
+                                      VirtualizingPanel.IsVirtualizing="True"
+                                      VirtualizingPanel.VirtualizationMode="Standard"
+                                      ScrollViewer.CanContentScroll="True"
+                                      ScrollViewer.VerticalScrollBarVisibility="Visible"
+                                      IsReadOnly="False"
+                                      CanUserSortColumns="True"
+                                      CanUserAddRows="False"
+                                      CanUserDeleteRows="False"
+                                      MaxHeight="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, 
+                                                    Path=ActualHeight, 
+                                                    Converter={StaticResource PercentageConverter}, 
+                                                    ConverterParameter=0.67}" CellEditEnding="namedValuesDataGrid_CellEditEnding">
+                            </DataGrid>
+                            <TextBlock x:Name="namedValuesTextBlock"
+                                       Grid.Row="1" Grid.Column="0"
+                                       FontSize="20" FontFamily="Times New Roman" FontWeight="Bold"
+                                       Margin="10" Visibility="Visible">Enable Named Values</TextBlock>
+                            <RadioButton x:Name="enabledNamedValues"
+                                         Grid.Row="2" Grid.Column="0" Margin="10"
+                                         IsChecked="True"
+                                         VerticalContentAlignment="Center"
+                                         FontSize="20" FontFamily="Times New Roman" FontWeight="Bold"
+                                         Checked="enabledNamedValues_Checked">Enabled</RadioButton>
+                            <RadioButton x:Name="disabledNamedValues"
+                                         Grid.Row="2" Grid.Column="1" Margin="10"
+                                         VerticalContentAlignment="Center"
+                                         FontSize="20" FontFamily="Times New Roman" FontWeight="Bold"
+                                         Checked="enabledNamedValues_Checked">Disabled</RadioButton>
+                            <Button x:Name="saveNamedValues" Grid.Row="3" FontSize="20"
+                                    FontFamily="Times New Roman"
+                                    FontWeight="Bold"
+                                    Grid.Column="0" Margin="0,10" Click="saveNamedValues_Click" >Save</Button>
+                        </Grid>
+                    </TabItem>
                 </TabControl>
             </Border>
         </DockPanel>

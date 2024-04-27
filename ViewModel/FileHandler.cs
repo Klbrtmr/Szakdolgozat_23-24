@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ExcelDataReader;
+using InteractiveDataDisplay.WPF;
 using Szakdolgozat.Interfaces;
 using Szakdolgozat.Model;
 using Szakdolgozat.Properties;
@@ -14,6 +15,15 @@ namespace Szakdolgozat.ViewModel
     internal class FileHandler : IFileHandler
     {
         private int currentID = 0;
+        private MainWindow m_MainWindow;
+
+        private List<double> helperList = new List<double>();
+
+        public FileHandler(MainWindow mainWindow)
+        {
+            m_MainWindow = mainWindow;
+        }
+
 
         /// <inheritdoc cref="IFileHandler.GenerateUniqueFileName"/>
         public string GenerateUniqueFileName(string excelFilePath, List<ImportedFile> selectedFiles)
@@ -65,7 +75,7 @@ namespace Szakdolgozat.ViewModel
         }
 
         /// <inheritdoc cref="IFileHandler.CreateSingleImportedFile"/>
-        public ImportedFile CreateSingleImportedFile(string newFileName, string excelFilePath, object[,] cellValues, object[,] customCellValues, int newID, System.Windows.Media.Color displayColor)
+        public ImportedFile CreateSingleImportedFile(string newFileName, string excelFilePath, object[,] cellValues, object[,] customCellValues, int newID, System.Windows.Media.Color displayColor, IDictionary<double, string> namedValues)
         {
             return new ImportedFile
             {
@@ -75,6 +85,7 @@ namespace Szakdolgozat.ViewModel
                 DisplayColor = displayColor,
                 ExcelData = cellValues,
                 CustomExcelData = customCellValues,
+                NamedValues = namedValues,
             };
         }
 
@@ -82,6 +93,35 @@ namespace Szakdolgozat.ViewModel
         public int GenerateNewID()
         {
             return currentID++;
+        }
+
+        /// <inheritdoc cref="IFileHandler.GetValuesForNamedValues(object[,])"/>
+        public IDictionary<double, string> GetValuesForNamedValues(object[,] cellValues)
+        {
+            IDictionary<double, string> localNamedValues = new Dictionary<double, string>();
+            helperList.Clear();
+
+            for (int i = 1; i < cellValues.GetLength(0); i++)
+            {
+                for (int j = 2; j < cellValues.GetLength(1); j++)
+                {
+                    double actualValue = (double)cellValues[i, j];
+
+                    helperList.Add(actualValue);
+                }
+            }
+
+            helperList.Sort();
+
+            foreach (double item in helperList)
+            {
+                if (!localNamedValues.ContainsKey(item))
+                {
+                    localNamedValues.Add(item, string.Empty);
+                }
+            }
+
+            return localNamedValues;
         }
 
         /// <summary>
@@ -110,6 +150,8 @@ namespace Szakdolgozat.ViewModel
         /// <param name="cellValues">The 2D object array to populate with the cell values.</param>
         private void PopulateCellValues(DataSet dataSet, object[,] cellValues)
         {
+            m_MainWindow.m_NamedValues.Clear();
+
             for (int i = 0; i < dataSet.Tables[0].Columns.Count; i++)
             {
                 cellValues[0, i] = dataSet.Tables[0].Rows[0].ItemArray[i];
@@ -209,7 +251,7 @@ namespace Szakdolgozat.ViewModel
         }
 
         /// <inheritdoc cref="IFileHandler.CreateImportedFile"/>
-        public ImportedFile CreateImportedFile(string excelFilePath, object[,] cellValues, object[,] customCellValues, int newID, System.Windows.Media.Color displayColor, List<ImportedFile> selectedFiles)
+        public ImportedFile CreateImportedFile(string excelFilePath, object[,] cellValues, object[,] customCellValues, int newID, System.Windows.Media.Color displayColor, IDictionary<double, string> namedValues, List<ImportedFile> selectedFiles)
         {
             return new ImportedFile
             {
@@ -219,6 +261,7 @@ namespace Szakdolgozat.ViewModel
                 DisplayColor = displayColor,
                 ExcelData = cellValues,
                 CustomExcelData = customCellValues,
+                NamedValues = namedValues,
             };
         }
     }
