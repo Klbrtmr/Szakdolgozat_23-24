@@ -130,7 +130,7 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition Width="210"/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             <DataGrid Name="excelDataGrid" Grid.Row="0"
@@ -191,7 +191,7 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition Width="210"/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             
@@ -257,7 +257,7 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition Width="210"/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             <DataGrid Name="namedValuesDataGrid" Grid.Row="0"
