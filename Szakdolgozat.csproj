@@ -392,6 +392,9 @@
     <Resource Include="Assets\exit.png" />
     <Resource Include="Assets\exit_light.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\GitHub_Szakdolgozat_QRCODE.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
