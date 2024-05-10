@@ -48,7 +48,8 @@
                              FontFamily="Times New Roman" 
                              FontWeight="Bold" 
                              FontSize="15" 
-                             Width="120">
+                             Width="120"
+                             ToolTip="Signal configuration page.">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -105,7 +106,8 @@
                             <Button x:Name="saveTimeUnitButton" Grid.Row="5"
                                     Grid.Column="0" Margin="0,5"
                                     FontSize="20" FontFamily="Times New Roman" FontWeight="Bold"
-                                    Click="saveTimeUnitButton_Click">Save</Button>
+                                    Click="saveTimeUnitButton_Click"
+                                    ToolTip="Save signals' color, timestamp and update charts.">Save</Button>
                             
                             <ToolBarTray Grid.Row="0" Grid.ColumnSpan="2">
                                 <ToolBar>
@@ -121,7 +123,8 @@
                              FontFamily="Times New Roman" 
                              FontWeight="Bold" 
                              FontSize="15"  
-                             Width="120">
+                             Width="120"
+                             ToolTip="Measurement">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -166,14 +169,16 @@
                                          Checked="enabledOriginalEventLine_Checked">Disabled</RadioButton>
                             <Button x:Name="saveOriginalEventLines" Grid.Row="3"
                                     FontSize="20" FontFamily="Times New Roman" FontWeight="Bold"
-                                    Grid.Column="0" Margin="0,10" Click="saveOriginalEventLines_Click">Save</Button>
+                                    Grid.Column="0" Margin="0,10" Click="saveOriginalEventLines_Click"
+                                    ToolTip="Save event line settings and update chart.">Save</Button>
                         </Grid>
                     </TabItem>
                     <TabItem Header="Chart"
                              FontFamily="Times New Roman" 
                              FontWeight="Bold" 
                              FontSize="15"
-                             Width="120">
+                             Width="120"
+                             ToolTip="Measurement chart">
                         <Grid x:Name="Layoutroot" Background="White">
                             <ScottPlot:WpfPlot x:Name="originalChart" MouseDoubleClick="myPlot_MouseDoubleClick"/>
                         </Grid>
@@ -182,7 +187,8 @@
                              FontFamily="Times New Roman" 
                              FontWeight="Bold" 
                              FontSize="15"  
-                             Width="120">
+                             Width="120"
+                             ToolTip="Custom measurement">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -232,14 +238,16 @@
                                          Checked="enabledCustomEventLine_Checked">Disabled</RadioButton>
                             <Button x:Name="saveCustomEventLines" Grid.Row="3"
                                     FontSize="20" FontFamily="Times New Roman" FontWeight="Bold"
-                                    Grid.Column="0" Margin="0,10" Click="saveCustomEventLines_Click">Save</Button>
+                                    Grid.Column="0" Margin="0,10" Click="saveCustomEventLines_Click"
+                                    ToolTip="Save event line settings and update chart.">Save</Button>
                         </Grid>
                     </TabItem>
                     <TabItem Header="Custom Chart" 
                              FontFamily="Times New Roman" 
                              FontWeight="Bold" 
                              FontSize="15"  
-                             Width="120">
+                             Width="120"
+                             ToolTip="Custom measurement chart">
                         <Grid x:Name="CustomLayoutroot" Background="White">
                             <ScottPlot:WpfPlot x:Name="CustomChart" MouseDoubleClick="myPlot_MouseDoubleClick"/>
                         </Grid>
@@ -248,7 +256,8 @@
                              FontFamily="Times New Roman" 
                              FontWeight="Bold" 
                              FontSize="15"  
-                             Width="120">
+                             Width="120"
+                             ToolTip="Named values for current measurement.">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -297,7 +306,8 @@
                             <Button x:Name="saveNamedValues" Grid.Row="3" FontSize="20"
                                     FontFamily="Times New Roman"
                                     FontWeight="Bold"
-                                    Grid.Column="0" Margin="0,10" Click="saveNamedValues_Click" >Save</Button>
+                                    Grid.Column="0" Margin="0,10" Click="saveNamedValues_Click"
+                                    ToolTip="Save named values and update charts.">Save</Button>
                         </Grid>
                     </TabItem>
                 </TabControl>
@@ -358,7 +368,8 @@
                 <MenuItem x:Name="importExcel" Header="Import excel"
                           VerticalAlignment="Center"
                           FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" 
-                          FontWeight="Bold" Click="importExcel_Click" ToolTip="ASDASD">
+                          FontWeight="Bold" Click="importExcel_Click"
+                          ToolTip="Select the measurement file to be imported.">
                     <MenuItem.Icon>
                         <Image Source="Assets/document.png"/>
                     </MenuItem.Icon>
@@ -369,7 +380,8 @@
                 <MenuItem x:Name="importProject" Header="Import project"
                           VerticalAlignment="Center"
                           FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" 
-                          FontWeight="Bold" Click="importProject_Click">
+                          FontWeight="Bold" Click="importProject_Click"
+                          ToolTip="Select the EDF project file to be imported.">
                     <MenuItem.Icon>
                         <Image Source="Assets/file-import.png"/>
                     </MenuItem.Icon>
@@ -380,7 +392,8 @@
                 <MenuItem x:Name="exporttoexcel" Header="Export Custom Table"
                           VerticalAlignment="Center"
                           FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" 
-                          FontWeight="Bold" Click="exporttoexcel_Click">
+                          FontWeight="Bold" Click="exporttoexcel_Click"
+                          ToolTip="Save current measurement.">
                     <MenuItem.Icon>
                         <Image Source="Assets/export.png"/>
                     </MenuItem.Icon>
@@ -391,7 +404,8 @@
                 <MenuItem x:Name="exportproject" Header="Export project"
                           VerticalAlignment="Center"
                           FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" 
-                          FontWeight="Bold" Click="exportproject_Click">
+                          FontWeight="Bold" Click="exportproject_Click"
+                          ToolTip="Save current project.">
                     <MenuItem.Icon>
                         <Image Source="Assets/exportfile.png"/>
                     </MenuItem.Icon>
@@ -402,7 +416,8 @@
                 <MenuItem x:Name="cleanButton" Header="Clean project"
                         VerticalAlignment="Center"
                         FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" 
-                        FontWeight="Bold" Click="cleanButton_Click">
+                        FontWeight="Bold" Click="cleanButton_Click"
+                        ToolTip="Delete all measurements from project.">
                     <MenuItem.Icon>
                         <Image Source="Assets/broom.png"/>
                     </MenuItem.Icon>
@@ -413,7 +428,8 @@
                 <MenuItem x:Name="closeProject" Header="Close project"
                           VerticalAlignment="Center"
                           FontSize="20" Margin="10,0,0,10" FontFamily="Times New Roman" 
-                          FontWeight="Bold" Click="closeProject_Click">
+                          FontWeight="Bold" Click="closeProject_Click"
+                          ToolTip="Close project.">
                     <MenuItem.Icon>
                         <Image Source="Assets/exit.png"/>
                     </MenuItem.Icon>
@@ -434,7 +450,8 @@
                                      MouseDoubleClick="filesListing_MouseDoubleClick">
                                 <ListBox.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem x:Name="DeleteMenuItem" Header="Delete File" Click="DeleteMenuItem_Click"/>
+                                        <MenuItem x:Name="DeleteMenuItem" Header="Delete File" Click="DeleteMenuItem_Click"
+                                                  ToolTip="Delete selected measurement."/>
                                     </ContextMenu>
                                 </ListBox.ContextMenu>
                             </ListBox>
