@@ -59,6 +59,9 @@ namespace Szakdolgozat
         /// </summary>
         private List<ImportedFile> m_SelectedFiles = new List<ImportedFile>();
 
+        /// <summary>
+        /// Use public property at private field.
+        /// </summary>
         public List<ImportedFile> SelectedFiles
         {
             get => m_SelectedFiles;
