@@ -330,6 +330,15 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="Excels\100000_Sample_with_events.xlsx" />
+    <None Include="Excels\Invalid values.xlsx" />
+    <None Include="Excels\Negative numbers.xlsx" />
+    <None Include="Excels\Project\Minta_events_project.edf" />
+    <None Include="Excels\szakdolgozat_iteration.xlsx" />
+    <None Include="Excels\szakdolgozat_minta_without_events.xlsx" />
+    <None Include="Excels\szakdolgozat_minta_with_all_events.xlsx" />
+    <None Include="Excels\szakdolgozat_minta_with_events.xlsx" />
+    <None Include="Excels\szakdolgozat_minta_with_events_szinek.xlsx" />
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -395,6 +404,7 @@
   <ItemGroup>
     <Resource Include="Assets\GitHub_Szakdolgozat_QRCODE.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
